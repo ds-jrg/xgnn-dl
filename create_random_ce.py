@@ -155,17 +155,14 @@ def find_nth_filler(ce, n):  # we say n>=1
     count = 0
     if isinstance(ce, OWLObjectIntersectionOf):
         for op in ce.operands():
-            result = find_nth_filler(op, n-1)
+            result = find_nth_filler(op, n)
             if isinstance(result, OWLClassExpression):
                 return result
-            else:
-                return count + result
     if isinstance(ce, OWLObjectSomeValuesFrom):
         if count == n-1:
             return ce
         else:
-            count += 1
-            return count + find_nth_filler(ce._filler, n-1)
+            return find_nth_filler(ce._filler, n-1)
     else:
         return 0
 
@@ -233,7 +230,7 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
             new_ce = OWLObjectIntersectionOf([ce, OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)])
     if place_to_mutate == 'filler':
         number_to_mutate = random.randint(0, count_fillers(ce))
-        # print('Place to mutate: ', number_to_mutate)
+        print('Place in filler to mutate: ', number_to_mutate)
         random_class = random.choice(list_of_classes)
         edge_class = random.choice(list_of_edge_types)
         if number_to_mutate == 0:
@@ -244,17 +241,19 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
                 pass
         else:
             filler_to_mutate = find_nth_filler(ce, number_to_mutate)
+            print(filler_to_mutate)
             if mutation == 'add_intersection_with_edge_with_class':
                 if isinstance(filler_to_mutate, int):
                     new_ce = OWLObjectIntersectionOf(
                         [ce, OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)])
                 elif isinstance(filler_to_mutate, OWLObjectSomeValuesFrom):
                     new_edge = OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)
-                    filler_to_mutate = OWLObjectIntersectionOf([filler_to_mutate, new_edge])
+                    filler_to_mutate._filler = OWLObjectIntersectionOf([filler_to_mutate._filler, new_edge])
                     # here the change already happened in ce
                     new_ce = ce
             else:
                 pass
+            # filler_to_mutate._filler = new_ce
     return new_ce
 
 
@@ -514,16 +513,10 @@ def integrate_new_to_old_dict(old_dict, new_dict, current_node_id, update_id):
     if is_valid_graph is True and is_single_edge is False:
         old_dict = update_dict(new_dict, old_dict)
         return old_dict, current_node_id
-
-    # update the node ids of the new dictionary:
-    # list_of_checked_edges = []
     # new edge has the startnode-id of its current_node_id and a new end-node-id
     # TODO: If only one edge is added, add this edge with current_node_id to new_node_id
     # TODO: If a dictionary is merged to another dictionary, check, that the start-ids of the originally created edge stays the same and only the other node-id is adapted.
     for edge, ids in new_dict.items():
-        # if edge not in list_of_checked_edges:
-        # list_of_checked_edges.append(edge)
-        # list_of_checked_edges.append(get_twisted_edge(edge))
         list_ids_start = ids[0].tolist()
         for idstart in list_ids_start:
             # choose a random ID for the new node, but do not create an edge twice.
@@ -540,18 +533,10 @@ def integrate_new_to_old_dict(old_dict, new_dict, current_node_id, update_id):
             if edge[0] == edge[2]:
                 list_of_new_ids = [x for x in list_of_new_ids if x != idstart]
             new_id = random.choice(list_of_new_ids)
-            # change all ids in the start_ids of new_dict, which are equal to new_id
-            # new_dict = update_current_ids(new_dict, edge[2], idstart, new_id)  # edge only for getting the node type
             new_dict_local = dict()
             new_dict_local[edge] = (torch.Tensor([]), torch.Tensor([]))
-            # new_dict_local[get_twisted_edge(edge)] = (torch.Tensor([]), torch.Tensor([]))
             new_dict_local[edge] = (torch.cat((torch.Tensor([idstart]), new_dict_local[edge][0])),
                                     torch.cat((torch.Tensor([new_id]), new_dict_local[edge][1])))
-            # new_dict_local[get_twisted_edge(edge)] = (torch.cat((new_dict_local[get_twisted_edge(edge)][0],
-            #                                                     torch.Tensor([new_id]))),
-            #                                          torch.cat((new_dict_local[get_twisted_edge(edge)][1],
-            #                                                     torch.Tensor([idstart]))))
-            # update old_dict
             old_dict = update_dict(new_dict_local, old_dict)
     old_dict = make_graphdict_readable(old_dict)
     if update_id:
@@ -682,19 +667,11 @@ ce_u_0_i_12 = OWLObjectUnionOf([class_0, ce_12])
 
 # ------------- Testing Phase of functions
 ce_012 = add_op_to_intersection(ce_01, class_2)
-print(61, dlsr.render(ce_012))
-print(dlsr.render(ce_01))
-
-
-print('Testing intersection of longer CE')
-print(113, dlsr.render(ce_u_0_i_12))
-add_ce_to_top_intersect(ce_u_0_i_12, class_3)
-print(115, dlsr.render(ce_u_0_i_12))
 
 
 # test of random_ce_with_startnode
 print('Testing random_ce_with_startnode')
-result = random_ce_with_startnode(6, class_0, [class_0, class_1], [edge])
+result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
 print(334, dlsr.render(result))
 
 # for i in range(0, 10):
