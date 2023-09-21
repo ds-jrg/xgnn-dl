@@ -1,11 +1,11 @@
-#In this file, we manually create CEs. 
-#The goal is, to be able to use this CEs, to create different graphs and receive the GNN-output on those
+# In this file, we manually create CEs.
+# The goal is, to be able to use this CEs, to create different graphs and receive the GNN-output on those
 
 
-#Input: List for a Tree [nodetype1, [nodetype2, [nodetype3]]] would be 
-#class1 and edge to class2, where this again has an edge to class3
+# Input: List for a Tree [nodetype1, [nodetype2, [nodetype3]]] would be
+# class1 and edge to class2, where this again has an edge to class3
 
-#We say, that each inside-list is of form [nodetype, []], where the latter list may be empty.
+# We say, that each inside-list is of form [nodetype, []], where the latter list may be empty.
 
 from owlapy.model import OWLObjectProperty, OWLObjectSomeValuesFrom
 from owlapy.model import OWLDataProperty
@@ -20,6 +20,7 @@ xmlns = "http://www.semanticweb.org/stefan/ontologies/2023/1/untitled-ontology-1
 NS = xmlns
 objprop = OWLObjectProperty(IRI(NS, 'to'))
 
+
 def create_ce_from_inputtree(tree):
     return_ce = OWLObjectIntersectionOf([])
     tce = tuple(return_ce._operands)
@@ -28,15 +29,16 @@ def create_ce_from_inputtree(tree):
     lce.append(current_class)
     return_ce._operands = tuple(lce)
     del tree[0]
-    for i in tree: 
+    for i in tree:
         child = OWLObjectIntersectionOf([])
         child = create_ce_from_inputtree(i)
-        edge = OWLObjectSomeValuesFrom(property = objprop, filler = child)
+        edge = OWLObjectSomeValuesFrom(property=objprop, filler=child)
         tcec = tuple(return_ce._operands)
         lcec = list(tcec)
         lcec.append(edge)
         return_ce._operands = tuple(lcec)
     return return_ce
+
 
 testtree = ['1', ['11', ['111']], ['2'], ['3']]
 print(42, dlsr.render(create_ce_from_inputtree(testtree)))
