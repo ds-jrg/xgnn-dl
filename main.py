@@ -411,6 +411,7 @@ from datasets import create_hetero_ba_houses, initialize_dblp
 from graph_generation import create_graphs_for_heterodata, add_features_and_predict_outcome, compute_accu, compute_prediction_ce, compute_confusion_for_ce_line, compute_f1
 from ce_generation import create_graphdict_from_ce, length_ce, create_test_ce_3011, create_test_ce_3012, generate_cedict_from_ce
 from ce_generation import create_random_ce_from_BAHetero, remove_front, create_random_ce
+from create_random_ce import random_ce_with_startnode
 from visualization import visualize_best_ces
 from evaluation import ce_score_fct, ce_confusion_iterative, ce_fidelity
 import torch
@@ -471,8 +472,8 @@ try:
         run_BAShapes = False
 except Exception as e:
     print(f"Error deleting file: {e}")    
-    run_DBLP = True
-    run_BAShapes = True
+    run_DBLP = False
+    run_BAShapes = False
     random_seed = 1
     iterations = 3
 
@@ -701,6 +702,17 @@ print(1080, ce_to_tree_list(ce_test_here))
 
 list_3011 = ['Intersection', ['3'], ['to', ['Intersection', ['0'], ['to', ['Intersection', ['1'], ['to', ['1']]]]]]]
 '''
+
+
+# ----------------- Test, to create a test CE, and a test graph.
+class_3 = OWLClass(IRI(NS,'3'))
+class_2 = OWLClass(IRI(NS,'2'))
+class_1 = OWLClass(IRI(NS,'1'))
+class_0 = OWLClass(IRI(NS,'0'))
+edge = OWLObjectProperty(IRI(NS, 'to'))
+test_ce = random_ce_with_startnode(6, class_0, [class_0, class_1], [edge])
+graph_to_test_ce = create_graphdict_from_ce(test_ce, ['0','1'], ['to'], [('0', 'to', '1'), ('1', 'to', '0'), ('0', 'to', '0'), ('1', 'to', '1')])
+print(graph_to_test_ce)
 
 
 

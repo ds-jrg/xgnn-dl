@@ -7,6 +7,9 @@ import copy
 import dgl
 # sys.path.append('/Ontolearn')
 # import generatingXgraphs
+import dgl
+# sys.path.append('/Ontolearn')
+# import generatingXgraphs
 
 
 from ontolearn.concept_learner import CELOE
