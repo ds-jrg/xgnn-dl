@@ -1,5 +1,5 @@
 import unittest
-from XLitOnto.XLit.generate_graphs import get_gnn_outs
+from generate_graphs import get_gnn_outs
 from datasets import HeteroBAMotifDataset, GenerateRandomGraph, GraphMotifAugmenter
 from models import HeteroGNNModel, HeteroGNNTrainer
 import networkx as nx

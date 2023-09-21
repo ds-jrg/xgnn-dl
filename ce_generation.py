@@ -470,8 +470,83 @@ def create_random_ce_from_BAHetero(num_iter):
     random.seed(random_seed)
     rand_ce = create_random_ce(list_classes_objprops, class3, num_iter)
     return rand_ce
+# -------------------   All done in Classes: Here, we write one base-class with subclasses to create random CEs
+class ClassExpressions():
+    """
+    Here, we summarize all functions to alternate through class expressions and retrieve informations from them.
+    Functions:
+    - rnd_intersection: returns a random intersection of classes
+    """
+    def __init__(self, orig_ce = None) -> None:
+        if orig_ce is not None:
+            self.orig_ce = orig_ce
+        pass
+    
+    def count_intersection(self, ce):
+        """
+        This function counts the number of intersections in a given CE
+        """
+        count = 0
+        for sublist in ce:
+            if isinstance(sublist, OWLObjectIntersectionOf):
+                count += 1
+        return count
+    
+    
+    def rnd_intersection(self, list_classes):
+        """
+        This function returns a random intersection of classes
+        """
+        
+        return rnd_intersection
+
+class ConceptEL():
+    """
+    This Class saves a random CEs, having only "conjunction" and "properties" as operators.
+    Here we save the CEs with possible classes and edge properties
+    We can:
+    - mutate_CE: mutate a given CE by adding a new property to a class to (1) an existing intersection or (2) to a class
+    - create_CE: create random CEs of different lengths
+
+    """
+    def __init__(self, list_of_classes, list_of_properties) -> None:
+        self.list_of_classes = list_of_classes
+        self.list_of_properties = list_of_properties
+    
+    def mutate_CE(self, new_class):
+        action = random.choice(['add_at_intersection', 'create_new_intersection'])
+        if action == 'add_at_intersection':
+            rnd_intersection = find_random_intersection()
+        
+    
+    
+    def create_CE(self, length):
+        if length == 1:
+            return self.list_of_classes[0]
+        else:
+            rnd_class = self.list_of_classes[random.randint(0, len(self.list_of_classes)-1)]
+            # TODO: Mutate CE
+            
+            
+            return OWLObjectIntersectionOf([rnd_class, self.create_CE(length-1)])
+    
+    
+    
+    
+    
+    
+class ConceptUnionEL(ConceptEL):
+    """
+    This class saves CEs, which can have unions. In this class, all possible edge-types (properties) and node-types (classes) are saved.
+    We can:
+    - create random CEs of different lengths
+    - mutate a given CE by adding a new property to a class to (1) an existing intersection or (2) to a class
+    """
 
 
+
+
+ 
 # -------------------   Testing: Here, many instances are created to be able to test different scenarios.
 # testing: many outputs
 root_node_type = 'Author'
