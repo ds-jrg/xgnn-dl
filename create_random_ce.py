@@ -42,6 +42,11 @@ def return_top_intersection(ce):
     # TODO: Add OWLOBjectSomeValuesFrom
 
 
+def length_ce(ce):
+    # length_metric = OWLClassExpressionLengthMetric.get_default()
+    return count_classes(ce)
+
+
 def return_bottom_intersection(ce):
     if isinstance(ce, OWLObjectIntersectionOf):
         result = []
@@ -92,6 +97,7 @@ def add_ce_to_bottom_intersect(ce, new_op):
 
 
 # count the number of fillers used in this Class Expression
+# TODO: This does not work, sometimes really high numbers are returned!!
 def count_fillers(ce):
     if isinstance(ce, OWLObjectIntersectionOf):
         count = 0
@@ -110,6 +116,23 @@ def count_fillers(ce):
     else:
         return 0
 
+
+def replace_property_of_fillers(ce):
+    if isinstance(ce, OWLObjectIntersectionOf):
+        for op in ce.operands():
+            replace_property_of_fillers(op)
+        return ce
+    elif isinstance(ce, OWLObjectUnionOf):
+        for op in ce.operands():
+            replace_property_of_fillers(op)
+        return ce
+    elif isinstance(ce, OWLObjectSomeValuesFrom):
+        if isinstance(ce._property, list):
+            ce._property = ce._property[0]
+        return replace_property_of_fillers(ce._filler)
+    return ce
+
+
 # count the number of intersections used in this Class Expression
 
 
@@ -127,6 +150,33 @@ def count_intersections(ce):
     elif isinstance(ce, OWLObjectSomeValuesFrom):
         count = 0
         count += count_intersections(ce._filler)
+        return count
+    else:
+        return 0
+
+
+def count_classes(ce):
+    if isinstance(ce, OWLObjectIntersectionOf):
+        count = 0
+        for op in ce.operands():
+            if isinstance(op, OWLClass):
+                count += 1
+        for op in ce.operands():
+            count = count + count_classes(op)
+        return count
+    elif isinstance(ce, OWLObjectUnionOf):
+        count = 0
+        for op in ce.operands():
+            if isinstance(op, OWLClass):
+                count += 1
+        for op in ce.operands():
+            count = count + count_classes(op)
+        return count
+    elif isinstance(ce, OWLObjectSomeValuesFrom):
+        count = 0
+        if isinstance(ce, OWLClass):
+            count += 1
+        count += count_classes(ce._filler)
         return count
     else:
         return 0
@@ -189,7 +239,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
     # randomly select a mutation and a place to mutate
     mutation = random.choice(possible_mutations)
     place_to_mutate = random.choice(possible_places_to_mutate)
-    # print('Mutation is: ', mutation, 'at place: ', place_to_mutate)
     if place_to_mutate == 'intersection':
         random_class = random.choice(list_of_classes)
         edge_class = random.choice(list_of_edge_types)
@@ -197,7 +246,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
         num_insections = count_intersections(ce)
         if num_insections > 0:
             number_to_mutate = random.randint(0, count_intersections(ce))
-            # print('Place to mutate: ', number_to_mutate)
             if number_to_mutate == 0:
                 if mutation == 'add_intersection_with_edge_with_class':
                     new_ce = OWLObjectIntersectionOf(
@@ -211,7 +259,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
                     new_ce = OWLObjectIntersectionOf(
                         [random_class, OWLObjectSomeValuesFrom(property=edge_class, filler=ce)])
                 if isinstance(intersection_to_mutate, OWLObjectIntersectionOf):
-                    # print(214, 'here an edge should be added to the intersection: ', dlsr.render(intersection_to_mutate))
                     if mutation == 'add_intersection_with_edge_with_class':
                         new_edge = OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)
                         list_of_operands = list(intersection_to_mutate._operands)
@@ -230,7 +277,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
             new_ce = OWLObjectIntersectionOf([ce, OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)])
     if place_to_mutate == 'filler':
         number_to_mutate = random.randint(0, count_fillers(ce))
-        print('Place in filler to mutate: ', number_to_mutate)
         random_class = random.choice(list_of_classes)
         edge_class = random.choice(list_of_edge_types)
         if number_to_mutate == 0:
@@ -241,7 +287,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
                 pass
         else:
             filler_to_mutate = find_nth_filler(ce, number_to_mutate)
-            print(filler_to_mutate)
             if mutation == 'add_intersection_with_edge_with_class':
                 if isinstance(filler_to_mutate, int):
                     new_ce = OWLObjectIntersectionOf(
@@ -253,11 +298,7 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
                     new_ce = ce
             else:
                 pass
-            # filler_to_mutate._filler = new_ce
     return new_ce
-
-
-# -------------------- fcts to maybe leave out later
 
 
 # randomly generate a Class Expression with fixed length
@@ -564,8 +605,12 @@ def create_graph_from_ce(ce, current_class, edgetype, current_node_id):
 
     Assumptions:
     The ce is created in a way, that all individuals have a class.
+
+    Attention:
+    This only works for one edge-type currently, but not for multiple edge-types.
     """
     # Initialize an empty dictionary to hold the graph representation
+
     current_dict = dict()
     if isinstance(ce, OWLClass):
         current_class = ce
@@ -582,7 +627,13 @@ def create_graph_from_ce(ce, current_class, edgetype, current_node_id):
                         create_graph_from_ce(op, current_class, edgetype, current_node_id)[0],
                         current_node_id, update_id=False)
     elif isinstance(ce, OWLObjectSomeValuesFrom) and current_class is not None:
-        edgetype = ce._property
+        # TODO: Sometimes, ce._property is a list, find out why and remove this case !!!
+        if isinstance(ce._property, OWLObjectProperty):
+            edgetype = ce._property
+        # This is just for handling the error, that somewhere the property is saved as a list
+        # instead of a ClassExpression
+        if isinstance(ce._property, list):
+            edgetype = ce._property[0]
         if isinstance(ce._filler, OWLClass):
             new_class = ce._filler
             new_node_id = 0
@@ -612,15 +663,148 @@ def create_graph_from_ce(ce, current_class, edgetype, current_node_id):
             pass
     else:
         pass
-    # TODO: Do not create a full graph in each step, just store the created edges. Then after calling this function, create a full graph.
     return current_dict, current_node_id, current_class
 
 
 def get_graph_from_ce(ce, classtype, edgetype):
+    """
+    Attention:
+    This only works for one edge-type currently, but not for multiple edge-types.
+    """
     graph_dict = create_graph_from_ce(ce, classtype, edgetype, 0)[0]
     graph_dict = make_graphdict_readable(graph_dict)
     graph_dict = test_new_dict_on_useability(graph_dict)
     return graph_dict
+
+
+def make_graphdict_from_pyg_hdata(hdata):
+    metagraph = hdata.to_dict()
+    graph_dict = dict()
+    for edge, ids in metagraph.items():
+        new_entry = list(ids.values())[0]
+        new_entry = (new_entry[0], new_entry[1])
+        graph_dict[edge] = new_entry
+    keys_to_delete = [key for key in graph_dict.keys() if not (isinstance(key, tuple) and len(key) == 3)]
+    for key in keys_to_delete:
+        del graph_dict[key]
+    return graph_dict
+
+
+# Evalation Methods:
+
+def find_adjacent(graph_dict, current_id, current_type):
+    # graph_dict: dict of the form {[str,str,str] : [tensor,tensor]}, where the key represents (nodetype, edgetype, nodetype)-triples and the value the node-ids.
+    # current_id: id of the current node
+    # current_type: type of the current node
+    # return: list of all adjacent nodes
+    dict_adjacent = {}
+    for key, ids in graph_dict.items():
+        if key[0] == current_type and current_id in ids[0].tolist():
+            existing_list = dict_adjacent.get(key[2], [])
+            existing_list.extend(ids[1].tolist())
+            existing_list = list(set(existing_list))
+            dict_adjacent[key[2]] = existing_list
+    return dict_adjacent
+
+
+def fidelity_ce_recursive(ce, graph_dict, start_nodeid_graph, start_nodetype):
+    # Startnodetype is always the class (in normal, not in OWL!)
+    # The function is called with start_nodetype = None, by having done the check of it is the nodetype in the graph beforehand
+    # Start: find top Class in CE, this should be adjacent to current startnodeid, startnodetype.
+    #
+    # Do the next code for every adjacent node found, until a true value is returned.
+    # If no adjacent node is found, return false.
+    # TODO Check, when to change the nodeids
+    if isinstance(ce, OWLClass):
+        class_for_graph = remove_front(ce.to_string_id())
+        adjacent_nodes = find_adjacent(graph_dict, start_nodeid_graph, start_nodetype)
+        if class_for_graph in adjacent_nodes.keys():
+            return True
+        else:
+            return False
+    elif isinstance(ce, OWLObjectIntersectionOf):
+        dict_future_tests = {}
+        next_class = find_class(ce)
+        next_class_str = remove_front(next_class.to_string_id())
+        if start_nodetype is None:
+            start_nodetype = remove_front(next_class.to_string_id())
+            adjacent_nodes = {start_nodetype: [start_nodeid_graph]}
+            new_node_type = next_class
+            for op in ce.operands():
+                if not isinstance(op, OWLClass):
+                    if not fidelity_ce_recursive(op, graph_dict, start_nodeid_graph, start_nodetype):
+                        return False
+            return True
+        else:
+            if fidelity_ce_recursive(next_class, graph_dict, start_nodeid_graph, start_nodetype):
+                adjacent_nodes = find_adjacent(graph_dict, start_nodeid_graph, start_nodetype)
+                new_node_type = next_class
+                for ind in adjacent_nodes[remove_front(new_node_type.to_string_id())]:
+                    for op in ce.operands():
+                        if not isinstance(op, OWLClass):
+                            if not fidelity_ce_recursive(op, graph_dict, ind, new_node_type.to_string_id()):
+                                return False
+
+                return True
+            else:
+                return False
+
+    elif isinstance(ce, OWLObjectSomeValuesFrom):
+        # TODO: Check property to edgetype
+        return fidelity_ce_recursive(ce._filler, graph_dict, start_nodeid_graph, start_nodetype)
+
+
+def fidelity_ce_testdata(datasetfid, modelfid, ce_for_fid, node_type_expl, label_expl):
+    # Start: Test for right start ID, then return a list of filler-ces
+    fid_result = -1
+    graph_dict = make_graphdict_from_pyg_hdata(datasetfid)
+    mask = datasetfid[node_type_expl].test_mask
+    mask_tf = 0
+    for value in mask.tolist():
+        if str(value) == 'True' or str(value) == 'False':
+            mask_tf = 1
+            break
+    if label_expl == -1:
+        list_labels = datasetfid[node_type_expl].y
+        label_expl = max(set(list_labels))
+    modelfid.eval()
+    pred = modelfid(datasetfid.x_dict, datasetfid.edge_index_dict).argmax(dim=-1)
+    pred_list = pred.tolist()
+    for index, value in enumerate(pred_list):
+        if value != label_expl:
+            pred_list[index] = 0
+        else:
+            pred_list[index] = 1
+    pred = torch.tensor(pred_list)
+    if mask_tf == 0:
+        mask = datasetfid[node_type_expl]['test_mask']
+        # cedict = generate_cedict_from_ce(ce_for_fid)
+        smaller_mask = random.sample(mask.tolist(), k=min(200, len(mask.tolist())))
+        mask = torch.tensor(smaller_mask)
+    else:
+        indices_of_ones = [i for i, value in enumerate(mask.tolist()) if value == True]
+        chosen_indices = random.sample(indices_of_ones, k=min(20, len(indices_of_ones)))
+        mask = [i if i in chosen_indices else 0 for i in range(len(mask.tolist()))]
+        mask = [x for x in mask if x != 0]
+        mask = torch.tensor(mask)
+        sys.exit()
+    count_fids = 0
+    count_zeros_test = 0
+    count_zeros_gnn = 0
+    for index in mask.tolist():
+        if isinstance(node_type_expl, OWLClass):
+            node_type_expl = remove_front(node_type_expl.to_string_id())
+        result_ce_fid = fidelity_ce_recursive(ce_for_fid, graph_dict, index, node_type_expl)
+        # compute_prediction_ce(cedict, metagraph, node_type_expl, index)
+        if pred[index] == result_ce_fid:
+            count_fids += 1
+        if result_ce_fid == 0:
+            count_zeros_test += 1
+        if pred[index] == 0:
+            count_zeros_gnn += 1
+    fid_result = round(float(count_fids) / float(len(mask.tolist())), 2)
+    return fid_result
+
 
 # TODO: put these steps in Asana and rempve from here
 # Hilfsfunktion: Tiefen aller Leaf-nodes
@@ -629,58 +813,48 @@ def get_graph_from_ce(ce, classtype, edgetype):
 # 2. Dictionary to Class Expression
 # 3. Mutinsert
 # 4. GenGrow
-
 # fct-name create_broad_ce
-
 # first: Gengrow from deap (with mutinsert)
-
-
 # dict: to save spot in the tree: add dictionary to each node: Key: Pythonobject, value: Tiefe, parent, ?
     # Problem: Intersection of 2 intersections: Are these different? > save different class objects in dict
-
-
 # function: Add sth to last intersection
-
-
 # function: Save all _operands of all intersections, choose one at random and change this one
-
-
 # deap-mutation functions: mutinsert oder alles in deap umwandeln und zurück
 # gengrow, genfull aus evolearner ?
 # --------- Declaration of Testing Objects
-class_3 = OWLClass(IRI(NS, '3'))
-class_2 = OWLClass(IRI(NS, '2'))
-class_1 = OWLClass(IRI(NS, '1'))
-class_0 = OWLClass(IRI(NS, '0'))
-edge = OWLObjectProperty(IRI(NS, 'to'))
-# CE 3-2-1
-edge_end = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
-filler_end = OWLObjectIntersectionOf([class_2, edge_end])
-edge_middle = OWLObjectSomeValuesFrom(property=edge, filler=filler_end)
-ce_321 = OWLObjectIntersectionOf([class_3, edge_middle])
-ce_01 = OWLObjectIntersectionOf([class_0, class_1])
-ce_12 = OWLObjectIntersectionOf([class_1, class_2])
-# print(44, dlsr.render(ce_01))
+testing = False
 
-ce_u_0_i_12 = OWLObjectUnionOf([class_0, ce_12])
+if __name__ == '__main__' and testing == True:
+    class_3 = OWLClass(IRI(NS, '3'))
+    class_2 = OWLClass(IRI(NS, '2'))
+    class_1 = OWLClass(IRI(NS, '1'))
+    class_0 = OWLClass(IRI(NS, '0'))
+    edge = OWLObjectProperty(IRI(NS, 'to'))
+    # CE 3-2-1
+    edge_end = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
+    filler_end = OWLObjectIntersectionOf([class_2, edge_end])
+    edge_middle = OWLObjectSomeValuesFrom(property=edge, filler=filler_end)
+    ce_321 = OWLObjectIntersectionOf([class_3, edge_middle])
+    ce_01 = OWLObjectIntersectionOf([class_0, class_1])
+    ce_12 = OWLObjectIntersectionOf([class_1, class_2])
 
+    ce_u_0_i_12 = OWLObjectUnionOf([class_0, ce_12])
 
-# ------------- Testing Phase of functions
-ce_012 = add_op_to_intersection(ce_01, class_2)
+    # ------------- Testing Phase of functions
+    ce_012 = add_op_to_intersection(ce_01, class_2)
 
+    # test of random_ce_with_startnode
+    print('Testing random_ce_with_startnode')
+    result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
+    print(334, dlsr.render(result))
 
-# test of random_ce_with_startnode
-print('Testing random_ce_with_startnode')
-result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
-print(334, dlsr.render(result))
-
-# for i in range(0, 10):
-#    result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
-#    print(334, dlsr.render(result))
-# print(dlsr.render(ce_321))
-# graph_dict = create_graph_from_ce(result, None, edge, 0)
-# print(335, graph_dict)
-graph_dict = get_graph_from_ce(result, None, edge)
-print(336, graph_dict)
+    # for i in range(0, 10):
+    #    result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
+    #    print(334, dlsr.render(result))
+    # print(dlsr.render(ce_321))
+    # graph_dict = create_graph_from_ce(result, None, edge, 0)
+    # print(335, graph_dict)
+    graph_dict = get_graph_from_ce(result, None, edge)
+    print(336, graph_dict)
 
 # ------------------ End Testing Phase
