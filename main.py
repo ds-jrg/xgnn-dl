@@ -3,10 +3,8 @@
 import bashapes_model as bsm
 from datasets import create_hetero_ba_houses, initialize_dblp
 from generate_graphs import get_number_of_hdata, get_gnn_outs
-from ce_generation import create_graphdict_from_ce, create_test_ce_3011, create_test_ce_3012, generate_cedict_from_ce
-from ce_generation import create_random_ce_from_BAHetero, remove_front
 from create_random_ce import random_ce_with_startnode, get_graph_from_ce, mutate_ce, length_ce, length_ce, fidelity_ce_testdata, replace_property_of_fillers
-from visualization import visualize_best_ces, visualize_hd
+from visualization import visualize_hd
 from evaluation import ce_score_fct, ce_confusion_iterative, ce_fidelity
 import torch
 import statistics
@@ -90,6 +88,12 @@ lambdatwo = 0.0  # controls the variance in the CE output
 
 
 # ----------------  utils
+
+def remove_front(s):
+    if len(s) == 0:
+        return s
+    else:
+        return s[len(xmlns):]
 
 
 def uniquify(path, extension='.pdf'):
@@ -355,14 +359,14 @@ class_1 = OWLClass(IRI(NS, '1'))
 class_0 = OWLClass(IRI(NS, '0'))
 edge = OWLObjectProperty(IRI(NS, 'to'))
 test_ce = random_ce_with_startnode(6, class_0, [class_0, class_1], [edge])
-graph_to_test_ce = create_graphdict_from_ce(test_ce, ['0', '1'], ['to'], [(
-    '0', 'to', '1'), ('1', 'to', '0'), ('0', 'to', '0'), ('1', 'to', '1')])
+# graph_to_test_ce = create_graphdict_from_ce(test_ce, ['0', '1'], ['to'], [(
+#   '0', 'to', '1'), ('1', 'to', '0'), ('0', 'to', '0'), ('1', 'to', '1')])
 # print(graph_to_test_ce)
 
 
 # ---------------------- evaluation DBLP
 # this does not work accordingly
-random_seed = 3006
+
 if run_DBLP:
     delete_files_in_folder('content/plots/DBLP')
     datadblp, targetdblp = initialize_dblp()
