@@ -50,6 +50,11 @@ def length_ce(ce):
     return count_classes(ce)
 
 
+def length_ce(ce):
+    # length_metric = OWLClassExpressionLengthMetric.get_default()
+    return count_classes(ce)
+
+
 def return_bottom_intersection(ce):
     if isinstance(ce, OWLObjectIntersectionOf):
         result = []
@@ -292,7 +297,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
                 pass
         else:
             filler_to_mutate = find_nth_filler(ce, number_to_mutate)
-            print(filler_to_mutate)
             if mutation == 'add_intersection_with_edge_with_class':
                 if isinstance(filler_to_mutate, int):
                     new_ce = OWLObjectIntersectionOf(
@@ -304,7 +308,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
                     new_ce = ce
             else:
                 pass
-            # filler_to_mutate._filler = new_ce
     return new_ce
 
 
@@ -845,8 +848,7 @@ if __name__ == '__main__' and testing == True:
     ce_01 = OWLObjectIntersectionOf([class_0, class_1])
     ce_12 = OWLObjectIntersectionOf([class_1, class_2])
 
-ce_u_0_i_12 = OWLObjectUnionOf([class_0, ce_12])
-
+    ce_u_0_i_12 = OWLObjectUnionOf([class_0, ce_12])
 
     # ------------- Testing Phase of functions
     ce_012 = add_op_to_intersection(ce_01, class_2)

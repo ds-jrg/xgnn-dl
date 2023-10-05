@@ -8,8 +8,10 @@ import torch
 import dgl
 import sys
 import copy
+import copy
 from ce_generation import generate_cedict_from_ce
 from create_random_ce import length_ce, remove_front, find_class, count_classes
+from create_random_ce import length_ce, remove_front
 from graph_generation import compute_prediction_ce
 import pandas as pd
 

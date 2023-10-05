@@ -80,6 +80,7 @@ def readout_OWLclass(ce: OWLClassExpression, list_nodetypes=[]):
 
 def length_ce(ce):
     length_metric = OWLClassExpressionLengthMetric.get_default()
+    print(ce)
     return length_metric.length(ce)
 
 
@@ -458,6 +459,12 @@ def create_random_ce_from_BAHetero(num_iter):
     random.seed(random_seed)
     rand_ce = create_random_ce(list_classes_objprops, class3, num_iter)
     return rand_ce
+
+
+
+
+
+
 
 
 # -------------------   Testing: Here, many instances are created to be able to test different scenarios.

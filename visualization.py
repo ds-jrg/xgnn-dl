@@ -1,7 +1,6 @@
 # Here, several functions for visualization & their utils are implemented
 
 
-
 from ce_generation import generate_cedict_from_ce
 import dgl
 import networkx as nx
@@ -10,22 +9,25 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import re
 import os
+import math
 
 from graph_generation import graphdict_and_features_to_heterodata
-
-
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('matplotlib')
+logger.setLevel(logging.WARNING)
 
 
 # ---------------- utils
-def uniquify(path, extension = '.pdf'):
+def uniquify(path, extension='.pdf'):
     if path.endswith("_"):
         path += '1'
         counter = 1
     while os.path.exists(path+extension):
-        counter +=1
+        counter += 1
         while path and path[-1].isdigit():
             path = path[:-1]
-        path +=str(counter)
+        path += str(counter)
     return path
 
 
@@ -51,11 +53,11 @@ def generate_colors(num_colors):
     # Generate a list of evenly spaced hues
     hues = [i / num_hues for i in range(num_hues)]
     # Shuffle the hues randomly
-    #random.shuffle(hues)
+    # random.shuffle(hues)
     saturations = []
-    #saturations = [0.8 for _ in range(num_colors)]
+    # saturations = [0.8 for _ in range(num_colors)]
     values = []
-    #values = [0.4 for _ in range(num_colors)]
+    # values = [0.4 for _ in range(num_colors)]
     for i in range(num_colors):
         if i % 2 == 0:
             values.append(0.4)
@@ -70,7 +72,9 @@ def generate_colors(num_colors):
     return hex_colors
 
 
-
+def adjust_caption_size_exp(caption_length, max_size=18, min_size=8, rate=0.1):
+    font_size = max_size * math.exp(-rate * caption_length)
+    return max(min_size, min(font_size, max_size))
 
 
 # ----------------- Visualization Functions
@@ -86,26 +90,103 @@ def visualize(dict_graph):
         'width': 1,
     }
     plt.figure(figsize=[15, 7])
-    nx.draw(graph_final_nx,**options)
+    nx.draw(graph_final_nx, **options)
     name_plot_save = 'content/plots/graph.pdf'
     name_plot_save = uniquify(name_plot_save)
-    #plt.figure()
+    # plt.figure()
     plt.savefig(name_plot_save, format="pdf")
     plt.show()
     plt.clf()
 
 
 # This function is the main function to visualize
-def visualize_heterodata(hd, addname = '', ce = None, gnnout = None, mean_acc = None, add_out = None, list_all_nodetypes = None, label_to_explain = None, name_folder = ''):
+def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explain, add_info='', name_folder=''):
+    try:
+        plt.clf()
+    except Exception as e:
+        print(f'An exception occurred while clearing the plot: {e}')
+    # create data for legend and caption
+    number_of_node_types_for_colors = len(list_all_nodetypes)
+    colors = generate_colors(number_of_node_types_for_colors)
+    if number_of_node_types_for_colors == 4:
+        colors = ['#59a14f', '#f28e2b', '#4e79a7', '#e15759']
+    curent_nodetypes_to_all_nodetypes = []
+    for _ in range(len(hd_graph.node_types)):
+        all_nodetypes_index = list_all_nodetypes.index(hd_graph.node_types[_])
+        curent_nodetypes_to_all_nodetypes.append([_, all_nodetypes_index])
+    # create nx graph to visualize
+    Gnew = nx.Graph()
+    homdata = hd_graph.to_homogeneous()
+    num_nodes_of_graph = len(homdata.node_type.tolist())
+    Gnew.add_nodes_from(list(range(num_nodes_of_graph)))
+    # add edges
+    list_edges_start, list_edges_end = homdata.edge_index.tolist()[0], homdata.edge_index.tolist()[1]
+    list_edges_for_networkx = list(zip(list_edges_start, list_edges_end))
+    Gnew.add_edges_from(list_edges_for_networkx)
+    # color nodes
+    list_node_types = homdata.node_type.tolist()
+    node_labels_to_indices = dict()
+    index = 0
+    stop = False  # the prediction is always done for the first node
+    for nodekey in homdata.node_type.tolist():
+        if label_to_explain != None:
+            if str(curent_nodetypes_to_all_nodetypes[nodekey][1]) == label_to_explain and stop == False:
+                node_labels_to_indices.update({index: '*'})
+                stop = True
+            else:
+                node_labels_to_indices.update({index: ''})
+        else:
+            node_labels_to_indices.update({index: curent_nodetypes_to_all_nodetypes[nodekey][1]})
+        index += 1
+    color_map_of_nodes = []
+    for typeindex in list_node_types:
+        color_map_of_nodes.append(colors[curent_nodetypes_to_all_nodetypes[typeindex][1]])
+    # plt
+    options = {
+        'with_labels': 'True',
+        'node_size': 500
+    }
+    nx.draw(Gnew, node_color=color_map_of_nodes,  **options, labels=node_labels_to_indices)
+    # create legend
+    patch_list = []
+    name_list = []
+    for i in range(len(hd_graph.node_types)):
+        patch_list.append(plt.Circle((0, 0), 0.1, fc=colors[curent_nodetypes_to_all_nodetypes[i][1]]))
+        name_list.append(hd_graph.node_types[i])
+    # create caption
+    caption_text = add_info
+    caption_size = adjust_caption_size_exp(caption_length=len(add_info), max_size=18, min_size=8, rate=0.1)
+    caption_position = (0.5, 0.1)
+    # folder to save in:
+    folder = remove_integers_at_end(addname_for_save)
+    number_ce = get_last_number(addname_for_save)
+    if name_folder == '':
+        name_plot_save = 'content/plots/'+'/'+folder+str(number_ce)
+    else:
+        name_plot_save = name_folder + 'HeteroBAShapes' + '/ce_'+str(number_ce)+'_graph_'
+    name_plot_save = uniquify(name_plot_save, '_wo_text.pdf')
+    directory = os.path.dirname(name_plot_save)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    plt.savefig(name_plot_save+'_wo_text.pdf', bbox_inches='tight', format="pdf")
+    plt.legend(patch_list, name_list)
+    plt.figtext(*caption_position, caption_text, ha='center', size=caption_size)
+    name_plot_save = uniquify(name_plot_save)
+    plt.savefig(name_plot_save+'.pdf', bbox_inches='tight', format="pdf")
+
+
+# old function
+def visualize_heterodata(hd, addname='', ce=None, gnnout=None, mean_acc=None, add_out=None, list_all_nodetypes=None,
+                         label_to_explain=None, name_folder=''):
     try:
         plt.clf()
     except Exception as e:
         print('plt could not be clarified')
     options = {
-        'with_labels' : 'True',
-        'node_size' : 500
+        'with_labels': 'True',
+        'node_size': 500
     }
-        # create random colours for visualization
+    # create random colours for visualization
     number_of_node_types = len(hd.node_types)
     number_of_node_types_for_colors = number_of_node_types
     curent_nodetypes_to_all_nodetypes = []
@@ -116,90 +197,89 @@ def visualize_heterodata(hd, addname = '', ce = None, gnnout = None, mean_acc = 
             all_nodetypes_index = _
         curent_nodetypes_to_all_nodetypes.append([_, all_nodetypes_index])
     if list_all_nodetypes != None:
-        number_of_node_types_for_colors = len(list_all_nodetypes) 
+        number_of_node_types_for_colors = len(list_all_nodetypes)
     colors = generate_colors(number_of_node_types_for_colors)
     if number_of_node_types_for_colors == 4:
         colors = ['#59a14f', '#f28e2b', '#4e79a7', '#e15759']
-    #find out, which node in homogeneous graph has which type
+    # find out, which node in homogeneous graph has which type
     homdata = hd.to_homogeneous()
     tensor_with_node_types = homdata.node_type
-    #generate networkx graph with the according setting
+    # generate networkx graph with the according setting
     Gnew = nx.Graph()
-    #add nodes
+    # add nodes
     num_nodes_of_graph = len(homdata.node_type.tolist())
     Gnew.add_nodes_from(list(range(num_nodes_of_graph)))
-    #add edges
+    # add edges
     list_edges_start, list_edges_end = homdata.edge_index.tolist()[0], homdata.edge_index.tolist()[1]
     list_edges_for_networkx = list(zip(list_edges_start, list_edges_end))
     Gnew.add_edges_from(list_edges_for_networkx)
-    #color nodes
+    # color nodes
     list_node_types = homdata.node_type.tolist()
     node_labels_to_indices = dict()
     index = 0
-    stop = False #the prediction is always done for the first node
+    stop = False  # the prediction is always done for the first node
     for nodekey in homdata.node_type.tolist():
         if label_to_explain != None:
             if str(curent_nodetypes_to_all_nodetypes[nodekey][1]) == label_to_explain and stop == False:
-                node_labels_to_indices.update({index : '*'})
+                node_labels_to_indices.update({index: '*'})
                 stop = True
             else:
-                node_labels_to_indices.update({index : ''})
+                node_labels_to_indices.update({index: ''})
         else:
-            node_labels_to_indices.update({index : curent_nodetypes_to_all_nodetypes[nodekey][1]})
-        index +=1
+            node_labels_to_indices.update({index: curent_nodetypes_to_all_nodetypes[nodekey][1]})
+        index += 1
     color_map_of_nodes = []
     for typeindex in list_node_types:
         color_map_of_nodes.append(colors[curent_nodetypes_to_all_nodetypes[typeindex][1]])
-    #plt
-    nx.draw(Gnew, node_color=color_map_of_nodes,  **options, labels = node_labels_to_indices)
-    #create legend
+    # plt
+    nx.draw(Gnew, node_color=color_map_of_nodes,  **options, labels=node_labels_to_indices)
+    # create legend
     patch_list = []
     name_list = []
     for i in range(number_of_node_types):
         patch_list.append(plt.Circle((0, 0), 0.1, fc=colors[curent_nodetypes_to_all_nodetypes[i][1]]))
         name_list.append(hd.node_types[i])
-    
-    #create caption
+
+    # create caption
     caption_text = ''
     caption_size = 18
     if ce != None:
         caption_text += ce
         caption_size -= 4
     if gnnout != None:
-        caption_text += '\n'+ ' out: ' + str(gnnout)
+        caption_text += '\n' + ' out: ' + str(gnnout)
         caption_size -= 4
     if mean_acc != None:
         caption_text += ' acc: ' + str(mean_acc)
         caption_size -= 4
     if add_out != None:
         caption_text += ' ' + add_out
-        caption_size -= 4   
+        caption_size -= 4
     caption_position = (0.5, 0.1)  # Adjust the position as per your requirements
-    
-    
-    #folder to save in:
+
+    # folder to save in:
     folder = remove_integers_at_end(addname)
     number_ce = get_last_number(addname)
     print(folder, number_ce)
-    #goal: ce_name_1_graph_3
+    # goal: ce_name_1_graph_3
     if name_folder == '':
         name_plot_save = 'content/plots/'+folder+'/ce_'+folder+'_'+str(number_ce)+'_graph_'
     else:
         name_plot_save = name_folder + '/ce_'+str(number_ce)+'_graph_'
     name_plot_save = uniquify(name_plot_save, '_wo_text.pdf')
-    #name_plot_save = name_plot_save.replace(".pdf", "")
-    #name_plot_save += 'wo_text.pdf'
+    # name_plot_save = name_plot_save.replace(".pdf", "")
+    # name_plot_save += 'wo_text.pdf'
     plt.savefig(name_plot_save+'_wo_text.pdf', bbox_inches='tight', format="pdf")
     plt.legend(patch_list, name_list)
-    plt.figtext(*caption_position, caption_text, ha='center')#, size = caption_size)
-    #plt.figure()
-    #name_plot_save = 'content/plots/'+folder+'/'+'graph'+addname+'.pdf'
+    plt.figtext(*caption_position, caption_text, ha='center')  # , size = caption_size)
+    # plt.figure()
+    # name_plot_save = 'content/plots/'+folder+'/'+'graph'+addname+'.pdf'
     name_plot_save = uniquify(name_plot_save)
     plt.savefig(name_plot_save+'.pdf', bbox_inches='tight', format="pdf")
-    #plt.show()
+    # plt.show()
 
 
-def visualize_best_results(num_top, saved_list, addname = '', list_all_nodetypes = None, label_to_explain = None):
+def visualize_best_results(num_top, saved_list, addname='', list_all_nodetypes=None, label_to_explain=None):
     num_top = min([num_top, len(saved_list)])
     for i in range(num_top):
         saved_dict_result = saved_list[i][0][0]
@@ -219,22 +299,25 @@ def visualize_best_results(num_top, saved_list, addname = '', list_all_nodetypes
             mean_acc = saved_list[i][3]
         except Exception as e:
             print(f"290 Here we skiped the error: {e}")
-        visualize_heterodata(graphdict_and_features_to_heterodata(saved_dict_result, saved_features_result), addname, gnnout = gnn_out, ce = ce, mean_acc = mean_acc, list_all_nodetypes = list_all_nodetypes, label_to_explain = label_to_explain)
+        visualize_heterodata(graphdict_and_features_to_heterodata(saved_dict_result, saved_features_result), addname,
+                             gnnout=gnn_out, ce=ce, mean_acc=mean_acc, list_all_nodetypes=list_all_nodetypes, label_to_explain=label_to_explain)
         '''
         try:
             visualize_heterodata(graphdict_and_features_to_heterodata(saved_dict_result, saved_features_result), addname, gnnout = gnn_out, ce = ce, int_generate_colors = int_generate_colors)
         except Exception as e:
             print(f"290 Here we skiped the error: {e}")
             print(291, i, saved_list[i])
-           ''' 
+           '''
 
-def visualize_best_ces(num_top_ces, num_top_graphs, list_of_results_ce = list(), list_all_nodetypes = None, label_to_explain = None, ml = None, ds = None, node_expl = None, plotname = 'any', random_seed = 615):
-    #for each CE: visualize num_top_graphs by saving them under a unique name
-    #aufbau: [graphs, ce]
+
+def visualize_best_ces(num_top_ces, num_top_graphs, list_of_results_ce=list(), list_all_nodetypes=None, label_to_explain=None, ml=None, ds=None, node_expl=None, plotname='any', random_seed=615):
+    # for each CE: visualize num_top_graphs by saving them under a unique name
+    # aufbau: [graphs, ce]
     num_top_ces = min(num_top_ces, len(list_of_results_ce))
     for ind_ce in range(num_top_ces):
         if ml != None and ds != None and node_expl != None:
-            ce_fid = ce_fidelity(list_of_results_ce[ind_ce][5], modelfid=ml, datasetfid = ds, node_type_expl = node_expl, random_seed = random_seed)
+            ce_fid = ce_fidelity(list_of_results_ce[ind_ce][5], modelfid=ml,
+                                 datasetfid=ds, node_type_expl=node_expl, random_seed=random_seed)
             print(378, ce_fid)
         else:
             ce_fid = -1
@@ -245,9 +328,8 @@ def visualize_best_ces(num_top_ces, num_top_graphs, list_of_results_ce = list(),
         max_f = list_of_results_ce[ind_ce][5]
         # new way to compute accuracy directly on CE:
         ce_dict = generate_cedict_from_ce(list_of_results_ce[ind_ce][6])
-        #compute_confusion_for_ce_line(ce_dict)
-        
-        
+        # compute_confusion_for_ce_line(ce_dict)
+
         print(364, avg_acc, ce_vis, num_top_ces)
         graphs = list_of_results_ce[ind_ce][0]
         addname = plotname+str(ind_ce+1)
@@ -260,30 +342,10 @@ def visualize_best_ces(num_top_ces, num_top_graphs, list_of_results_ce = list(),
                 gnn_out = graphs[ind_gr][1]
             except Exception as e:
                 print(f"290 Here we skiped the error: {e}")
-            visualize_heterodata(graphdict_and_features_to_heterodata(dict_graph_ce, features_graph_ce), addname, gnnout = 'Score: '+str(score), ce = ce_vis, mean_acc = str(avg_acc)+' max acc: ' + str(max_acc) + ' F1: ' + str(max_f)+' fid: ' + str(ce_fid), list_all_nodetypes = list_all_nodetypes, label_to_explain = label_to_explain)
-
-
-
+            visualize_heterodata(graphdict_and_features_to_heterodata(dict_graph_ce, features_graph_ce), addname, gnnout='Score: '+str(score), ce=ce_vis, mean_acc=str(
+                avg_acc)+' max acc: ' + str(max_acc) + ' F1: ' + str(max_f)+' fid: ' + str(ce_fid), list_all_nodetypes=list_all_nodetypes, label_to_explain=label_to_explain)
 
 
 def visualize_one_hd(ce, path, number_of_graphs, add_result):
     print('Visualization started')
     # visualize graphs
-
-    
-
-
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
