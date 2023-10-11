@@ -19,3 +19,24 @@ Our primary goal is to identify a CE which is valid for graphs that maximize the
 ## Abstract
 
 Graph Neural Networks (GNNs) have emerged as powerful tools for node and graph classification on graph-structured data, but they lack explainability, particularly when it comes to understanding their behavior at global level. Current research mainly utilizes subgraphs of the input as local explanations and generates graphs as global explanations. However, these graph-based methods have limited expressiveness in explaining a class with multiple sufficient explanations. To achieve more expressive explanations, we propose utilizing class expressions (CEs) from the field of description logic (DL). We demonstrate our approach on heterogeneous graphs with different node types, which we explain with CEs in the description logic EL. To identify the most fitting explanation, we construct multiple graphs for each CE and calculate the average GNN output among those graphs. Our approach offers a more expressive mechanism for explaining GNNs in node classification tasks and addresses the limitations of existing graph-based explanations.
+
+## Explanations to the Code
+
+#### Installation
+Please follow the instructions for the virtual environment `hot2` from Section 3 in `https://github.com/mathematiger/Hands_on_GraphXAI` for installation with pip. Then run the shell `./run_egel.sh`
+
+#### Important Functions
+There is a vast summary of files, but only some are important:
+
+`create_random_ce.py` describes all functions, which are needed to create and mutate one CE, with some additional utility functions.
+
+`generate_graphs.py` describes all functions which are needed to create heterogeneous PyTorch-geometric graphs from a CE.
+
+`main.py` brings all functions together and describes the Beam-Search.
+
+`evaluation` describes the scoring function for beam search, as well as accuracy and fidelity.
+
+`datasets.py` describes the generation of the dataset heteroBAShapes.
+
+`visualization.py` describes all functions needed to visualize the results.
+
