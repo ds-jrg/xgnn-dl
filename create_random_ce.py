@@ -241,51 +241,58 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
     place_to_mutate = random.choice(possible_places_to_mutate)
     if place_to_mutate == 'intersection':
         random_class = random.choice(list_of_classes)
-        edge_class = random.choice(list_of_edge_types)
+        if isinstance(list_of_edge_types, list):
+            edge_class = random.choice(list_of_edge_types)
+        else:
+            edge_class = list_of_edge_types
         # randomly select the number, which intersection or filler to mutate
         num_insections = count_intersections(ce)
-        if num_insections > 0:
-            number_to_mutate = random.randint(0, count_intersections(ce))
-            if number_to_mutate == 0:
+        if num_insections >= 2:
+            number_to_mutate = random.randint(2, count_intersections(ce))
+            # loop through all intersections until the number_to_mutate
+            intersection_to_mutate = find_nth_intersection(ce, number_to_mutate)
+            if isinstance(intersection_to_mutate, int):
+                new_ce = mutate_ce(ce, list_of_classes, list_of_edge_types)
+            if isinstance(intersection_to_mutate, OWLObjectIntersectionOf):
                 if mutation == 'add_intersection_with_edge_with_class':
-                    new_ce = OWLObjectIntersectionOf(
-                        [ce, OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)])
+                    new_edge = OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)
+                    list_of_operands = list(intersection_to_mutate._operands)
+                    list_of_operands.append(new_edge)
+                    intersection_to_mutate._operands = tuple(list_of_operands)
+                    # intersection_to_mutate = add_op_to_intersection_deepcopy(intersection_to_mutate, new_edge)
+                    new_ce = ce
                 else:
-                    pass
+                    new_ce = OWLObjectIntersectionOf(
+                        [random_class, OWLObjectSomeValuesFrom(property=edge_class, filler=ce)])
             else:
-                # loop through all intersections until the number_to_mutate
-                intersection_to_mutate = find_nth_intersection(ce, number_to_mutate)
-                if isinstance(intersection_to_mutate, int):
-                    new_ce = OWLObjectIntersectionOf(
-                        [random_class, OWLObjectSomeValuesFrom(property=edge_class, filler=ce)])
-                if isinstance(intersection_to_mutate, OWLObjectIntersectionOf):
-                    if mutation == 'add_intersection_with_edge_with_class':
-                        new_edge = OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)
-                        list_of_operands = list(intersection_to_mutate._operands)
-                        list_of_operands.append(new_edge)
-                        intersection_to_mutate._operands = tuple(list_of_operands)
-                        # intersection_to_mutate = add_op_to_intersection_deepcopy(intersection_to_mutate, new_edge)
-                        new_ce = ce
-                    else:
-                        new_ce = OWLObjectIntersectionOf(
-                            [random_class, OWLObjectSomeValuesFrom(property=edge_class, filler=ce)])
+                if isinstance(ce, OWLObjectIntersectionOf):
+                    new_edge = OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)
+                    list_of_operands = list(ce._operands)
+                    list_of_operands.append(new_edge)
+                    ce._operands = tuple(list_of_operands)
+                    # intersection_to_mutate = add_op_to_intersection_deepcopy(intersection_to_mutate, new_edge)
+                    new_ce = ce
                 else:
-                    new_ce = OWLObjectIntersectionOf(
-                        [random_class, OWLObjectSomeValuesFrom(property=edge_class, filler=ce)])
+                    print('This should not happen in the current implementation')
+                    pass
         else:
             # exchange the CE by adding the intersection to the top and add an edge
             new_ce = OWLObjectIntersectionOf([ce, OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)])
     if place_to_mutate == 'filler':
-        number_to_mutate = random.randint(0, count_fillers(ce))
         random_class = random.choice(list_of_classes)
-        edge_class = random.choice(list_of_edge_types)
-        if number_to_mutate == 0:
+        if isinstance(list_of_edge_types, list):
+            edge_class = random.choice(list_of_edge_types)
+        else:
+            edge_class = list_of_edge_types
+        number_fillers = count_fillers(ce)
+        if number_fillers == 0:
             if mutation == 'add_intersection_with_edge_with_class':
                 new_ce = OWLObjectIntersectionOf(
                     [ce, OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)])
             else:
                 pass
         else:
+            number_to_mutate = random.randint(1, number_fillers)
             filler_to_mutate = find_nth_filler(ce, number_to_mutate)
             if mutation == 'add_intersection_with_edge_with_class':
                 if isinstance(filler_to_mutate, int):
@@ -307,6 +314,8 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
 
 
 def random_ce_with_startnode(length, typestart, list_of_classes, list_of_edge_types):
+    if isinstance(list_of_edge_types, list):
+        list_of_edge_types = list_of_edge_types[0]  # Only for debugging
     if length == 0:
         return typestart
     else:

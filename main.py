@@ -75,16 +75,17 @@ except Exception as e:
     random_seed = 1
     iterations = 3  # not implemented in newer version !!
 # Further Parameters:
+train_new_GNN = True
 layers = 2  # 2 or 4 for the bashapes hetero dataset
 start_length = 2
 end_length = 10
-number_of_ces = 1000
+number_of_ces = 200
 number_of_graphs = 10
-num_top_results = 5
+num_top_results = 10
 save_ces = True  # Debugging: if True, creates new CEs and save the CEs to hard disk
 # hyperparameters for scoring
-lambdaone = 0.2  # controls the length of the CE
-lambdatwo = 0.0  # controls the variance in the CE output
+lambdaone = 0.5  # controls the length of the CE
+lambdatwo = 0.0  # controls the variance in the CE output on the different graphs for one CE
 
 
 # ----------------  utils
@@ -233,6 +234,7 @@ def beam_search(hd, model, target_class, start_length, end_length, number_of_ces
     list_sorted = sorted(list_results, key=lambda x: x['score'], reverse=True)
     list_results = list_sorted[:number_of_ces]
     for _ in range(start_length, end_length+1):
+        # print(dlsr.render(replace_property_of_fillers(list_results[0]['CE'])))
         new_list = list()
         for ce in list_results:
             ce_here = copy.deepcopy(ce['CE'])
@@ -381,7 +383,7 @@ if run_BAShapes:
     bashapes = create_hetero_ba_houses(500, 100)  # TODO: Save BAShapes to some file, code already somewhere
     delete_files_in_folder('content/plots')
     # train GNN 2_hop
-    modelHeteroBSM = bsm.train_GNN(False, bashapes, layers=layers)
+    modelHeteroBSM = bsm.train_GNN(train_new_GNN, bashapes, layers=layers)
     start_time = time.time()
     beam_and_calc_and_output(hd=bashapes, model=modelHeteroBSM, target_class='3',
                              start_length=start_length, end_length=end_length,
