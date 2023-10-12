@@ -25,7 +25,7 @@ Graph Neural Networks (GNNs) have emerged as powerful tools for node and graph c
 #### Installation
 Please follow the instructions for the virtual environment `hot2` from Section 3 in `https://github.com/mathematiger/Hands_on_GraphXAI` for installation with pip. Then run the shell `./run_egel.sh`
 
-#### Important Functions
+#### Overview of the Files
 There is a vast summary of files, but only some are important:
 
 `create_random_ce.py` describes all functions, which are needed to create and mutate one CE, with some additional utility functions.
@@ -40,3 +40,9 @@ There is a vast summary of files, but only some are important:
 
 `visualization.py` describes all functions needed to visualize the results.
 
+#### Functions from the paper
+
+1. **Mutate CE** refers to the function `mutate_ce` in `create_random_ce.py`
+2. **Beam Search** refers to the function `beam_search` in `main.py`
+3. **Create Graph** refers to the function `get_graph_from_ce` in `create_random_ce`
+4. **Accuracy** refers to the function `get_accuracy_baheteroshapes` in `evaluation.py`
