@@ -63,7 +63,7 @@ def test_ce_fast_instance_checker():
     paper_to_author = OWLObjectIntersectionOf([class_paper, edge_to_author])
     edge_to_paper = OWLObjectSomeValuesFrom(property=edge, filler=class_paper)
     paper_to_paper = OWLObjectIntersectionOf([class_paper, edge_to_paper])
-
+    paper_to_author_to_paper = OWLObjectIntersectionOf([class_paper, edge_to_author, edge_to_paper])
     # Create a HeteroData object with a simple graph
     hetero_data = HeteroData()
     hetero_data['Paper', 'to', 'Author'].edge_index = torch.tensor([[0, 1], [1, 2]])
@@ -80,7 +80,9 @@ def test_ce_fast_instance_checker():
     # Test for an invalid CE
     ce = paper_to_paper
     valid_nodes = ce_fast_instance_checker(ce, hetero_data, 'Paper', 0)
-    print('Result of FIC', valid_nodes)
+
+    # test for a more complicated CE
+    ce = paper_to_author_to_paper
     assert valid_nodes == set()
 
 
