@@ -5,7 +5,7 @@ from datasets import create_hetero_ba_houses, initialize_dblp
 from generate_graphs import get_number_of_hdata, get_gnn_outs
 from create_random_ce import random_ce_with_startnode, get_graph_from_ce, mutate_ce, length_ce, length_ce, fidelity_ce_testdata, replace_property_of_fillers
 from visualization import visualize_hd
-from evaluation import ce_score_fct, ce_confusion_iterative, ce_fidelity
+from evaluation import ce_score_fct, ce_confusion_iterative, ce_fidelity, get_accuracy_baheteroshapes
 import torch
 import statistics
 # from dgl.data.rdf import AIFBDataset, AMDataset, BGSDataset, MUTAGDataset
@@ -75,17 +75,17 @@ except Exception as e:
     random_seed = 1
     iterations = 3  # not implemented in newer version !!
 # Further Parameters:
-train_new_GNN = True
-layers = 2  # 2 or 4 for the bashapes hetero dataset
+train_new_GNN = False
+layers = 4  # 2 or 4 for the bashapes hetero dataset
 start_length = 2
-end_length = 10
-number_of_ces = 200
-number_of_graphs = 10
+end_length = 4
+number_of_ces = 100
+number_of_graphs = 1
 num_top_results = 10
 save_ces = True  # Debugging: if True, creates new CEs and save the CEs to hard disk
 # hyperparameters for scoring
-lambdaone = 0.5  # controls the length of the CE
-lambdatwo = 0.0  # controls the variance in the CE output on the different graphs for one CE
+lambdaone = 0.1  # controls the length of the CE
+lambdatwo = 0.5  # controls the variance in the CE output on the different graphs for one CE
 
 
 # ----------------  utils
@@ -238,18 +238,23 @@ def beam_search(hd, model, target_class, start_length, end_length, number_of_ces
         new_list = list()
         for ce in list_results:
             ce_here = copy.deepcopy(ce['CE'])
+
             ce_here = mutate_ce(ce_here, node_types, edge_ces)
+            start_time = time.time()
             local_dict_results = dict()
             local_dict_results['CE'] = ce_here
             list_graphs = get_number_of_hdata(
                 ce_here, hd, num_graph_hdata=number_of_graphs)  # is some hdata object now
             local_dict_results['graphs'] = list_graphs
             local_dict_results['GNN_outs'] = list()
+
             for graph in list_graphs:
                 # generate output of GNN
                 # generate the results for acc, f, ...
                 gnn_out = get_gnn_outs(graph, model, target_class)
                 local_dict_results['GNN_outs'].append(gnn_out)
+            # end_time = time.time()
+           # print(end_time-start_time)
             score = ce_score_fct(ce_here, local_dict_results['GNN_outs'], lambdaone, lambdatwo)
             local_dict_results['score'] = score
             new_list.append(local_dict_results)

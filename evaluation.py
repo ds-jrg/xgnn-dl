@@ -3,11 +3,13 @@
 # ----------- evaluating class expressions: Currently not in use. ------------
 import random as random
 import os.path as osp
+from torch_geometric.data import HeteroData
 import torch
+import dgl
 import sys
 import copy
 from ce_generation import generate_cedict_from_ce
-from create_random_ce import length_ce, remove_front
+from create_random_ce import length_ce, remove_front, find_class
 from graph_generation import compute_prediction_ce
 import pandas as pd
 
@@ -227,3 +229,86 @@ def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo):
     sum_squared_diffs = sum(squared_diffs)
     variance = sum_squared_diffs / (len(list_gnn_outs))
     return mean-lambdaone*length_of_ce-lambdatwo*variance
+
+
+def get_accuracy_baheteroshapes(ce):
+    # Implementation following soon!
+    pass
+
+
+# ------------------- new functions ------------------- (10.2023
+def find_adjacent_edges(hetero_data: HeteroData, node_type: str, node_id: int):
+    """
+    Find adjacent edges for a specific node in a HeteroData object.
+
+    Parameters:
+    - hetero_data (HeteroData): The HeteroData object containing the graph data.
+    - node_type (int): The type of node for which to find adjacent edges.
+    - node_id (int): The ID of the node for which to find adjacent edges.
+
+    Returns:
+    - list: A list of tuples representing adjacent edges. Each tuple is of the form (source_node, target_node, edge_type).
+    """
+    adjacent_edges = []
+    # check, if heter_data is valid:
+    if not isinstance(hetero_data, HeteroData):
+        raise TypeError('hetero_data must be of type HeteroData')
+    # Iterate through all possible edge types in the HeteroData object
+    for edge_type in hetero_data.edge_types:
+        edge_data = hetero_data[edge_type]['edge_index']
+        mask = edge_data[0] == node_id
+        src_type, rel_type, dst_type = edge_type
+        if src_type == node_type:
+            target_nodes = edge_data[1][mask]
+            for target_node_id in target_nodes:
+                adjacent_edges.append((target_node_id.item(), dst_type, edge_type))
+            # Check for edges terminating at the given node
+    # return dict of adjacent edges: {(str, str, str) : tensor[(tensor, tensor)]}
+    adjacent_edges = set(adjacent_edges)
+    return adjacent_edges
+
+
+def ce_fast_instance_checker(ce, dataset, current_node_type, current_id):
+    """
+    This function gives back the set of instances in the dataset, for which the CE holds true. 
+    Input:
+    ce: OWL class expression
+    dataset: dataset in Pytorch Geometric format;
+    current_node_type: node type of the current node; called with the node-type to be explained
+    current_id: The current id of the node which is checked for validity
+
+    Output:
+    the set of nodes in the graph, where the CE "ends"
+    """
+    valid_adjacent_nodes = set()
+    if isinstance(ce, OWLClass):
+        if remove_front(ce.to_string_id()) == current_node_type:
+            return set([(current_node_type, current_id)])
+        else:
+            return set()
+    elif isinstance(ce, OWLObjectIntersectionOf):
+        top_class = find_class(ce)
+        #  normalize CE-classes and node_type_expl to one format
+        top_class = remove_front(top_class.to_string_id())
+        if top_class != current_node_type:
+            print('Node types do not match')
+            return set()
+
+        for op in ce.operands():
+            if not isinstance(op, OWLClass):
+                valid_adjacent_nodes.update(ce_fast_instance_checker(op, dataset, current_node_type, current_id))
+    elif isinstance(ce, OWLObjectSomeValuesFrom):
+        new_class = find_class(ce._filler)
+        new_class = remove_front(new_class.to_string_id())
+        adjacent_edges = find_adjacent_edges(dataset, current_node_type, current_id)
+        for edge in adjacent_edges:
+            if edge[1] == new_class:
+                pass
+                # valid_adjacent_nodes.add(edge)
+        for edge in adjacent_edges:
+            new_adjacent_nodes = ce_fast_instance_checker(ce._filler, dataset, edge[1], edge[0])
+            if not new_adjacent_nodes:
+                pass
+            else:
+                valid_adjacent_nodes.update(new_adjacent_nodes)
+    return valid_adjacent_nodes

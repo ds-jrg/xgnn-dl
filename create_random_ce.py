@@ -533,6 +533,8 @@ def update_current_ids(new_dict, nodetype, idstart, new_id):
             new_dict[edge2] = (torch.Tensor([new_id if id == idstart else id for id in ids2[0].tolist()]), ids2[1])
     return new_dict
 
+# Not optimal runtime!!
+
 
 def integrate_new_to_old_dict(old_dict, new_dict, current_node_id, update_id):
     """
