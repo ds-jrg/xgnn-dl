@@ -78,7 +78,7 @@ except Exception as e:
 train_new_GNN = False
 layers = 4  # 2 or 4 for the bashapes hetero dataset
 start_length = 2
-end_length = 4
+end_length = 10
 number_of_ces = 100
 number_of_graphs = 1
 num_top_results = 10
@@ -269,13 +269,25 @@ def calc_fid_acc_top_results(list_results, model, target_class, dataset):
     if isinstance(target_class, OWLClassExpression):
         target_class = remove_front(target_class.to_string_id())
     for rdict in list_results:
-        fidelity = fidelity_el(ce=rdict['CE'], dataset=dataset, node_type_to_expl=target_class, model=model)
+        fidelity = fidelity_el(ce=rdict['CE'], dataset=dataset, node_type_to_expl=target_class, model=model, label_to_expl=1)
         # fidelity = fidelity_ce_testdata(datasetfid=dataset, modelfid=model,
         #                                ce_for_fid=rdict['CE'], node_type_expl=target_class, label_expl=-1)
 
         accuracy = ce_confusion_iterative(rdict['CE'], dataset, [target_class, 0])
         rdict['fidelity'] = fidelity
         rdict['accuracy'] = accuracy
+
+    # test this function and delete later!!
+    edge_to_one = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
+    edge_to_two_to_one = OWLObjectSomeValuesFrom(
+        property=edge, filler=OWLObjectIntersectionOf([class_2, edge_to_one]))
+    edge_to_two_to_one_to_one = OWLObjectSomeValuesFrom(
+        property=edge, filler=OWLObjectIntersectionOf([class_2, edge_to_two_to_one]))
+    three_to_two_to_one_to_one = OWLObjectIntersectionOf([class_3, edge_to_two_to_one_to_one])
+    ce2 = three_to_two_to_one_to_one
+    fidelity2 = fidelity_el(ce=ce2, dataset=dataset, node_type_to_expl=target_class, model=model, label_to_expl=1)
+    print('Fidelity of the 3-2-1-1 CE is: ', fidelity2)
+
     return list_results
 
 

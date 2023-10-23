@@ -150,7 +150,6 @@ def graphdict_and_features_to_heterodata(graph_dict, features_list):
     for edge in graph_dict:
         hdata[edge[0], edge[1], edge[2]].edge_index = torch.tensor([graph_dict[edge][0].tolist(),
                                                                     graph_dict[edge][1].tolist()], dtype=torch.long)
-    print('generate_graphs, ', hdata)
     return hdata
 
 

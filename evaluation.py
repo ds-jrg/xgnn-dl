@@ -314,14 +314,12 @@ def ce_fast_instance_checker(ce, dataset, current_node_type, current_id):
     return valid_adjacent_nodes
 
 
-def fidelity_el(ce, dataset, node_type_to_expl, model):
+def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl):
     # find all ids of the test data of dataset
     count = 0
     if hasattr(node_type_to_expl, 'to_string_id'):
         node_type_to_expl = remove_front(node_type_to_expl.to_string_id())
     mask = dataset[node_type_to_expl].test_mask
-    smaller_mask = random.sample(mask.tolist(), k=min(500, len(mask.tolist())))
-    mask = torch.tensor(smaller_mask)
     mask_tf = 0
     # check, if 0/1 or True/False is used as mask
     for value in mask.tolist():
@@ -338,7 +336,7 @@ def fidelity_el(ce, dataset, node_type_to_expl, model):
     pred = model(dataset.x_dict, dataset.edge_index_dict).argmax(dim=-1)
     pred_list = pred.tolist()
     for index, value in enumerate(pred_list):
-        if value != node_type_to_expl:
+        if value != label_to_expl:
             pred_list[index] = 0
         else:
             pred_list[index] = 1
