@@ -312,3 +312,44 @@ def ce_fast_instance_checker(ce, dataset, current_node_type, current_id):
             else:
                 valid_adjacent_nodes.update(new_adjacent_nodes)
     return valid_adjacent_nodes
+
+
+def fidelity_el(ce, dataset, node_type_to_expl, model):
+    # find all ids of the test data of dataset
+    count = 0
+    if hasattr(node_type_to_expl, 'to_string_id'):
+        node_type_to_expl = remove_front(node_type_to_expl.to_string_id())
+    mask = dataset[node_type_to_expl].test_mask
+    smaller_mask = random.sample(mask.tolist(), k=min(500, len(mask.tolist())))
+    mask = torch.tensor(smaller_mask)
+    mask_tf = 0
+    # check, if 0/1 or True/False is used as mask
+    for value in mask.tolist():
+        if str(value) == 'True' or str(value) == 'False':
+            mask_tf = 1
+            break
+    if mask_tf == 1:
+        indices_of_ones = [i for i, value in enumerate(mask.tolist()) if value == True]
+        chosen_indices = random.sample(indices_of_ones, k=min(20, len(indices_of_ones)))
+        mask = [i if i in chosen_indices else 0 for i in range(len(mask.tolist()))]
+        mask = [x for x in mask if x != 0]
+        mask = torch.tensor(mask)
+    model.eval()
+    pred = model(dataset.x_dict, dataset.edge_index_dict).argmax(dim=-1)
+    pred_list = pred.tolist()
+    for index, value in enumerate(pred_list):
+        if value != node_type_to_expl:
+            pred_list[index] = 0
+        else:
+            pred_list[index] = 1
+    for id in mask.tolist():
+        current_id = id
+        return_id = 1
+        return_set = ce_fast_instance_checker(ce, dataset, node_type_to_expl, current_id)
+        return_gnn = pred_list[id]  # get instead the gnn feedback
+        if not return_set:
+            return_id = 0
+        if return_id == return_gnn:
+            count += 1
+    fid_result = round(float(count) / float(len(mask.tolist())), 2)
+    return fid_result
