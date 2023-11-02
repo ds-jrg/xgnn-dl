@@ -79,8 +79,8 @@ train_new_GNN = False
 layers = 4  # 2 or 4 for the bashapes hetero dataset
 start_length = 2
 end_length = 10
-number_of_ces = 100
-number_of_graphs = 1
+number_of_ces = 200
+number_of_graphs = 10
 num_top_results = 10
 save_ces = True  # Debugging: if True, creates new CEs and save the CEs to hard disk
 # hyperparameters for scoring

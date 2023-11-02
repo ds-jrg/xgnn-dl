@@ -3,7 +3,7 @@ from torch_geometric.data import Data
 from evaluation import fidelity_el
 from owlready2 import get_ontology, IRIS
 from evaluation import find_adjacent_edges, ce_fast_instance_checker
-from evaluation import find_adjacent_edges
+from evaluation import find_adjacent_edges, Accuracy_El
 from torch_geometric.data import HeteroData
 import torch
 import unittest
@@ -49,6 +49,7 @@ def test_find_adjacent_edges():
 
 # ------------- call the tests -----------------
 test_find_adjacent_edges()
+print("Testing find_adjacent_edges()... passed")
 
 
 class TestMyFunction(unittest.TestCase):
@@ -133,6 +134,53 @@ class TestMyFunction(unittest.TestCase):
 
 
 # ------------- call the tests -----------------
-test_find_adjacent_edges()
-if __name__ == "__main__":
+# test_find_adjacent_edges()
+# if __name__ == "__main__":
+#    unittest.main()
+
+
+# -------- new function
+
+class TestAccuracyEl(unittest.TestCase):
+    # some good CEs for this:
+    class_3 = OWLClass(IRI(NS, '3'))
+    class_2 = OWLClass(IRI(NS, '2'))
+    class_1 = OWLClass(IRI(NS, '1'))
+    class_0 = OWLClass(IRI(NS, '0'))
+    edge = OWLObjectProperty(IRI(NS, 'to'))
+    # 2-3-2
+    edge_to_two = OWLObjectSomeValuesFrom(property=edge, filler=class_2)
+    edge_to_three_to_two = OWLObjectSomeValuesFrom(
+        property=edge, filler=OWLObjectIntersectionOf([class_3, edge_to_two]))
+    two_to_three_to_two = OWLObjectIntersectionOf([class_2, edge_to_three_to_two])
+    # 3-2-1
+    edge_to_one = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
+    edge_to_two_to_one = OWLObjectSomeValuesFrom(
+        property=edge, filler=OWLObjectIntersectionOf([class_2, edge_to_one]))
+    three_to_two_to_one = OWLObjectIntersectionOf([class_3, edge_to_two_to_one])
+
+# test_ce_accuracy_to_house()
+
+    def setUp(self):
+        self.accuracy_el_instance = Accuracy_El()
+
+    def test_ce_accuracy_to_house(self):
+        # Define a sample Class Expression (CE)
+        sample_ce = self.three_to_two_to_one  # Replace with an actual Class Expression object
+        result = self.accuracy_el_instance.ce_accuracy_to_house(sample_ce)
+        self.assertIsNotNone(result, "The result should not be None")
+        self.assertTrue(isinstance(result, float), "The result should be a float")
+        # Add more assertions based on what you expect the result to be
+        self.assertEqual(result, 0.6)
+
+        # new test for new CE
+
+        # TODO Create a new instance in a meaningful way
+        accuracy_el_instance_2 = Accuracy_El()
+        sample_ce = self.two_to_three_to_two
+        result = accuracy_el_instance_2.ce_accuracy_to_house(sample_ce)
+        self.assertEqual(result, 1/7)
+
+
+if __name__ == '__main__':
     unittest.main()
