@@ -140,7 +140,23 @@ class TestMyFunction(unittest.TestCase):
 
 
 # -------- new function
+class TestCalcAccuracy(unittest.TestCase):
+    def setUp(self):
+        self.evaluation_instance = Accuracy_El()
+        self.evaluation_instance.list_results = [
+            {'result': {'a': True, 'b': False, 'c': True, 'd': True, 'e': False}, 'fp': 1},
+            {'result': {'a': False, 'b': False, 'c': True, 'd': True, 'e': True}, 'fp': 0},
+            {'result': {'a': True, 'b': True, 'c': False, 'd': False, 'e': False}, 'fp': 2},
+            {'result': {'a': False, 'b': False, 'c': False, 'd': False, 'e': False}, 'fp': 3},
+        ]
 
+    def test_calc_accuracy(self):
+        self.evaluation_instance._calc_accuracy()
+        self.assertEqual(self.evaluation_instance.list_results[0]['accuracy'], 0.4)
+        self.assertEqual(self.evaluation_instance.list_results[1]['accuracy'], 0.6)
+        self.assertEqual(self.evaluation_instance.list_results[2]['accuracy'], 0.2)
+        self.assertEqual(self.evaluation_instance.list_results[3]['accuracy'], 0.0)
+        print(1, 'Accuracy test passed')
 class TestAccuracyEl(unittest.TestCase):
     # some good CEs for this:
     class_3 = OWLClass(IRI(NS, '3'))
@@ -166,7 +182,7 @@ class TestAccuracyEl(unittest.TestCase):
 
     def test_ce_accuracy_to_house(self):
         # Define a sample Class Expression (CE)
-        sample_ce = self.three_to_two_to_one  # Replace with an actual Class Expression object
+        sample_ce = self.three_to_two_to_one  
         result = self.accuracy_el_instance.ce_accuracy_to_house(sample_ce)
         self.assertIsNotNone(result, "The result should not be None")
         self.assertTrue(isinstance(result, float), "The result should be a float")
@@ -179,8 +195,30 @@ class TestAccuracyEl(unittest.TestCase):
         accuracy_el_instance_2 = Accuracy_El()
         sample_ce = self.two_to_three_to_two
         result = accuracy_el_instance_2.ce_accuracy_to_house(sample_ce)
-        self.assertEqual(result, 1/7)
+        self.assertEqual(result, 2/7)
 
 
+class TestCalcAccuracy(unittest.TestCase):
+    def setUp(self):
+        self.evaluation_instance = Accuracy_El()
+        self.evaluation_instance.list_results = [
+            {'result': {'a': True, 'b': False, 'c': True, 'd': True, 'e': False}, 'fp': 1},
+            {'result': {'a': False, 'b': False, 'c': True, 'd': True, 'e': True}, 'fp': 0},
+            {'result': {'a': True, 'b': True, 'c': False, 'd': False, 'e': False}, 'fp': 2},
+            {'result': {'a': False, 'b': False, 'c': False, 'd': False, 'e': False}, 'fp': 3},
+        ]
+
+    def test_calc_accuracy(self):
+        self.evaluation_instance._calc_accuracy()
+        self.assertEqual(self.evaluation_instance.list_results[0]['accuracy'], 0.5)
+        self.assertEqual(self.evaluation_instance.list_results[1]['accuracy'], 0.6)
+        self.assertEqual(self.evaluation_instance.list_results[2]['accuracy'], 2/7)
+        self.assertEqual(self.evaluation_instance.list_results[3]['accuracy'], 0.0)
+
+
+
+
+   
+     
 if __name__ == '__main__':
     unittest.main()

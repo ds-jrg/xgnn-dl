@@ -402,7 +402,7 @@ class Accuracy_El:
             heterodata_motif[edge].edge_index = (indices[0], indices[1], torch.tensor(indices[2]))
         self.dict_motif = heterodata_motif
         self.list_results = list()
-        dict_found_nodes = {('3', 0): False, ('2', 0): False, ('2', 1): False, ('1', 0): False, ('1', ): False}
+        dict_found_nodes = {('3', 0): False, ('2', 0): False, ('2', 1): False, ('1', 0): False, ('1', 1): False}
         number_of_false_positives = 0
         pos_graph = {'nodetype': '3', 'id': 0}
         dict_onepath = {'result': dict_found_nodes, 'position': pos_graph,
@@ -415,8 +415,8 @@ class Accuracy_El:
         Calculate the accuracy of the current path
         """
         for dict in self.list_results:
-            dict['accuracy'] = sum(1 for value in dict['result'].values() if value) / \
-                (dict['fp'] + 5)
+            dict['accuracy'] = sum(1 for value in dict['result'].values() if value is True) / (5 + dict['fp'])
+        print(self.list_results[0]['result'], self.list_results[0]['fp'], self.list_results[0]['accuracy'])
 
     def _ce_accuracy_iterate_house(self, ce):
         """
@@ -424,76 +424,56 @@ class Accuracy_El:
         dict_motif: dict of the motif for its graph structure
         dict_result: dict of the nodetypes : True or False (found or not found)
         """
-        pos_graph = self.list_results[self.current_path_index]['position']
-        dict_result = self.list_results[self.current_path_index]['result']
-        fp = self.list_results[self.current_path_index]['fp']
         if isinstance(ce, OWLClass):
             # Question: Here what to do exactly ?? Should we check, if the class is in the graph ??
             # Should we update the current position here? -> no, that is not possible
             self.list_results[self.current_path_index]['found_classes'] += 1
-            print(remove_front(ce.to_string_id()), pos_graph)
-            if remove_front(ce.to_string_id()) == pos_graph['nodetype']:
-                print(remove_front(ce.to_string_id()), pos_graph)
-                dict_result[(pos_graph['nodetype'], pos_graph['id'])] = True
+            print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
+            if remove_front(ce.to_string_id()) == self.list_results[self.current_path_index]['position']['nodetype']:
+                print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
+                self.list_results[self.current_path_index]['result'][(self.list_results[self.current_path_index]['position']['nodetype'],
+                                                                      self.list_results[self.current_path_index]['position']['id'])] = True
             else:
-                fp += 1
+                self.list_results[self.current_path_index]['fp'] += 1
         elif isinstance(ce, OWLObjectIntersectionOf):
             for op in ce.operands():
                 self._ce_accuracy_iterate_house(op)
         elif isinstance(ce, OWLObjectSomeValuesFrom):
             new_class = remove_front(find_class(ce._filler).to_string_id())
-            adjacent_edges = find_adjacent_edges(self.dict_motif, pos_graph['nodetype'], pos_graph['id'])
-            new_list_entries = []
-            new_list_entries.append(self.current_path_index)
-            # count possibilities for CE:
-            count_new_paths = 0
-            for edge in adjacent_edges:
-                if edge[1] == new_class:
-                    count_new_paths += 1
+            adjacent_edges = find_adjacent_edges(
+                self.dict_motif, self.list_results[self.current_path_index]['position']['nodetype'], self.list_results[self.current_path_index]['position']['id'])
+            new_abstract_index = 0
             # iterate somehow over all possible paths
-            if count_new_paths == 1:
+            if len(adjacent_edges) == 1:
                 # append also an edge to abstract node and test that one
                 self.list_results.append(copy.deepcopy(self.list_results[self.current_path_index]))
-                new_list_entries.append(len(self.list_results) - 1)
+                new_abstract_index = len(self.list_results) - 1
                 self.list_results[-1]['position'] = {'nodetype': 'abstract', 'id': 0}
-                self.list_results[-1]['fp'] += 1
-                # TODO: Save in here somehow, what is missing from the current dict ??
-
-                for edge in adjacent_edges:
-                    if edge[1] == new_class:
-                        # update the current path
-                        pos_graph = {'nodetype': edge[1], 'id': edge[0]}
-                        # dict_result[(new_class, pos_graph['id'])] = True
-                        # ensure, that exactly one adjacent node is taken for exactly one CE
-                        break
-            elif count_new_paths == 0:
-                fp += 1
-                pos_graph = {'nodetype': 'abstract', 'id': 0}
+                edge = adjacent_edges[0]
+                if edge[1] == new_class:
+                    # update the current path
+                    self.list_results[self.current_path_index]['position'] = {'nodetype': edge[1], 'id': edge[0]}
+            elif len(adjacent_edges) == 0:
+                self.list_results[self.current_path_index]['fp'] += 1
+                self.list_results[self.current_path_index]['position'] = {'nodetype': 'abstract', 'id': 0}
+                new_abstract_index = self.current_path_index
             else:
                 # append also an edge to abstract node and test that one
                 self.list_results.append(copy.deepcopy(self.list_results[self.current_path_index]))
-                new_list_entries.append(len(self.list_results) - 1)
-                self.list_results[-1]['position'] = {'nodetype': 'abstract', 'id': 0}
-                self.list_results[-1]['fp'] += 1
-                # make count_new_paths-1 copies of current status
-                local_list_indices = []
-                local_list_indices.append(self.current_path_index)
-                for _ in range(count_new_paths-1):
-                    self.list_results.append(copy.deepcopy(self.list_results[self.current_path_index]))
-                    new_list_entries.append(len(self.list_results) - 1)
-                    local_list_indices.append(len(self.list_results) - 1)
-                # iterate over all adjacent edges
+                new_abstract_index = len(self.list_results) - 1
                 count_current_path_index = 0
+                adjacent_edges = list(set(adjacent_edges))
+                current_index = copy.deepcopy(self.current_path_index)
                 for edge in adjacent_edges:
                     if edge[1] == new_class:
-                        self.list_results[local_list_indices[count_current_path_index]
-                                          ]['position'] = {'nodetype': edge[1], 'id': edge[0]}
-                        self.list_results[local_list_indices[count_current_path_index]
-                                          ]['result'][(new_class, pos_graph['id'])] = True
+                        self.list_results.append(copy.deepcopy(self.list_results[current_index]))
+                        self.list_results[-1]['position'] = {'nodetype': edge[1], 'id': edge[0]}
+                        self.current_path_index = len(self.list_results) -1
+                        self._ce_accuracy_iterate_house(ce._filler)
                         count_current_path_index += 1
-            for index in new_list_entries:
-                self.current_path_index = index
-                self._ce_accuracy_iterate_house(ce._filler)
+            self.list_results[new_abstract_index]['position'] = {'nodetype': 'abstract', 'id': 0}
+            self.current_path_index = new_abstract_index
+            self._ce_accuracy_iterate_house(ce._filler)
 
     def ce_accuracy_to_house(self, ce):
         """
@@ -507,19 +487,14 @@ class Accuracy_El:
         Simultaneously, we store the found nodes of the motif.
         """
         print('Evaluation of the CE: ', dlsr.render(ce))
-        print(self.list_results)
         # Initialize the top class
         top_class = find_class(ce)
-        if not top_class == '3':
+        if not remove_front(top_class.to_string_id()) == '3':
             self.list_results[self.current_path_index]['position']['nodetype'] = 'abstract'
             self.list_results[self.current_path_index]['fp'] += 1
-        # count all classes:
-        self.list_results[self.current_path_index]['total_classes'] = count_classes(ce)
         self._ce_accuracy_iterate_house(ce)
         self._calc_accuracy()
         sorted_list_results = sorted(
             self.list_results, key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
-        print('Result ', sorted_list_results[0]['accuracy'])
-        print('fp, found_nodes: ', self.list_results[0]['fp'], self.list_results[0]['result'])
-
+        self.list_results.sort(key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
         return sorted_list_results[0]['accuracy']
