@@ -3,11 +3,13 @@
 # ----------- evaluating class expressions: Currently not in use. ------------
 import random as random
 import os.path as osp
+from torch_geometric.data import HeteroData
 import torch
+import dgl
 import sys
 import copy
 from ce_generation import generate_cedict_from_ce
-from create_random_ce import length_ce, remove_front
+from create_random_ce import length_ce, remove_front, find_class, count_classes
 from graph_generation import compute_prediction_ce
 import pandas as pd
 
@@ -18,6 +20,7 @@ from owlapy.model import OWLDeclarationAxiom, OWLDatatype, OWLDataSomeValuesFrom
 from owlapy.model import OWLDataPropertyDomainAxiom
 from owlapy.model import IRI
 from owlapy.render import DLSyntaxObjectRenderer
+dlsr = DLSyntaxObjectRenderer()
 
 
 def available_edges_with_nodeid(graph, current_type, current_id, edgetype='to'):
@@ -227,3 +230,271 @@ def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo):
     sum_squared_diffs = sum(squared_diffs)
     variance = sum_squared_diffs / (len(list_gnn_outs))
     return mean-lambdaone*length_of_ce-lambdatwo*variance
+
+
+def get_accuracy_baheteroshapes(ce):
+    # Implementation following soon!
+    pass
+
+
+# ------------------- new functions ------------------- (10.2023)
+def find_adjacent_edges(hetero_data: HeteroData, node_type: str, node_id: int):
+    """
+    Find adjacent edges for a specific node in a HeteroData object.
+
+    Parameters:
+    - hetero_data (HeteroData): The HeteroData object containing the graph data.
+    - node_type (int): The type of node for which to find adjacent edges.
+    - node_id (int): The ID of the node for which to find adjacent edges.
+
+    Returns:
+    - list: A list of tuples representing adjacent edges. Each tuple is of the form (source_node, target_node, edge_type).
+    """
+    adjacent_edges = []
+    # check, if heter_data is valid:
+    if isinstance(hetero_data, dict):
+        hetero_data = HeteroData(hetero_data)
+    if not isinstance(hetero_data, HeteroData):
+        raise TypeError('hetero_data must be of type HeteroData')
+    # Iterate through all possible edge types in the HeteroData object
+    for edge_type in hetero_data.edge_types:
+        edge_data = hetero_data[edge_type]['edge_index']
+        mask = edge_data[0] == node_id
+        src_type, rel_type, dst_type = edge_type
+        if src_type == node_type:
+            target_nodes = edge_data[1][mask]
+            for target_node_id in target_nodes:
+                adjacent_edges.append((target_node_id.item(), dst_type, edge_type))
+            # Check for edges terminating at the given node
+    # return dict of adjacent edges: {(str, str, str) : tensor[(tensor, tensor)]}
+    adjacent_edges = set(adjacent_edges)
+    return adjacent_edges
+
+
+def ce_fast_instance_checker(ce, dataset, current_node_type, current_id):
+    """
+    This function gives back the set of instances in the dataset, for which the CE holds true. 
+    Input:
+    ce: OWL class expression
+    dataset: dataset in Pytorch Geometric format;
+    current_node_type: node type of the current node; called with the node-type to be explained
+    current_id: The current id of the node which is checked for validity
+
+    Output:
+    the set of nodes in the graph, where the CE "ends"
+
+    Assumptions:
+    - The dataset is a heterogenous graph
+    - The dataset contains only one graph
+    - Each node has exactly one type
+    - Each individual in a CE has exactly one type
+    """
+    # TODO: change "union" to intersection -> then, if somewhere set() is returned
+    # Then, the overall result is also set() and if not, then the overal result is only the node we started the search
+    valid_adjacent_nodes = set()
+    if isinstance(ce, OWLClass):
+        if remove_front(ce.to_string_id()) == current_node_type:
+            return set([(current_node_type, current_id)])
+        else:
+            return set()
+    elif isinstance(ce, OWLObjectIntersectionOf):
+        top_class = find_class(ce)
+        #  normalize CE-classes and node_type_expl to one format
+        top_class = remove_front(top_class.to_string_id())
+        if top_class != current_node_type:
+            return set()
+
+        for op in ce.operands():
+            if not isinstance(op, OWLClass):
+                valid_adjacent_nodes.update(ce_fast_instance_checker(op, dataset, current_node_type, current_id))
+    elif isinstance(ce, OWLObjectSomeValuesFrom):
+        new_class = find_class(ce._filler)
+        new_class = remove_front(new_class.to_string_id())
+        adjacent_edges = find_adjacent_edges(dataset, current_node_type, current_id)
+        for edge in adjacent_edges:
+            if edge[1] == new_class:
+                pass
+                # valid_adjacent_nodes.add(edge)
+        for edge in adjacent_edges:
+            new_adjacent_nodes = ce_fast_instance_checker(ce._filler, dataset, edge[1], edge[0])
+            if not new_adjacent_nodes:
+                pass
+            else:
+                valid_adjacent_nodes.update(new_adjacent_nodes)
+    return valid_adjacent_nodes
+
+
+def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl):
+    # find all ids of the test data of dataset
+    count = 0
+    if hasattr(node_type_to_expl, 'to_string_id'):
+        node_type_to_expl = remove_front(node_type_to_expl.to_string_id())
+    mask = dataset[node_type_to_expl].test_mask
+    mask_tf = 0
+    # check, if 0/1 or True/False is used as mask
+    for value in mask.tolist():
+        if str(value) == 'True' or str(value) == 'False':
+            mask_tf = 1
+            break
+    if mask_tf == 1:
+        indices_of_ones = [i for i, value in enumerate(mask.tolist()) if value == True]
+        chosen_indices = random.sample(indices_of_ones, k=min(20, len(indices_of_ones)))
+        mask = [i if i in chosen_indices else 0 for i in range(len(mask.tolist()))]
+        mask = [x for x in mask if x != 0]
+        mask = torch.tensor(mask)
+    model.eval()
+    pred = model(dataset.x_dict, dataset.edge_index_dict).argmax(dim=-1)
+    pred_list = pred.tolist()
+    for index, value in enumerate(pred_list):
+        if value != label_to_expl:
+            pred_list[index] = 0
+        else:
+            pred_list[index] = 1
+    for id in mask.tolist():
+        current_id = id
+        return_id = 1
+        return_set = ce_fast_instance_checker(ce, dataset, node_type_to_expl, current_id)
+        return_gnn = pred_list[id]  # get instead the gnn feedback
+        if not return_set:
+            return_id = 0
+        if return_id == return_gnn:
+            count += 1
+    fid_result = round(float(count) / float(len(mask.tolist())), 2)
+    return fid_result
+
+
+class Accuracy_El:
+    def __init__(self):
+        dict_motif = {('3', 'to', '2'): (torch.tensor([0, 0], dtype=torch.long),
+                                         torch.tensor([0, 1], dtype=torch.long), [0, 1]),
+                      ('2', 'to', '3'): (torch.tensor([0, 1], dtype=torch.long),
+                                         torch.tensor([0, 0], dtype=torch.long), [1, 0]),
+                      ('2', 'to', '1'): (torch.tensor([0, 1], dtype=torch.long),
+                                         torch.tensor([0, 1], dtype=torch.long), [2, 3]),
+                      ('1', 'to', '2'): (torch.tensor([0, 1], dtype=torch.long),
+                                         torch.tensor([0, 1], dtype=torch.long), [3, 2]),
+                      ('2', 'to', '2'): (torch.tensor([0, 1], dtype=torch.long),
+                                         torch.tensor([1, 0], dtype=torch.long), [4, 4]),
+                      ('1', 'to', '1'): (torch.tensor([0, 1], dtype=torch.long),
+                                         torch.tensor([1, 0], dtype=torch.long), [5, 5]),
+                      # now the abstract class is included
+                      ('0', 'to', 'abstract'): (torch.tensor([0], dtype=torch.long),
+                                                torch.tensor([0], dtype=torch.long), [-1]),
+                      ('abstract', 'to', '0'): (torch.tensor([0], dtype=torch.long),
+                                                torch.tensor([0], dtype=torch.long), [-1]),
+                      ('1', 'to', 'abstract'): (torch.tensor([0, 1], dtype=torch.long),
+                                                torch.tensor([0, 0], dtype=torch.long), [-1, -1]),
+                      ('abstract', 'to', '1'): (torch.tensor([0, 0], dtype=torch.long),
+                                                torch.tensor([0, 1], dtype=torch.long), [-1, -1]),
+                      ('2', 'to', 'abstract'): (torch.tensor([0, 1], dtype=torch.long),
+                                                torch.tensor([0, 0], dtype=torch.long), [-1, -1]),
+                      ('abstract', 'to', '2'): (torch.tensor([0, 0], dtype=torch.long),
+                                                torch.tensor([0, 1], dtype=torch.long), [-1, -1]),
+                      ('3', 'to', 'abstract'): (torch.tensor([0], dtype=torch.long),
+                                                torch.tensor([0], dtype=torch.long), [-1]),
+                      ('abstract', 'to', '3'): (torch.tensor([0], dtype=torch.long),
+                                                torch.tensor([0], dtype=torch.long), [-1]),
+                      ('abstract', 'to', 'abstract'): (torch.tensor([0], dtype=torch.long),
+                                                       torch.tensor([0], dtype=torch.long), [-1])
+                      }
+        heterodata_motif = HeteroData()
+        for edge, indices in dict_motif.items():
+            heterodata_motif[edge].edge_index = (indices[0], indices[1], torch.tensor(indices[2]))
+        self.dict_motif = heterodata_motif
+        self.list_results = list()
+        dict_found_nodes = {('3', 0): False, ('2', 0): False, ('2', 1): False, ('1', 0): False, ('1', 1): False}
+        number_of_false_positives = 0
+        pos_graph = {'nodetype': '3', 'id': 0}
+        dict_onepath = {'result': dict_found_nodes, 'position': pos_graph,
+                        'fp': number_of_false_positives, 'accuracy': None, 'found_classes': 0, 'total_classes': -1}
+        self.list_results.append(dict_onepath)
+        self.current_path_index = 0
+
+    def _calc_accuracy(self):
+        """
+        Calculate the accuracy of the current path
+        """
+        for dict in self.list_results:
+            dict['accuracy'] = sum(1 for value in dict['result'].values() if value is True) / (5 + dict['fp'])
+        print(self.list_results[0]['result'], self.list_results[0]['fp'], self.list_results[0]['accuracy'])
+
+    def _ce_accuracy_iterate_house(self, ce):
+        """
+        pos_graph: dict nodetype : str, id: int
+        dict_motif: dict of the motif for its graph structure
+        dict_result: dict of the nodetypes : True or False (found or not found)
+        """
+        if isinstance(ce, OWLClass):
+            # Question: Here what to do exactly ?? Should we check, if the class is in the graph ??
+            # Should we update the current position here? -> no, that is not possible
+            self.list_results[self.current_path_index]['found_classes'] += 1
+            print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
+            if remove_front(ce.to_string_id()) == self.list_results[self.current_path_index]['position']['nodetype']:
+                print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
+                self.list_results[self.current_path_index]['result'][(self.list_results[self.current_path_index]['position']['nodetype'],
+                                                                      self.list_results[self.current_path_index]['position']['id'])] = True
+            else:
+                self.list_results[self.current_path_index]['fp'] += 1
+        elif isinstance(ce, OWLObjectIntersectionOf):
+            for op in ce.operands():
+                self._ce_accuracy_iterate_house(op)
+        elif isinstance(ce, OWLObjectSomeValuesFrom):
+            new_class = remove_front(find_class(ce._filler).to_string_id())
+            adjacent_edges = find_adjacent_edges(
+                self.dict_motif, self.list_results[self.current_path_index]['position']['nodetype'], self.list_results[self.current_path_index]['position']['id'])
+            new_abstract_index = 0
+            # iterate somehow over all possible paths
+            if len(adjacent_edges) == 1:
+                # append also an edge to abstract node and test that one
+                self.list_results.append(copy.deepcopy(self.list_results[self.current_path_index]))
+                new_abstract_index = len(self.list_results) - 1
+                self.list_results[-1]['position'] = {'nodetype': 'abstract', 'id': 0}
+                edge = adjacent_edges[0]
+                if edge[1] == new_class:
+                    # update the current path
+                    self.list_results[self.current_path_index]['position'] = {'nodetype': edge[1], 'id': edge[0]}
+            elif len(adjacent_edges) == 0:
+                self.list_results[self.current_path_index]['fp'] += 1
+                self.list_results[self.current_path_index]['position'] = {'nodetype': 'abstract', 'id': 0}
+                new_abstract_index = self.current_path_index
+            else:
+                # append also an edge to abstract node and test that one
+                self.list_results.append(copy.deepcopy(self.list_results[self.current_path_index]))
+                new_abstract_index = len(self.list_results) - 1
+                count_current_path_index = 0
+                adjacent_edges = list(set(adjacent_edges))
+                current_index = copy.deepcopy(self.current_path_index)
+                for edge in adjacent_edges:
+                    if edge[1] == new_class:
+                        self.list_results.append(copy.deepcopy(self.list_results[current_index]))
+                        self.list_results[-1]['position'] = {'nodetype': edge[1], 'id': edge[0]}
+                        self.current_path_index = len(self.list_results) -1
+                        self._ce_accuracy_iterate_house(ce._filler)
+                        count_current_path_index += 1
+            self.list_results[new_abstract_index]['position'] = {'nodetype': 'abstract', 'id': 0}
+            self.current_path_index = new_abstract_index
+            self._ce_accuracy_iterate_house(ce._filler)
+
+    def ce_accuracy_to_house(self, ce):
+        """
+        Idea: 
+        For each class, save a CE to this class (in 3-2-2-1-1 style)
+        Then, check for each CE, if it is valid in the house
+        If not: change classes (except the last class) to 'abstract'
+        Then: check again, and save all intermediate classes which are abstract as "loss"
+            If this is done top-bottom, then we only need to check for the intermediate cases is the CE is not valid
+        We then add up all the end-CE-results
+        Simultaneously, we store the found nodes of the motif.
+        """
+        print('Evaluation of the CE: ', dlsr.render(ce))
+        # Initialize the top class
+        top_class = find_class(ce)
+        if not remove_front(top_class.to_string_id()) == '3':
+            self.list_results[self.current_path_index]['position']['nodetype'] = 'abstract'
+            self.list_results[self.current_path_index]['fp'] += 1
+        self._ce_accuracy_iterate_house(ce)
+        self._calc_accuracy()
+        sorted_list_results = sorted(
+            self.list_results, key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
+        self.list_results.sort(key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
+        return sorted_list_results[0]['accuracy']
