@@ -5,7 +5,7 @@ from datasets import create_hetero_ba_houses, initialize_dblp
 from generate_graphs import get_number_of_hdata, get_gnn_outs
 from create_random_ce import random_ce_with_startnode, get_graph_from_ce, mutate_ce, length_ce, length_ce, fidelity_ce_testdata, replace_property_of_fillers
 from visualization import visualize_hd
-from evaluation import ce_score_fct, ce_confusion_iterative, fidelity_el, get_accuracy_baheteroshapes
+from evaluation import ce_score_fct, ce_confusion_iterative, fidelity_el, ce_fast_instance_checker, Accuracy_El
 import torch
 import statistics
 # from dgl.data.rdf import AIFBDataset, AMDataset, BGSDataset, MUTAGDataset
@@ -273,8 +273,10 @@ def calc_fid_acc_top_results(list_results, model, target_class, dataset):
         # fidelity = fidelity_ce_testdata(datasetfid=dataset, modelfid=model,
         #                                ce_for_fid=rdict['CE'], node_type_expl=target_class, label_expl=-1)
 
-        accuracy = ce_confusion_iterative(rdict['CE'], dataset, [target_class, 0])
+        #accuracy = ce_confusion_iterative(rdict['CE'], dataset, [target_class, 0])
         rdict['fidelity'] = fidelity
+        accuracy_class_instance = Accuracy_El()
+        accuracy = accuracy_class_instance.ce_accuracy_to_house(rdict['CE'])
         rdict['accuracy'] = accuracy
 
     # test this function and delete later!!
