@@ -40,6 +40,8 @@ class PyGDataProcessor():
         # if _data has a type_to_classify, then we can use it as a type_to_classify
         if hasattr(self._data, 'type_to_classify'):
             self._type_to_classify = self._data.type_to_classify
+        else:
+            self._data.type_to_classify = str(self._type_to_classify)
 
     def import_hdata(self, heterodata, type_to_classify=None):
         """
@@ -67,7 +69,9 @@ class PyGDataProcessor():
     def add_training_validation_test(self, training_percent=40, validation_percent=30, test_percent=30):
 
         # set the number of nodes of the to-be-classified type
+        self._type_to_classify = str(self._type_to_classify)
         try:
+            number_of_nodes = self._data[self._type_to_classify].num_nodes
             if hasattr(self._data[self._type_to_classify], 'num_nodes'):
                 number_of_nodes = self._data[self._type_to_classify].num_nodes
             else:
@@ -76,6 +80,7 @@ class PyGDataProcessor():
         except Exception:
             number_of_nodes = self._data[self._type_to_classify].size()
             self._data[self._type_to_classify].num_nodes = number_of_nodes
+        assert isinstance(number_of_nodes, int), ("The number of nodes is not an integer.", number_of_nodes)
         idx = torch.arange(number_of_nodes)
 
         if training_percent + validation_percent + test_percent != 100:
@@ -106,6 +111,7 @@ class PyGDataProcessor():
         self._data[self._type_to_classify].val_mask = torch.tensor(valid_idx)
         self._data[self._type_to_classify].test_mask = torch.tensor(test_idx)
         self._convert_format_train_val_test()  # convert the format of the masks
+        return self._data
 
     def _convert_format_train_val_test(self):
         # Helper method to convert data to required format (e.g., True/False to 1/0)
@@ -252,33 +258,51 @@ class GraphLibraryConverter():
         # Step 2: create nodes
 
         for nodetype in labels:
-            hetero_graph[nodetype].x = torch.ones(dict_nodecount[nodetype], 1)
+            hetero_graph[str(nodetype)].x = torch.ones((dict_nodecount[nodetype], 1))
 
         # Step 3: create edges
         # 3.1: Create mapping old to new indices
         def count_nodes_with_label_until_id(G, label, node_id): return sum(1 for n, d in itertools.takewhile(
             lambda x: x[0] != node_id, G.nodes(data=True)) if d.get('label') == label)
-        list_current_to_new_indices = []
-        for label in range(len(labels)):
-            for node_id, attr in graph.nodes(data=True):
-                if attr.get('label') == label:
-                    list_current_to_new_indices.append(
-                        [node_id, count_nodes_with_label_until_id(graph, label, node_id)])
+        dict_current_to_new_indices = dict()
+        # test, if all nodes have a label
+        for node_id, attr in graph.nodes(data=True):
+            assert attr.get('label') is not None, "Not all nodes have a label."
+        for node_id, attr in graph.nodes(data=True):
+            dict_current_to_new_indices[node_id] = count_nodes_with_label_until_id(graph, attr.get('label'), node_id)
 
         # 3.2: Create edges
-        # iterate over all edges of graph: nx.Graph and transfer them to hetero_graph with the list_current_to_new_indices: list
+        # iterate over all edges of graph: nx.Graph and transfer them to hetero_graph with the dict_current_to_new_indices: list
         for edge in graph.edges():
             u, v = edge
-            label1 = graph.nodes[u].get('label')  # Replace 'label' with your attribute key
-            label2 = graph.nodes[v].get('label')
-            u_new, v_new = list_current_to_new_indices[u], list_current_to_new_indices[v]
+            label1 = str(graph.nodes[u].get('label'))  # Replace 'label' with your attribute key
+            label2 = str(graph.nodes[v].get('label'))
+            assert isinstance(u, int) and isinstance(v, int), "The nodes are not integers."
+            u_new, v_new = dict_current_to_new_indices[u], dict_current_to_new_indices[v]
             # update hetero_graph:
             hetero_graph = GraphLibraryConverter.add_edge_to_hdata(
                 hetero_graph, label1, edge_type, label2, u_new, v_new)
 
-        # test if hetero_graph is valid:
+        # add number of nodes to hetero_graph
+        for nodetype in labels:
+            hetero_graph[str(nodetype)].num_nodes = dict_nodecount[nodetype]
+        for nodetype in labels:
+            assert isinstance(hetero_graph[str(nodetype)].num_nodes, int), "num_nodes did not produce an integer"
+        # add number of num_node_types to hetero_graph
+        hetero_graph.num_node_types = len(labels)
+
+        # test if hetero_graph is bidirected:
         hetero_graph = GraphLibraryConverter.make_hdata_bidirected(hetero_graph)
-        return hetero_graph, list_current_to_new_indices
+
+        # ---- test, if everything worked
+        # test, if all node types are strings
+        for nodetype in hetero_graph.node_types:
+            assert isinstance(nodetype, str), "The node types are not strings."
+        # test, if it is bidirected
+
+        # end tests
+
+        return hetero_graph, dict_current_to_new_indices
 
     @staticmethod
     def pyg_to_networkx(graph):
@@ -302,20 +326,23 @@ class GraphLibraryConverter():
 
     @staticmethod
     def add_edge_to_hdata(hetero_graph, start_type, edge_type, end_type, start_id: int, end_id: int):
-        start_id_tensor = torch.tensor([start_id], dtype=torch.long).view(1, -1)
-        end_id_tensor = torch.tensor([end_id], dtype=torch.long).view(1, -1)
+        start_id_tensor = torch.tensor([start_id], dtype=torch.long)
+        end_id_tensor = torch.tensor([end_id], dtype=torch.long)
         if (start_type, edge_type, end_type) in hetero_graph.edge_types:
-            old_start_index = hetero_graph[start_type, edge_type, end_type].edge_index[0]
-            old_end_index = hetero_graph[start_type, edge_type, end_type].edge_index[1]
-            hetero_graph[start_type, edge_type, end_type].edge_index = (
-                torch.cat([old_start_index, start_id_tensor]), torch.cat([old_end_index, end_id]))
+            list_ids_start, list_ids_end = [row.tolist()
+                                            for row in hetero_graph[(start_type, edge_type, end_type)].edge_index]
+            list_ids_start.append(start_id)
+            list_ids_end.append(end_id)
+            hetero_graph[(start_type, edge_type, end_type)].edge_index = torch.tensor([list_ids_start, list_ids_end])
         elif (end_type, edge_type, start_type) in hetero_graph.edge_types:
-            old_start_index = hetero_graph[end_type, edge_type, start_type].edge_index[0]
-            old_end_index = hetero_graph[end_type, edge_type, start_type].edge_index[1]
-            hetero_graph[end_type, edge_type, start_type].edge_index = (
-                torch.cat([old_start_index, end_id_tensor]), torch.cat([old_end_index, start_id]))
+            list_ids_start, list_ids_end = [row.tolist()
+                                            for row in hetero_graph[(end_type, edge_type, start_type)].edge_index]
+            list_ids_start.append(end_id)
+            list_ids_end.append(start_id)
+            hetero_graph[(end_type, edge_type, start_type)].edge_index = torch.tensor([list_ids_start, list_ids_end])
         else:
             hetero_graph[start_type, edge_type, end_type].edge_index = (start_id_tensor, end_id_tensor)
+
         return hetero_graph
 
     def make_hdata_bidirected(hetero_graph):
@@ -326,14 +353,20 @@ class GraphLibraryConverter():
             start_type, relation_type, end_type = edge_type
 
             # Get the edge indices for this type
-            edge_index = hetero_graph[start_type, relation_type, end_type].edge_index
-            start_indices, end_indices = edge_index[0], edge_index[1]
+            edge_indices = hetero_graph[start_type, relation_type, end_type].edge_index
+            start_indices, end_indices = edge_indices[0], edge_indices[1]
 
             # Iterate through the edges
             for start_id, end_id in zip(start_indices, end_indices):
                 # Check if the reverse edge exists
-                reverse_edge_index = hetero_graph[end_type, relation_type, start_type].edge_index
-                if not any(end_id == reverse_edge_index[0][i] and start_id == reverse_edge_index[1][i] for i in range(len(reverse_edge_index[0]))):
+                if (end_type, relation_type, start_type) in hetero_graph.edge_types:
+                    reverse_edge_index = hetero_graph[end_type, relation_type, start_type].edge_index
+                    if not any(end_id == reverse_edge_index[0][i] and start_id == reverse_edge_index[1][i] for i in range(len(reverse_edge_index[0]))):
+                        # Add the reverse edge
+                        # Assuming a function add_edge_to_hdata as defined previously
+                        GraphLibraryConverter.add_edge_to_hdata(
+                            hetero_graph, end_type, relation_type, start_type, end_id.item(), start_id.item())
+                else:
                     # Add the reverse edge
                     # Assuming a function add_edge_to_hdata as defined previously
                     GraphLibraryConverter.add_edge_to_hdata(
@@ -445,13 +478,19 @@ class GraphMotifAugmenter():  # getestet
             graph = GenerateRandomGraph.create_BAGraph_nx(num_nodes, num_edges)
             self.orig_graph = graph
         self._graph = copy.deepcopy(self.orig_graph)
-        self._list_node_in_motif_or_not = [False]*self.orig_graph.number_of_nodes()
+        self._list_node_in_motif_or_not = [0]*self.orig_graph.number_of_nodes()
         self._number_nodes_of_orig_graph = self.orig_graph.number_of_nodes()
         for _ in range(num_motifs):
             self.add_motif(motif, self._graph)
+            len_motif = 0
+            try:
+                len_motif = len(motif['labels'])
+            except Exception:
+                if motif == 'house':
+                    len_motif = 5
             if motif == 'house':
                 motif == GraphMotifAugmenter.house_motif
-            self._list_node_in_motif_or_not.extend([True]*len(self.motif['labels']))
+            self._list_node_in_motif_or_not.extend([1]*len_motif)
 
     @staticmethod
     def add_motif(motif, graph):  # getestet
@@ -544,14 +583,50 @@ class HeteroBAMotifDataset():
         Nodes outside the motif are all nodes with id less than number_nodes_of_orig_graph.
     """
 
-    def __init__(self, graph,  type_to_classify=-1):
+    def __init__(self, graph: nx.Graph,  type_to_classify=-1):
         self._augmenter = GraphMotifAugmenter()
         self._type_to_classify = type_to_classify
         self._graph = graph
         self._hdatagraph = HeteroData()
         self._edge_index = 'to'
 
-    def _convert_labels_to_node_types(self):
+        # resolve type_to_classify == -1:
+        labels = []
+        for _, attr in self._graph.nodes(data=True):
+            label = attr.get('label')  # Replace 'label' with your attribute key
+            if label is not None:
+                labels.append(label)
+        labels = list(set(labels))
+        if self._type_to_classify == -1:
+            self._type_to_classify = str(labels[-1])
+        # set base label
+        self._base_label = self._make_base_label(labels)
+
+        # save labels
+        labels.append(self._base_label)
+        self.labels = labels
+
+        # save type_to_classify into hdatagraph
+        self._hdatagraph.type_to_classify = self._type_to_classify
+
+    def _make_base_label(self, labels):
+        """
+        Makes a base label, which is not used yet.
+        """
+        # set base label
+        if 0 not in labels:
+            self._base_label = 0
+        else:
+            self._base_label = max(labels)+1
+        for node in self._graph.nodes(data=True):
+            node_id, attr = node
+            if 'label' not in attr or attr['label'] is None:
+                self._graph.nodes[node_id]['label'] = self._base_label
+            if node_id < self._augmenter.number_nodes_of_orig_graph:
+                self._graph.nodes[node_id]['label'] = self._base_label
+        return self._base_label
+
+    def _convert_labels_to_node_types(self, change_percent_labels=40):
         """
         Converts the labels into node types and adds this to self._hdatagraph.
 
@@ -579,45 +654,40 @@ class HeteroBAMotifDataset():
         """
 
         # Step 0
-
-        labels = []
-        for _, attr in self._graph.nodes(data=True):
-            label = attr.get('label')  # Replace 'label' with your attribute key
-            if label is not None:
-                labels.append(label)
-        if 0 not in labels:
-            self._base_label = 0
-        else:
-            self._base_label = max(labels)+1
-        for node in self._graph.nodes(data=True):
-            node_id, attr = node
-            if not self._graph.nodes[node]['label']:
-                self._graph.nodes[node]['label'] = self._base_label
-            if node_id < self._augmenter.number_nodes_of_orig_graph:
-                self._graph.nodes[node]['label'] = self._base_label
-        pass
-
+        # in constructor
         # Step 1
         # 1.1
+        labels = self.labels
         if self._base_label in labels:
             labels.remove(self._base_label)
         # 1.2
-        self._add_random_types(labels)  # changes self._graph
+        self._add_random_types(labels, self._base_label, change_percent=change_percent_labels)  # changes self._graph
 
         # Step 2-4
         labels.append(self._base_label)
-        hdata_graph, list_current_to_new_indices = GraphLibraryConverter.networkx_to_heterogen_pyg(
+        hdata_graph, dict_current_to_new_indices = GraphLibraryConverter.networkx_to_heterogen_pyg(
             self._graph, edge_type=self._edge_index)
 
         # Step 5.1:
         # retrieve a label_list for nodes inside / outside the motif graph
-        label_list = [0]*hdata_graph[self._type_to_classify].num_nodes
+        if self._type_to_classify == -1:
+            type_to_classify_str = str(labels[-2])  # -1 is self._base_label, which is not classified
+        else:
+            type_to_classify_str = str(self._type_to_classify)
+        # tests
+        assert type_to_classify_str != str(self._base_label), (type_to_classify_str, self._base_label)
+        node_types = hdata_graph.node_types
+        node_types_str = [str(node) for node in node_types]
+        assert type_to_classify_str in node_types_str, (type_to_classify_str, hdata_graph)
+        # end tests
+        label_list = [0]*hdata_graph[type_to_classify_str].num_nodes
         for node in self._graph.nodes(data=True):
             node_id, attr = node
-            if str(self._graph.nodes[node]['label']) == str(self._type_to_classify):
-                label_list[list_current_to_new_indices[node_id][1]] = 1
+            if str(attr['label']) == str(self._type_to_classify):
+                new_node_id = dict_current_to_new_indices[node_id]
+                label_list[new_node_id] = 1
 
-        hdata_graph[self._type_to_classify].y = torch.tensor(label_list)
+        hdata_graph[type_to_classify_str].y = torch.tensor(label_list)
 
         hetero_data_pygdataprocessor = PyGDataProcessor(hdata_graph, self._type_to_classify)
         hetero_data_pygdataprocessor.add_training_validation_test(
@@ -625,9 +695,8 @@ class HeteroBAMotifDataset():
 
         # return the correct object
         return hetero_data_pygdataprocessor.data
-        # check, that this actually is the right format:
 
-    def _add_random_types(self, labels, change_percent=40):
+    def _add_random_types(self, labels, base_label=None, change_percent=40):
         """
         Randomly changes node types of the base-type to other available types.
         Then it creates labels for each node of the type to be classified: 1 for nodes in a motif, 0 for nodes outside.
@@ -636,16 +705,18 @@ class HeteroBAMotifDataset():
         Steps:
         1. Change labels of the base label to other labels by percentage change_percent; Stop if change_percent have been reached (iterate at random)
         """
+        if base_label is None:
+            base_label = self._base_label
 
         # 1. Change labels of the base label to other labels
         number_labels = len(labels)
 
-        nodes_with_data = list(G.nodes(data=True))
+        nodes_with_data = list(self._graph.nodes(data=True))
         random.shuffle(nodes_with_data)  # shuffle, st. the nodes with the base label are randomly distributed
         changes_nodes = 0
         num_nodes_total = self._augmenter.number_nodes_of_orig_graph
         for node_id, data in nodes_with_data:
-            if data['label'] == self._base_label:
+            if data['label'] == base_label:
                 if random.random() < change_percent/100:
                     data['label'] = labels[random.randint(0, number_labels-1)]
                     changes_nodes += 1

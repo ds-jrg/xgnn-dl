@@ -2,10 +2,12 @@
 # print('GNN_playground durchgelaufen')
 import bashapes_model as bsm
 from datasets import create_hetero_ba_houses, initialize_dblp
+from datasets import HeteroBAMotifDataset, GenerateRandomGraph, GraphMotifAugmenter
 from generate_graphs import get_number_of_hdata, get_gnn_outs
 from create_random_ce import random_ce_with_startnode, get_graph_from_ce, mutate_ce, length_ce, length_ce, fidelity_ce_testdata, replace_property_of_fillers
 from visualization import visualize_hd
 from evaluation import ce_score_fct, ce_confusion_iterative, fidelity_el, ce_fast_instance_checker, Accuracy_El
+from models import HeteroGNNModel, HeteroGNNTrainer
 import torch
 import statistics
 # from dgl.data.rdf import AIFBDataset, AMDataset, BGSDataset, MUTAGDataset
@@ -71,7 +73,7 @@ try:
 except Exception as e:
     print(f"Error deleting file: {e}")
     run_DBLP = False
-    run_BAShapes = True
+    run_BAShapes = False
     random_seed = 1
     iterations = 3  # not implemented in newer version !!
 # Further Parameters:
@@ -269,11 +271,12 @@ def calc_fid_acc_top_results(list_results, model, target_class, dataset):
     if isinstance(target_class, OWLClassExpression):
         target_class = remove_front(target_class.to_string_id())
     for rdict in list_results:
-        fidelity = fidelity_el(ce=rdict['CE'], dataset=dataset, node_type_to_expl=target_class, model=model, label_to_expl=1)
+        fidelity = fidelity_el(ce=rdict['CE'], dataset=dataset,
+                               node_type_to_expl=target_class, model=model, label_to_expl=1)
         # fidelity = fidelity_ce_testdata(datasetfid=dataset, modelfid=model,
         #                                ce_for_fid=rdict['CE'], node_type_expl=target_class, label_expl=-1)
 
-        #accuracy = ce_confusion_iterative(rdict['CE'], dataset, [target_class, 0])
+        # accuracy = ce_confusion_iterative(rdict['CE'], dataset, [target_class, 0])
         rdict['fidelity'] = fidelity
         accuracy_class_instance = Accuracy_El()
         accuracy = accuracy_class_instance.ce_accuracy_to_house(rdict['CE'])
@@ -355,9 +358,52 @@ def beam_and_calc_and_output(hd, model, target_class, start_length, end_length,
     output_top_results(list_results, target_class, hd.node_types)
 
 
+# -----------------  Test new Datasets and then delete this part -----------------------
+def test_new_datasets():
+    # test the new datasets
+    # create BA Graph
+    ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=500, num_edges=5)
+    motif = 'house'
+    type_to_classify = 2
+    synthetic_graph_class = GraphMotifAugmenter(motif, 50, ba_graph_nx)
+    synthetic_graph = synthetic_graph_class.graph
+    dataset_class = HeteroBAMotifDataset(synthetic_graph, type_to_classify)
+    dataset = dataset_class._convert_labels_to_node_types()
+    print(dataset)
+    return dataset
+
+
+def train_gnn_on_dataset(dataset):
+    # train GNN on dataset
+    """
+    # example test
+    bashapes = create_hetero_ba_houses(500, 100)
+    dataset = bashapes
+    dataset.num_node_types = 4
+    dataset.type_to_classify = '3'
+    dataset.type_to_classify = str(dataset.type_to_classify)  # to avoid errors
+    # end example test
+    """
+
+    model = HeteroGNNModel(dataset.metadata(), hidden_channels=16, out_channels=dataset.num_node_types,
+                           node_type=dataset.type_to_classify, num_layers=2)
+    model_trainer = HeteroGNNTrainer(model, dataset, learning_rate=0.01)
+    model_trainer.train(epochs=20)
+    return model
+
+
+dataset = test_new_datasets()
+model = train_gnn_on_dataset(dataset)
+
+
+# test ce_creation
+#beam_and_calc_and_output(hd=dataset, model=model, target_class='2',
+#                         start_length=start_length, end_length=end_length,
+#                         number_of_ces=number_of_ces, number_of_graphs=number_of_graphs,
+#                         num_top_results=num_top_results)
+
+
 # ------------------  Testing Zone -----------------------
-
-
 '''
 ce_test_here = create_test_ce_3011()[1] #3-1-2
 #print(919, dlsr.render(ce_test))
