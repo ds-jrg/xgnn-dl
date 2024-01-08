@@ -40,8 +40,11 @@ class PyGDataProcessor():
         # if _data has a type_to_classify, then we can use it as a type_to_classify
         if hasattr(self._data, 'type_to_classify'):
             self._type_to_classify = self._data.type_to_classify
+
         else:
             self._data.type_to_classify = str(self._type_to_classify)
+        if self._data.type_to_classify == 'None':
+            self._type_to_classify = None
 
     def import_hdata(self, heterodata, type_to_classify=None):
         """
@@ -98,19 +101,22 @@ class PyGDataProcessor():
                 training_percent = 40
                 validation_percent = 30
                 test_percent = 30
+        try:
+            train_idx, valid_and_test_idx = train_test_split(
+                idx,
+                train_size=0.01*training_percent,
+            )
+            valid_idx, test_idx = train_test_split(
+                valid_and_test_idx,
+                train_size=validation_percent / (validation_percent+test_percent),
+            )
+            self._data[self._type_to_classify].train_mask = torch.tensor(train_idx)
+            self._data[self._type_to_classify].val_mask = torch.tensor(valid_idx)
+            self._data[self._type_to_classify].test_mask = torch.tensor(test_idx)
+            self._convert_format_train_val_test()  # convert the format of the masks
+        except Exception:
+            print("Not possible to split the data into training, validation and test sets, probably not enough data")
 
-        train_idx, valid_and_test_idx = train_test_split(
-            idx,
-            train_size=0.01*training_percent,
-        )
-        valid_idx, test_idx = train_test_split(
-            valid_and_test_idx,
-            train_size=validation_percent / (validation_percent+test_percent),
-        )
-        self._data[self._type_to_classify].train_mask = torch.tensor(train_idx)
-        self._data[self._type_to_classify].val_mask = torch.tensor(valid_idx)
-        self._data[self._type_to_classify].test_mask = torch.tensor(test_idx)
-        self._convert_format_train_val_test()  # convert the format of the masks
         return self._data
 
     def _convert_format_train_val_test(self):
@@ -126,7 +132,6 @@ class PyGDataProcessor():
         else:
             total_nodes = self._data[self._type_to_classify].x.size()[0]
             self._data[self._type_to_classify].num_nodes = total_nodes
-        print(total_nodes, self._data[self._type_to_classify])
         for split in ['train', 'val', 'test']:
             split_key = f'{split}_mask'
             mask = getattr(self._data[self._type_to_classify], split_key)
@@ -242,12 +247,22 @@ class GraphLibraryConverter():
 
         # Scenario: Each label is a node type
         assert isinstance(graph, nx.Graph), "The graph is not a networkx graph."
+        # Preprocessing: Ensure, all nodes have a label
+        for node_id, attr in graph.nodes(data=True):
+            if attr.get('label') is None:
+                attr['label'] = '0'  # assuming default label is 0
+            if not isinstance(attr['label'], str):
+                attr['label'] = str(attr['label'])
         hetero_graph = HeteroData()
         labels = []
         for _, attr in graph.nodes(data=True):
             label = attr.get('label')  # Replace 'label' with your attribute key
             if label is not None:
                 labels.append(label)
+        labels = list(set(labels))
+        labels = [str(x) for x in labels]
+        labels = list(set(labels))
+
         # Step 1: count nodes of each label
         dict_nodecount = {}
         for label in labels:
@@ -323,6 +338,81 @@ class GraphLibraryConverter():
     def dict_to_heterodata(dict):
         # dict must be of the form: {('node_type', 'edge_type', 'node_type'): (torch.tensor(), torch.tensor())}
         pass
+
+    @staticmethod
+    def dict_to_networkx(dict_orig):
+        # graph_dict must be of the form: {('node_type', 'edge_type', 'node_type'): (torch.tensor(), torch.tensor())}
+        # utils:
+        graph_dict = copy.deepcopy(dict_orig)
+
+        def remap_indices(new_indices_dict):
+            remapped_dict = {}
+            for node_type, index_dict in new_indices_dict.items():
+                # Sort the values and remove duplicates
+                unique_indices = sorted(set(index_dict.values()))
+                # Create a mapping from old indices to a continuous range starting from 0
+                continuous_mapping = {old_index: new_index for new_index, old_index in enumerate(unique_indices)}
+                # Apply this mapping to the original indices
+                remapped_dict[node_type] = {old_index: continuous_mapping[old_value]
+                                            for old_index, old_value in index_dict.items()}
+            return remapped_dict
+
+        # steps:
+        # 1. Get num_node_types as number of node types, and each type a number
+        # 2. get max_num_nodes as maximal number of nodes of a type
+        # 3. new indices: new_index = old_index + type_number*max_num_nodes
+        # 4. make a dict: old_index -> new_index
+        # 5. Change new_index: make them to the smallest natural number below the current index (st indices are 0,1,2,3,4,5,...)
+
+        if not isinstance(graph_dict, dict):
+            raise ValueError("graph_dict must be a dict")
+
+        # Step 1: Get num_node_types and assign each type a number
+        node_types = set()
+        for edge_key in graph_dict.keys():
+            node_types.update([edge_key[0], edge_key[2]])
+        node_type_to_number = {node_type: i for i, node_type in enumerate(node_types)}
+        num_node_types = len(node_types)
+
+        # Step 2: Get max_num_nodes as maximal number of nodes of a type
+        max_num_nodes = 0
+        for edge_data in graph_dict.values():
+            max_num_nodes = max(max_num_nodes, max(edge_data[0].max(), edge_data[1].max()).item() + 1)
+
+        # Step 3: Calculate new indices
+        new_indices_dict = {}
+        for edge_key, edge_data in graph_dict.items():
+            src_type, dst_type = edge_key[0], edge_key[2]
+            src_type_number = node_type_to_number[src_type]
+            dst_type_number = node_type_to_number[dst_type]
+            if src_type not in new_indices_dict.keys():
+                new_indices_dict[src_type] = {}
+            if dst_type not in new_indices_dict.keys():
+                new_indices_dict[dst_type] = {}
+
+            for old_index in edge_data[0].tolist():
+                old_index = int(old_index)
+                new_index = old_index + src_type_number * max_num_nodes
+                new_index = int(new_index)
+                new_indices_dict[src_type][old_index] = new_index
+            for old_index in edge_data[1].tolist():
+                old_index = int(old_index)
+                new_index = old_index + dst_type_number * max_num_nodes
+                new_index = int(new_index)
+                new_indices_dict[dst_type][old_index] = new_index
+
+        new_indices_dict = remap_indices(new_indices_dict)
+        # Step 4: Create a NetworkX graph
+        G = nx.Graph()
+        for edge_key, edge_data in graph_dict.items():
+            src_type, dst_type = edge_key[0], edge_key[2]
+            src_nodes, dst_nodes = edge_data
+            for src, dst in zip(src_nodes.tolist(), dst_nodes.tolist()):
+                new_src = new_indices_dict[src_type][src]
+                new_dst = new_indices_dict[dst_type][dst]
+                G.add_edge(new_src, new_dst)
+
+        return G
 
     @staticmethod
     def add_edge_to_hdata(hetero_graph, start_type, edge_type, end_type, start_id: int, end_id: int):
@@ -520,6 +610,8 @@ class GraphMotifAugmenter():  # getestet
             # select random node from bagraph and add an edge to the house motif
             start_node = random.randint(0, nodes_in_graph)  # in ba_graph
             end_node = random.randint(0, nodes_in_motif-1)+nodes_in_graph  # in motif
+            while end_node == start_node:
+                end_node = random.randint(0, nodes_in_motif-1)+nodes_in_graph
             # Add nodes to graph
             assert 'labels' in motif, "The motif does not have labels."
             for i, label in enumerate(motif['labels']):
@@ -595,18 +687,22 @@ class HeteroBAMotifDataset():
         for _, attr in self._graph.nodes(data=True):
             label = attr.get('label')  # Replace 'label' with your attribute key
             if label is not None:
-                labels.append(label)
+                labels.append(str(label))
         labels = list(set(labels))
         if self._type_to_classify == -1:
             self._type_to_classify = str(labels[-1])
+        elif isinstance(self._type_to_classify, int):
+            self._type_to_classify = str(self._type_to_classify)
         # set base label
         self._base_label = self._make_base_label(labels)
 
         # save labels
         labels.append(self._base_label)
+        labels = list(set(labels))
         self.labels = labels
 
         # save type_to_classify into hdatagraph
+
         self._hdatagraph.type_to_classify = self._type_to_classify
 
     def _make_base_label(self, labels):
@@ -614,13 +710,14 @@ class HeteroBAMotifDataset():
         Makes a base label, which is not used yet.
         """
         # set base label
-        if 0 not in labels:
-            self._base_label = 0
+        if 0 not in labels and '0' not in labels:
+            self._base_label = '0'
         else:
-            self._base_label = max(labels)+1
+            labels_int = [int(label) for label in labels]
+            self._base_label = str(max(labels_int)+1)
         for node in self._graph.nodes(data=True):
             node_id, attr = node
-            if 'label' not in attr or attr['label'] is None:
+            if 'label' not in attr or attr['label'] is None or attr['label'] == 'None':
                 self._graph.nodes[node_id]['label'] = self._base_label
             if node_id < self._augmenter.number_nodes_of_orig_graph:
                 self._graph.nodes[node_id]['label'] = self._base_label
@@ -675,10 +772,11 @@ class HeteroBAMotifDataset():
         else:
             type_to_classify_str = str(self._type_to_classify)
         # tests
-        assert type_to_classify_str != str(self._base_label), (type_to_classify_str, self._base_label)
+        assert type_to_classify_str != str(self._base_label), (type_to_classify_str, self._base_label, labels)
         node_types = hdata_graph.node_types
         node_types_str = [str(node) for node in node_types]
         assert type_to_classify_str in node_types_str, (type_to_classify_str, hdata_graph)
+        # assert False, ("This works: ", hdata_graph)
         # end tests
         label_list = [0]*hdata_graph[type_to_classify_str].num_nodes
         for node in self._graph.nodes(data=True):

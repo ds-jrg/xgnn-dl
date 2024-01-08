@@ -8,6 +8,7 @@ from create_random_ce import random_ce_with_startnode, get_graph_from_ce, mutate
 from visualization import visualize_hd
 from evaluation import ce_score_fct, ce_confusion_iterative, fidelity_el, ce_fast_instance_checker, Accuracy_El
 from models import HeteroGNNModel, HeteroGNNTrainer
+from bashapes_model import HeteroGNNBA
 import torch
 import statistics
 # from dgl.data.rdf import AIFBDataset, AMDataset, BGSDataset, MUTAGDataset
@@ -52,7 +53,7 @@ warnings.filterwarnings("ignore", message=".*findfont.*")
 dlsr = DLSyntaxObjectRenderer()
 xmlns = "http://www.semanticweb.org/stefan/ontologies/2023/1/untitled-ontology-11#"
 NS = xmlns
-random_seed = 1
+random_seed = 0
 random.seed(random_seed)
 
 
@@ -77,12 +78,12 @@ except Exception as e:
     random_seed = 1
     iterations = 3  # not implemented in newer version !!
 # Further Parameters:
-train_new_GNN = False
+train_new_GNN = True
 layers = 4  # 2 or 4 for the bashapes hetero dataset
 start_length = 2
 end_length = 10
 number_of_ces = 200
-number_of_graphs = 10
+number_of_graphs = 2
 num_top_results = 10
 save_ces = True  # Debugging: if True, creates new CEs and save the CEs to hard disk
 # hyperparameters for scoring
@@ -218,17 +219,34 @@ def beam_search(hd, model, target_class, start_length, end_length, number_of_ces
     for mp in metagraph:
         edge_ces.append([OWLObjectProperty(IRI(NS, mp[1]))])
     for nt in hd.node_types:
-        node_types.append(OWLClass(IRI(NS, nt)))
+        assert isinstance(nt, str), (nt, "This is not a string, but should be")
+        nt_str = str(nt)  # debugging: Ensure only strings are used
+        node_types.append(OWLClass(IRI(NS, nt_str)))
     list_results = []
     for _ in range(number_of_ces):
         local_dict_results = dict()
         ce_here = random_ce_with_startnode(length=start_length, typestart=OWLClass(
             IRI(NS, target_class)), list_of_classes=node_types, list_of_edge_types=edge_ces)
+        assert isinstance(ce_here, OWLClassExpression), (ce_here, "This is not a Class Expression")
+        print('Evaluating CE: ', dlsr.render(ce_here))
         local_dict_results['CE'] = ce_here
         list_graphs = get_number_of_hdata(ce_here, hd, num_graph_hdata=number_of_graphs)
         local_dict_results['GNN_outs'] = list()
         for graph in list_graphs:
-            gnn_out = get_gnn_outs(graph, model, -1)
+            print('Graph to Evaluate: ', graph)
+            print('Features 3 of graph: ', graph[str(target_class)].x.dim())
+            # print("Node type 0 tensor is None:", graph['0'].x is None)
+            print("Node type 3 tensor is None:", graph[str(target_class)].x is None)
+            # print("Data type of node type 0 features:", type(graph['0'].x))
+            print("Data type of node type 2 features:", type(graph[str(target_class)].x))
+            # print("Shape of features for node type 0:", graph['0'].x.shape)
+            print("Shape of features for node type 2:", graph[str(target_class)].x.shape)
+            for edge_type, edge_index in graph.edge_index_dict.items():
+                print(f"Edge type: {edge_type}")
+                print(f"Edge index tensor: {edge_index}")
+                print(f"Shape of edge index tensor: {edge_index.shape}")
+
+            gnn_out = get_gnn_outs(graph, model, target_class)
             local_dict_results['GNN_outs'].append(gnn_out)
         score = ce_score_fct(ce_here, local_dict_results['GNN_outs'], lambdaone, lambdatwo)
         local_dict_results['score'] = score
@@ -242,7 +260,6 @@ def beam_search(hd, model, target_class, start_length, end_length, number_of_ces
             ce_here = copy.deepcopy(ce['CE'])
 
             ce_here = mutate_ce(ce_here, node_types, edge_ces)
-            start_time = time.time()
             local_dict_results = dict()
             local_dict_results['CE'] = ce_here
             list_graphs = get_number_of_hdata(
@@ -256,7 +273,7 @@ def beam_search(hd, model, target_class, start_length, end_length, number_of_ces
                 gnn_out = get_gnn_outs(graph, model, target_class)
                 local_dict_results['GNN_outs'].append(gnn_out)
             # end_time = time.time()
-           # print(end_time-start_time)
+            # print(end_time-start_time)
             score = ce_score_fct(ce_here, local_dict_results['GNN_outs'], lambdaone, lambdatwo)
             local_dict_results['score'] = score
             new_list.append(local_dict_results)
@@ -337,11 +354,10 @@ def beam_and_calc_and_output(hd, model, target_class, start_length, end_length,
         number_of_ces (int): Number of candidate entities to consider.
         number_of_graphs (int): Number of graphs to generate.
         top_results (int): Number of top results to output.
-
     Returns:
         None
     """
-    if save_ces:
+    if save_ces:  # Debugging: if True, creates new CEs and save the CEs to hard disk
         list_results = beam_search(hd, model, target_class, start_length, end_length,
                                    number_of_ces, number_of_graphs, num_top_results)
     # For Debug: Save to hard disk and load again
@@ -359,13 +375,15 @@ def beam_and_calc_and_output(hd, model, target_class, start_length, end_length,
 
 
 # -----------------  Test new Datasets and then delete this part -----------------------
+
+
 def test_new_datasets():
     # test the new datasets
     # create BA Graph
-    ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=500, num_edges=5)
+    ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=300, num_edges=5)
     motif = 'house'
-    type_to_classify = 2
-    synthetic_graph_class = GraphMotifAugmenter(motif, 50, ba_graph_nx)
+    type_to_classify = '3'
+    synthetic_graph_class = GraphMotifAugmenter(motif=motif, num_motifs=50, orig_graph=ba_graph_nx)
     synthetic_graph = synthetic_graph_class.graph
     dataset_class = HeteroBAMotifDataset(synthetic_graph, type_to_classify)
     dataset = dataset_class._convert_labels_to_node_types()
@@ -374,6 +392,7 @@ def test_new_datasets():
 
 
 def train_gnn_on_dataset(dataset):
+    # ensure: out_channels = 2
     # train GNN on dataset
     """
     # example test
@@ -384,23 +403,87 @@ def train_gnn_on_dataset(dataset):
     dataset.type_to_classify = str(dataset.type_to_classify)  # to avoid errors
     # end example test
     """
+    # print graph as in beam_search
+    graph = dataset
+    target_class = '3'
+    print('Working dataset: ')
+    print('Graph to train GNN on: ', graph)
+    print('Features 3 of graph: ', graph['3'].x.dim())
+    # print("Node type 0 tensor is None:", graph['0'].x is None)
+    print("Node type 2 tensor is None:", graph[str(target_class)].x is None)
+    # print("Data type of node type 0 features:", type(graph['0'].x))
+    print("Data type of node type 2 features:", type(graph[str(target_class)].x))
+    # print("Shape of features for node type 0:", graph['0'].x.shape)
+    print("Shape of features for node type 2:", graph[str(target_class)].x.shape)
+    for edge_type, edge_index in graph.edge_index_dict.items():
+        print(f"Edge type: {edge_type}")
+        print(f"Edge index tensor: {edge_index}")
+        print(f"Shape of edge index tensor: {edge_index.shape}")
+    # debug
+    print('How many types are there: ', dataset.num_node_types)
+    # model = HeteroGNNBA(dataset.metadata(), hidden_channels=16, out_channels=dataset.num_node_types,
+    #                    num_layers=2)
 
-    model = HeteroGNNModel(dataset.metadata(), hidden_channels=16, out_channels=dataset.num_node_types,
+    model = HeteroGNNModel(dataset.metadata(), hidden_channels=16, out_channels=2,
                            node_type=dataset.type_to_classify, num_layers=2)
     model_trainer = HeteroGNNTrainer(model, dataset, learning_rate=0.01)
-    model_trainer.train(epochs=20)
+    model = model_trainer.train(epochs=20)
+    # modelHeteroBSM = bsm.train_GNN(train_new_GNN, dataset, layers=layers)
+    # modelHeteroBSM.eval()
+    # end debug
+    # not working still ....
+
+    # start new debug: evaluate model on own dataset
+    model.eval()
     return model
 
 
-dataset = test_new_datasets()
-model = train_gnn_on_dataset(dataset)
+def dataset_debug():
+    ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=500, num_edges=5)
+    motif = 'house'
+    type_to_classify = '3'
+    synthetic_graph_class = GraphMotifAugmenter(motif=motif, num_motifs=2, orig_graph=ba_graph_nx)
+    synthetic_graph = synthetic_graph_class.graph
+    dataset_class = HeteroBAMotifDataset(synthetic_graph, type_to_classify)
+    dataset = dataset_class._convert_labels_to_node_types()
+    print(dataset)
+    return dataset
+
+
+dataset_to_learn = test_new_datasets()
+dataset_for_debug = dataset_debug()
+model = train_gnn_on_dataset(dataset_to_learn)
+out = model(dataset_for_debug.x_dict, dataset_for_debug.edge_index_dict)
+print('Output of model on debug dataset: ', out)
+
+
+def dataset_bashapes():
+    bashapes = create_hetero_ba_houses(50, 10)
+    dataset = bashapes
+    dataset.num_node_types = 4
+    dataset.type_to_classify = '3'
+    dataset.type_to_classify = str(dataset.type_to_classify)  # to avoid errors
+    return dataset
+
+
+dataset_debug_2 = dataset_bashapes()
+out = model(dataset_debug_2.x_dict, dataset_debug_2.edge_index_dict)
+print('Output of model on debug-bashapes dataset: ', out)
+
+# end new debug
 
 
 # test ce_creation
-#beam_and_calc_and_output(hd=dataset, model=model, target_class='2',
-#                         start_length=start_length, end_length=end_length,
-#                         number_of_ces=number_of_ces, number_of_graphs=number_of_graphs,
-#                         num_top_results=num_top_results)
+test_ce_new_datasets = True
+if test_ce_new_datasets:
+    dataset = test_new_datasets()
+    model = train_gnn_on_dataset(dataset)
+    out = model(dataset.x_dict, dataset.edge_index_dict)  # this works perfectly
+
+    beam_and_calc_and_output(hd=dataset, model=model, target_class='3',
+                             start_length=5, end_length=end_length,
+                             number_of_ces=number_of_ces, number_of_graphs=number_of_graphs,
+                             num_top_results=num_top_results)
 
 
 # ------------------  Testing Zone -----------------------

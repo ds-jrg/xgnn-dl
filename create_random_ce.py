@@ -421,13 +421,13 @@ def append_to_dict(dict, ids, edge):
     new_edge = (edge[0], edge[1], edge[2])
     twisted_edge = (edge[2], edge[1], edge[0])
     if new_edge not in dict:
-        dict[new_edge] = (torch.Tensor([ids[0]]), torch.Tensor([ids[1]]))
-        dict[twisted_edge] = (torch.Tensor([ids[0]]), torch.Tensor([ids[1]]))
+        dict[new_edge] = (torch.tensor([ids[0]]), torch.tensor([ids[1]]))
+        dict[twisted_edge] = (torch.tensor([ids[0]]), torch.tensor([ids[1]]))
     else:
-        dict[new_edge] = (torch.cat((dict[new_edge][0], torch.Tensor(ids[0]))),
-                          torch.cat((dict[new_edge][1], torch.Tensor(ids[1]))))
-        dict[twisted_edge] = (torch.cat((dict[twisted_edge][0], torch.Tensor(ids[1]))),
-                              torch.cat((dict[twisted_edge][1], torch.Tensor(ids[0]))))
+        dict[new_edge] = (torch.cat((dict[new_edge][0], torch.tensor(ids[0]))),
+                          torch.cat((dict[new_edge][1], torch.tensor(ids[1]))))
+        dict[twisted_edge] = (torch.cat((dict[twisted_edge][0], torch.tensor(ids[1]))),
+                              torch.cat((dict[twisted_edge][1], torch.tensor(ids[0]))))
     return dict
 
 
@@ -505,8 +505,8 @@ def test_new_dict_on_useability(new_dict):
         if edge_start == edge_end:
             for a, b in zip(list_ids_0, list_ids_1):
                 if (b, a) not in zip(list_ids_0, list_ids_1):
-                    result_dict[edge] = (torch.cat((result_dict[edge][0], torch.Tensor([b]))),
-                                         torch.cat((result_dict[edge][1], torch.Tensor([a]))))
+                    result_dict[edge] = (torch.cat((result_dict[edge][0], torch.tensor([b]))),
+                                         torch.cat((result_dict[edge][1], torch.tensor([a]))))
         else:
             twisted_edge_found = False
             for edge2, ids2 in new_dict.items():
@@ -528,9 +528,9 @@ def test_new_dict_on_useability(new_dict):
 def update_current_ids(new_dict, nodetype, idstart, new_id):
     for edge2, ids2 in new_dict.items():
         if edge2[0] == nodetype:
-            new_dict[edge2] = (torch.Tensor([new_id if id == idstart else id for id in ids2[0].tolist()]), ids2[1])
+            new_dict[edge2] = (torch.tensor([new_id if id == idstart else id for id in ids2[0].tolist()]), ids2[1])
         if edge2[2] == nodetype:
-            new_dict[edge2] = (torch.Tensor([new_id if id == idstart else id for id in ids2[0].tolist()]), ids2[1])
+            new_dict[edge2] = (torch.tensor([new_id if id == idstart else id for id in ids2[0].tolist()]), ids2[1])
     return new_dict
 
 # Not optimal runtime!!
@@ -567,10 +567,12 @@ def integrate_new_to_old_dict(old_dict, new_dict, current_node_id, update_id):
         return old_dict, current_node_id
     # new edge has the startnode-id of its current_node_id and a new end-node-id
     # TODO: If only one edge is added, add this edge with current_node_id to new_node_id
+    # TODO: Ensure, that this only created connected graphs
     # TODO: If a dictionary is merged to another dictionary, check, that the start-ids of the originally created edge stays the same and only the other node-id is adapted.
     for edge, ids in new_dict.items():
         list_ids_start = ids[0].tolist()
         for idstart in list_ids_start:
+            idstart = int(idstart)
             # choose a random ID for the new node, but do not create an edge twice.
             new_id_max = get_node_id_from_dict(old_dict, node_type=edge[2])+1
             if edge[0] == edge[2]:
@@ -586,9 +588,10 @@ def integrate_new_to_old_dict(old_dict, new_dict, current_node_id, update_id):
                 list_of_new_ids = [x for x in list_of_new_ids if x != idstart]
             new_id = random.choice(list_of_new_ids)
             new_dict_local = dict()
-            new_dict_local[edge] = (torch.Tensor([]), torch.Tensor([]))
-            new_dict_local[edge] = (torch.cat((torch.Tensor([idstart]), new_dict_local[edge][0])),
-                                    torch.cat((torch.Tensor([new_id]), new_dict_local[edge][1])))
+            # new_dict_local[edge] = (torch.Tensor([]), torch.Tensor([]))
+            new_dict_local[edge] = torch.tensor([[idstart], [new_id]])
+            # (torch.cat((torch.Tensor([idstart]), new_dict_local[edge][0])),
+            # torch.cat((torch.Tensor([new_id]), new_dict_local[edge][1])))
             old_dict = update_dict(new_dict_local, old_dict)
     old_dict = make_graphdict_readable(old_dict)
     if update_id:
@@ -649,7 +652,7 @@ def create_graph_from_ce(ce, current_class, edgetype, current_node_id):
             new_class = ce._filler
             new_node_id = 0
             new_dict = {(current_class, edgetype, new_class): (
-                torch.Tensor([current_node_id]), torch.Tensor([new_node_id]))}
+                torch.tensor([current_node_id]), torch.tensor([new_node_id]))}
             new_dict = make_graphdict_readable(new_dict)
             current_dict, current_node_id = integrate_new_to_old_dict(
                 current_dict, new_dict, current_node_id, update_id=True)
@@ -658,7 +661,7 @@ def create_graph_from_ce(ce, current_class, edgetype, current_node_id):
             new_class = find_class(ce._filler)
             new_node_id = 0
             new_dict = {(current_class, edgetype, new_class): (
-                torch.Tensor([current_node_id]), torch.Tensor([new_node_id]))}
+                torch.tensor([current_node_id]), torch.tensor([new_node_id]))}
             new_dict = make_graphdict_readable(new_dict)
             current_dict, current_node_id = integrate_new_to_old_dict(
                 current_dict, new_dict, current_node_id, update_id=True)

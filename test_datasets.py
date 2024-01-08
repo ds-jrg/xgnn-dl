@@ -55,7 +55,7 @@ class TestGraphLibraryConverter(unittest.TestCase):
         # Setup code here (if needed)
         pass
 
-    def test_networkx_to_heterogen_pyg(self):
+    def test_networkx_to_heterogen_pyg_simple(self):
         # Create a sample NetworkX graph
         G = nx.Graph()
         G.add_node(1, label='A')
@@ -67,7 +67,47 @@ class TestGraphLibraryConverter(unittest.TestCase):
 
         # Assertions to check if conversion is correct
         self.assertIsInstance(hetero_graph, HeteroData)
+
+        # Test, if all nodes ahve the correct type
+        assert hetero_graph['A'].x.shape[0] == 1
+        assert hetero_graph['B'].x.shape[0] == 1
         # Add more assertions as needed
+
+    def test_networkx_to_heterogen_pyg_complex(self):
+        # Create a sample NetworkX graph
+        G = nx.Graph()
+        G.add_node(1, label='A')
+        G.add_node(2, label='B')
+        G.add_node(3, label='A')
+        G.add_node(4, label='B')
+        G.add_edge(1, 2)
+        G.add_edge(3, 4)
+        G.add_edge(1, 3)
+        G.add_edge(2, 4)
+
+        # Convert to PyG heterogen graph
+        hetero_graph, _ = GraphLibraryConverter.networkx_to_heterogen_pyg(G)
+
+        # Assertions to check if conversion is correct
+        self.assertIsInstance(hetero_graph, HeteroData)
+
+        # Test, if all nodes ahve the correct type
+        assert hetero_graph['A'].x.shape[0] == 2
+        assert hetero_graph['B'].x.shape[0] == 2
+
+        # make a more complex BA Graph + motif
+        graph_nx = nx.barabasi_albert_graph(5, 3)
+        augmenter = GraphMotifAugmenter('house', 1, graph_nx)
+        graph_to_convert = augmenter.graph
+        hetero_graph, _ = GraphLibraryConverter.networkx_to_heterogen_pyg(graph_to_convert)
+        self.assertIsInstance(hetero_graph, HeteroData)
+
+        # other assert tests
+        self.assertEqual(hetero_graph['0'].x.shape[0], 5)
+        self.assertEqual(hetero_graph['1'].x.shape[0], 2)
+        self.assertEqual(hetero_graph['2'].x.shape[0], 2)
+        self.assertEqual(hetero_graph['3'].x.shape[0], 1)
+        self.assertEqual(hetero_graph.num_node_types, 4)
 
 
 class TestGenerateRandomGraph(unittest.TestCase):
@@ -149,20 +189,40 @@ class TestHeteroBAMotifDataset(unittest.TestCase):
     def setUp(self):
         # Setup a simple graph for testing
         self.simple_graph = nx.Graph()
-        self.simple_graph.add_node(0, label=1)
-        self.simple_graph.add_node(1, label=2)
+        self.simple_graph.add_node(0, label='1')
+        self.simple_graph.add_node(1, label='2')
         self.simple_graph.add_node(2)
         self.simple_graph.add_edge(0, 1)
         self.simple_graph.add_edge(1, 2)
         for i in range(3, 23):  # Start from 3 because 0, 1, and 2 are already added
-            label = random.choice([1, 2])  # Randomly choose between label 1 and 2
+            label = random.choice(['1', '2'])  # Randomly choose between label 1 and 2
             self.simple_graph.add_node(i, label=label)
+            self.simple_graph.add_edge(i, random.choice(list(self.simple_graph.nodes)))
+            self.simple_graph.add_edge(i, random.choice([0, 1]))
 
         # Setup an instance of GraphMotifAugmenter
         self.augmenter = GraphMotifAugmenter()  # Assuming this is a valid class
 
         # Setup an instance of HeteroBAMotifDataset
-        self.dataset = HeteroBAMotifDataset(self.simple_graph, -1)
+        testgraph = copy.deepcopy(self.simple_graph)
+        self.dataset = HeteroBAMotifDataset(testgraph, 2)
+
+        # setup a more complex graph
+        complex_graph = GenerateRandomGraph.create_BAGraph_nx(num_nodes=50, num_edges=4)
+        synthetic_graph_class = GraphMotifAugmenter(motif='house', num_motifs=50, orig_graph=complex_graph)
+        synthetic_graph = synthetic_graph_class.graph
+        self.complex_dataset = HeteroBAMotifDataset(synthetic_graph, -1)
+
+    def test_conversion_complex_graph(self):
+
+        # complex graph + added  motifs
+        # check, if the traversion has still the same number of nodes
+        # check, if there are nodes of all types
+
+        # 1st: Test, if complex graph gets to a graph where all nodes are of type 0
+        self.complex_dataset._convert_labels_to_node_types()
+
+        pass
 
     def test_init(self):
         # Test the __init__ method
@@ -175,27 +235,37 @@ class TestHeteroBAMotifDataset(unittest.TestCase):
         self.dataset._convert_labels_to_node_types()
         # Assertions to check if conversion is correct
         # Example: Check if base label is set correctly
-        self.assertIn(self.dataset._base_label, [0, 3])  # Depending on your implementation
+        self.assertIn(self.dataset._base_label, ['0', '3'])  # Depending on your implementation
 
     def test_add_random_types(self):
-        self.simple_graph.nodes[2]['label'] = 0
+        test_graph = copy.deepcopy(self.simple_graph)
+        test_graph.nodes[2]['label'] = '0'
         # Test the _add_random_types method
-        labels = [1, 2]
-        self.dataset._add_random_types(labels, 0, change_percent=50)
+        labels = ['1', '2']
+        self.dataset._add_random_types(labels, '0', change_percent=40)
         # Assertions to check if random types are added correctly
         # Example: Check if labels are changed
         changed_labels = [data['label'] for _, data in self.dataset._graph.nodes(data=True)]
-        self.assertIn(1, changed_labels)
-        self.assertIn(2, changed_labels)
+        self.assertIn('1', changed_labels)
+        self.assertIn('2', changed_labels)
 
     def test_full_conversion_process(self):
         # Test the full conversion process from a NetworkX graph to a HeteroData object
-        type_to_classify = 1
-        dataset = HeteroBAMotifDataset(self.simple_graph, type_to_classify)
+        type_to_classify = 2
+        test_graph = copy.deepcopy(self.simple_graph)
+        dataset = HeteroBAMotifDataset(test_graph, type_to_classify)
+        assert len(dataset.labels) == 3
+        assert dataset._base_label == '0', (dataset._base_label, dataset.labels)
+        self.assertEqual(dataset._type_to_classify, '2')
+        self.assertEqual(len(dataset.labels), 3)
+        self.assertEqual(dataset._base_label, '0')
+        self.assertEqual(dataset._graph.number_of_nodes(), 23)
         hetero_data = dataset._convert_labels_to_node_types()
         # Assertions to check the final conversion
         # Example: Check if the output is a HeteroData object
         self.assertIsInstance(hetero_data, HeteroData)
+
+        # test, if the correct number of features are created
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 import dgl
+import networkx as nx
 from torch_geometric.data import HeteroData
 import torch
 import torch_geometric
@@ -10,6 +11,7 @@ from owlapy.model import OWLClass, OWLClassExpression
 from owlapy.model import IRI
 from owlapy.render import DLSyntaxObjectRenderer
 import copy
+import datasets
 # generete several graphdicts to one CE
 # first, run multiple times the function for generating graphdicts
 # if these don't yield different results, add a mutation to the CE and try again
@@ -46,15 +48,25 @@ def convert_tensors_to_int(input_dict):
     return new_dict
 
 
+def test_graph_dict_on_connectedness(graphdict):
+    nx_graph = datasets.GraphLibraryConverter.dict_to_networkx(graphdict)
+    # use nx for connectedness
+    is_connected = nx.is_connected(nx_graph)
+    return is_connected
+
+
 def iterate_to_find_graphdicts(current_list, ce, origdata, num_graphdicts, maximum_iterations=20):
     if len(current_list) >= num_graphdicts:
         return current_list
     else:
         for _ in range(maximum_iterations):
             new_dict = get_graph_from_ce(ce, None, [origdata.edge_types[0][1]])
-            if not dict_in_list(new_dict, current_list):
-                if len(current_list) < num_graphdicts:
-                    current_list.append(new_dict)
+            # new tests
+            # If this dict is a connected graph add it, if not, don't add it
+            if test_graph_dict_on_connectedness(new_dict):
+                if not dict_in_list(new_dict, current_list):
+                    if len(current_list) < num_graphdicts:
+                        current_list.append(new_dict)
         if len(current_list) >= num_graphdicts:
             return current_list
         else:
@@ -144,12 +156,19 @@ def graphdict_and_features_to_heterodata(graph_dict, features_list):
     # create features and nodes
     for name_tuple in features_list:
         name = name_tuple[0]
-        hdata[name].x = name_tuple[1]
+        name_str = str(name)
+        print('debug name', name_str)
+        print('debug features', name_tuple[1])
+        hdata[name_str].x = name_tuple[1]
     # create edges
     # read from dict
+    print('Graphdict to hdata debug', graph_dict)
     for edge in graph_dict:
-        hdata[edge[0], edge[1], edge[2]].edge_index = torch.tensor([graph_dict[edge][0].tolist(),
-                                                                    graph_dict[edge][1].tolist()], dtype=torch.long)
+        start_list = graph_dict[edge][0].tolist()
+        start_list = [int(x) for x in start_list]
+        end_list = graph_dict[edge][1].tolist()
+        end_list = [int(x) for x in end_list]
+        hdata[(edge[0], edge[1], edge[2])].edge_index = torch.tensor([start_list, end_list])
     return hdata
 
 
@@ -162,14 +181,23 @@ def get_number_of_hdata(ce, origdata, num_graph_hdata=10):
     return hdata_list
 
 
-def get_gnn_outs(hd, model, cat_to_explain):
-    out = model(hd.x_dict, hd.edge_index_dict)
+def get_gnn_outs(hd_local, model_local, cat_to_explain):
+    model_local.eval()
+    assert hasattr(hd_local, 'x_dict')
+    assert hasattr(hd_local, 'edge_index_dict')
+    # assert False, hd_local
+    out = model_local(hd_local.x_dict, hd_local.edge_index_dict)
     if isinstance(cat_to_explain, str):
-        cat_to_explain = -1
+        try:
+            cat_to_explain = int(cat_to_explain)
+        except Exception:
+            cat_to_explain = -1
     elif isinstance(cat_to_explain, int):
         if cat_to_explain >= len(out[0]):
             cat_to_explain = -1
     elif isinstance(cat_to_explain, OWLClass):
         cat_to_explain = -1
-    result = round(out[0][cat_to_explain].item(), 2)
+    elif cat_to_explain is None:
+        cat_to_explain = -1
+    result = round(out[0][cat_to_explain].item(), 4)
     return result

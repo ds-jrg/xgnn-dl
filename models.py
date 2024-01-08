@@ -7,9 +7,10 @@ from torch_geometric.nn import HeteroConv, GCNConv
 from datasets import create_hetero_ba_houses, initialize_dblp
 import torch
 import torch.nn.functional as F
-from torch_geometric.nn import HeteroConv, SAGEConv, Linear, to_hetero
+from torch_geometric.nn import HeteroConv, SAGEConv, Linear
 from torch_geometric.data import HeteroData
 import os.path as osp
+from bashapes_model import HeteroGNNBA
 
 
 # ----------------- GNN classes for basic training -----------------
@@ -59,25 +60,26 @@ class HeteroGNNTrainer:   # TODO: Test this class
             train_acc = self.evaluate(self.data[self.data.type_to_classify].train_mask)
             val_acc = self.evaluate(self.data[self.data.type_to_classify].val_mask)
             print(f"Epoch: {epoch+1}, Loss: {loss:.4f}, Train Acc: {train_acc:.4f}, Val Acc: {val_acc:.4f}")
+        return self.model
 
     def test(self):
         test_acc = self.evaluate(self.data[self.data.type_to_classify].test_mask)
         print(f"Test Accuracy: {test_acc:.4f}")
+        return test_acc
 
 
 class HeteroGNNModel(torch.nn.Module):
     def __init__(self, metadata, hidden_channels, out_channels, node_type, num_layers=2):
         super().__init__()
         self._nodetype = str(node_type)
-
         self.convs = torch.nn.ModuleList()
+
         for _ in range(num_layers):
             conv = HeteroConv({
-                edge_type: SAGEConv((-1, -1), hidden_channels)
+                edge_type: SAGEConv((-1, -1), hidden_channels, dropout=0.5)
                 for edge_type in metadata[1]
             })
             self.convs.append(conv)
-
         self.lin = Linear(hidden_channels, out_channels)
 
     def forward(self, x_dict, edge_index_dict):
@@ -141,7 +143,6 @@ def test_dblp(modeldblp, datadblp):
 # TODO: put this in some function
 # TODO: Rename into train_model
 def train_model_dblp(modeldblp, datadblp, optimizer):
-    print('started training for ', modeldblp)
     modeldblp.train()
     for epoch in range(1, 200):
         loss = train_epoch_dblp(modeldblp, datadblp, optimizer)
