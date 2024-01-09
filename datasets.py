@@ -565,13 +565,20 @@ class GraphMotifAugmenter():  # getestet
         else:
             num_nodes = 400
             num_edges = 3
-            graph = GenerateRandomGraph.create_BAGraph_nx(num_nodes, num_edges)
-            self.orig_graph = graph
+            self.orig_graph = GenerateRandomGraph.create_BAGraph_nx(num_nodes, num_edges)
         self._graph = copy.deepcopy(self.orig_graph)
         self._list_node_in_motif_or_not = [0]*self.orig_graph.number_of_nodes()
         self._number_nodes_of_orig_graph = self.orig_graph.number_of_nodes()
         for _ in range(num_motifs):
-            self.add_motif(motif, self._graph)
+            while True:
+                try:
+                    self._graph = self.add_motif(motif, self._graph)
+                    break  # If the line executes without exceptions, exit the loop
+                except Exception as e:
+                    print(f"An exception occurred: {e}")
+                    raise Exception("The graph is not connected or something with the motif is wrong.")
+
+            # self._graph = self.add_motif(motif, self._graph)
             len_motif = 0
             try:
                 len_motif = len(motif['labels'])
@@ -583,7 +590,7 @@ class GraphMotifAugmenter():  # getestet
             self._list_node_in_motif_or_not.extend([1]*len_motif)
 
     @staticmethod
-    def add_motif(motif, graph):  # getestet
+    def add_motif(motif, graph):  # getestet, aber geht trotzdem nicht
         """
         Adds a motif to the graph (self.graph).
         Motifs are given by:
@@ -597,34 +604,60 @@ class GraphMotifAugmenter():  # getestet
         else:
             # TODO: convert to networkx
             raise Exception("The graph is not a networkx graph.")
-        nodes_in_graph = graph.number_of_nodes()
+        nodes_in_graph = len(graph.nodes)
+        assert nodes_in_graph > 0, "The graph has no nodes."
+
         if motif == 'house':
             motif = GraphMotifAugmenter.house_motif
         if isinstance(motif, dict):
             # assetr tests, if the dictionary is correct
-            nodes_in_motif = max(max(pair) for pair in motif['edges'])+1
+            nodes_in_motif = len(motif['labels'])
             assert 'labels' in motif, "The motif does not have labels."
             assert nodes_in_motif == len(motif['labels']), "The highest node in the motif is not the last node."
 
             # continue with the code
             # select random node from bagraph and add an edge to the house motif
-            start_node = random.randint(0, nodes_in_graph)  # in ba_graph
+            start_node = random.randint(0, nodes_in_graph-1)  # in ba_graph
             end_node = random.randint(0, nodes_in_motif-1)+nodes_in_graph  # in motif
             while end_node == start_node:
                 end_node = random.randint(0, nodes_in_motif-1)+nodes_in_graph
             # Add nodes to graph
             assert 'labels' in motif, "The motif does not have labels."
+            add_to = 0
+            if 0 not in list(graph.nodes):
+                add_to = 1
+            current_num_nodes = len(graph.nodes)
             for i, label in enumerate(motif['labels']):
-                graph.add_node(i+nodes_in_graph, label=label)
-            # Add edges
+                graph.add_node(i+current_num_nodes+add_to, label=label)  # assuming, the nodes previously are 0,1,2,...
+                assert current_num_nodes + i+1 == len(graph.nodes), ("The number of nodes did not increase by 1.", i,
+                                                                     i+current_num_nodes+add_to, graph.nodes)
             for u_motif, v_motif in motif['edges']:
-                u, v = u_motif + nodes_in_graph, v_motif + nodes_in_graph
+                u, v = u_motif + nodes_in_graph+add_to, v_motif + nodes_in_graph+add_to
                 graph.add_edge(u, v)
             graph.add_edge(start_node, end_node)
+            assert nx.is_connected(graph), "The graph is not connected."
+
+            # Add edges
+            # check if the labels worked
+            labels = []
+            for _, attr in graph.nodes(data=True):
+                label = attr.get('label')
+                labels.append(label)
+            for label_motif in motif['labels']:
+                assert label_motif in labels, "The label " + str(label_motif) + " is not in the graph."
+            # end check
 
             # update the list, which nodes are in the motif and which are not
         else:
             raise Exception("This case is not implemented yet.")
+
+        # Tests
+        if motif == GraphMotifAugmenter.house_motif:
+            labels = [str(node['label']) for _, node in graph.nodes(data=True) if 'label' in node]
+            for i in range(1, 4):
+                assert str(i) in labels, 'Label ' + str(i) + ' not in labels ' + str(labels)
+        assert nx.is_connected(graph), "The graph is not connected."
+        # End Tests
         return graph
 
     # getter and setter methods
@@ -675,6 +708,7 @@ class HeteroBAMotifDataset():
         Nodes outside the motif are all nodes with id less than number_nodes_of_orig_graph.
     """
 
+    # TODO: This somehow does not work, see test_add_random_types
     def __init__(self, graph: nx.Graph,  type_to_classify=-1):
         self._augmenter = GraphMotifAugmenter()
         self._type_to_classify = type_to_classify
@@ -775,7 +809,7 @@ class HeteroBAMotifDataset():
         assert type_to_classify_str != str(self._base_label), (type_to_classify_str, self._base_label, labels)
         node_types = hdata_graph.node_types
         node_types_str = [str(node) for node in node_types]
-        assert type_to_classify_str in node_types_str, (type_to_classify_str, hdata_graph)
+        assert type_to_classify_str in node_types_str, (type_to_classify_str, hdata_graph, self._graph.nodes(data=True))
         # assert False, ("This works: ", hdata_graph)
         # end tests
         label_list = [0]*hdata_graph[type_to_classify_str].num_nodes
@@ -804,22 +838,39 @@ class HeteroBAMotifDataset():
         1. Change labels of the base label to other labels by percentage change_percent; Stop if change_percent have been reached (iterate at random)
         """
         if base_label is None:
-            base_label = self._base_label
+            base_label = str(self._base_label)
+        assert base_label is not None, ("The base label is None.", base_label)
 
         # 1. Change labels of the base label to other labels
         number_labels = len(labels)
-
         nodes_with_data = list(self._graph.nodes(data=True))
-        random.shuffle(nodes_with_data)  # shuffle, st. the nodes with the base label are randomly distributed
-        changes_nodes = 0
-        num_nodes_total = self._augmenter.number_nodes_of_orig_graph
+        # first: Change all node without label to the base label
+        for node_id, data in nodes_with_data:
+            if not hasattr(data, 'label') or data['label'] is None or data['label'] == 'None':
+                data['label'] = base_label
+        # Second: Save all nodes without base_label in a list
+        nodes_with_data = list(self._graph.nodes(data=True))
+        node_ids_with_baselabel = []
         for node_id, data in nodes_with_data:
             if data['label'] == base_label:
+                node_ids_with_baselabel.append(node_id)
+
+        # random.shuffle(nodes_with_data)  # shuffle, st. the nodes with the base label are randomly distributed
+        changes_nodes = 0
+        num_nodes_total = self._augmenter.number_nodes_of_orig_graph
+        # assert num_nodes_total < len(self._graph.nodes), self._graph.nodes
+        for node_id, data in self._graph.nodes(data=True):
+            if node_id in node_ids_with_baselabel:
                 if random.random() < change_percent/100:
-                    data['label'] = labels[random.randint(0, number_labels-1)]
+                    self._graph.add_node(node_id, label=labels[random.randint(0, number_labels-1)])
+                    # data['label'] = labels[random.randint(0, number_labels-1)]
                     changes_nodes += 1
-            if changes_nodes >= num_nodes_total*change_percent/100:
+            if changes_nodes >= (len(node_ids_with_baselabel)*change_percent)/100:
                 break
+        # tests
+
+        # end tests
+        return self._graph
 
     # getter and setter methods
 
