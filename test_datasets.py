@@ -109,6 +109,15 @@ class TestGraphLibraryConverter(unittest.TestCase):
         self.assertEqual(hetero_graph['3'].x.shape[0], 1)
         self.assertEqual(hetero_graph.num_node_types, 4)
 
+    def test_make_hdata_bidirected(self):
+        hgraph = HeteroData()
+        hgraph['A'].x = torch.randn(1, 2)
+        hgraph['B'].x = torch.rand(1, 2)
+        hgraph[('A', 'to', 'B')].edge_index = torch.tensor([[0], [0]], dtype=torch.long)
+        hgraph = GraphLibraryConverter.make_hdata_bidirected(hgraph)
+        print('Hgraph before making it undirected: ', hgraph)
+        assert ('A', 'to', 'B') in hgraph.edge_types
+
 
 class TestGenerateRandomGraph(unittest.TestCase):
 
@@ -263,12 +272,20 @@ class TestHeteroBAMotifDataset(unittest.TestCase):
         complex_test_graph = GenerateRandomGraph.create_BAGraph_nx(num_nodes=50, num_edges=4)
         augmenter_local = GraphMotifAugmenter('house', num_motifs=10, orig_graph=complex_test_graph)
         graph = augmenter_local.graph
+        # Begin Test for graph
+        labels = [str(node['label']) for _, node in graph.nodes(data=True) if 'label' in node]
+        # test if thet length is correct:
+        self.assertEqual(len(graph.nodes), 100)  # change here, if different graphs are chosen
+        for i in range(1, 3):
+            assert str(i) in labels, 'Label ' + str(i) + ' not in labels ' + str(labels)
+        # End Test for Graph
         dataset_class = HeteroBAMotifDataset(graph, '3')
         graph = dataset_class._graph
 
         labels = [str(node['label']) for _, node in graph.nodes(data=True) if 'label' in node]
         # test if thet length is correct:
         self.assertEqual(len(graph.nodes), 100)  # change here, if different graphs are chosen
+        # test if labels are correct
         for i in range(0, 4):
             assert str(i) in labels, 'Label ' + str(i) + ' not in labels ' + str(labels)
 
@@ -298,9 +315,14 @@ class TestHeteroBAMotifDataset(unittest.TestCase):
         for i in range(1, 4):
             assert str(i) in labels, 'Label ' + str(i) + ' not in labels ' + str(labels)
         dataset_class = HeteroBAMotifDataset(synthetic_graph, type_to_classify)
-        synthetic_graph = dataset_class._add_random_types(labels, '0')
+        synthetic_graph = dataset_class._graph
+        labels_local = [str(node['label']) for _, node in synthetic_graph.nodes(data=True) if 'label' in node]
+        for i in range(0, 4):
+            assert str(i) in labels_local, 'Label ' + str(i) + ' not in labels ' + str(labels_local)
+        synthetic_graph = dataset_class._add_random_types(labels_local, '0', 80)
         labels = [str(node['label']) for _, node in synthetic_graph.nodes(data=True) if 'label' in node]
-        for i in range(1, 4):
+        # the followign test fails atm
+        for i in range(0, 4):
             assert str(i) in labels, 'Label ' + str(i) + ' not in labels ' + str(labels)
         # dataset = dataset_class._convert_labels_to_node_types()
 

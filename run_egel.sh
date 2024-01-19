@@ -1,8 +1,9 @@
 #!/bin/sh
 
-run_DBLP="True"
-run_BAShapes="False"
-random_seed=1
-iterations=5
+end_length=10
+number_of_ces=300
+number_of_graphs=10
+lambdaone=0.5
+random_seed=0
 
-python main.py "$run_DBLP" "$run_BAShapes" "$random_seed" "$iterations"
+python main.py "$end_length" "$number_of_ces" "$number_of_graphs" "$iterlambdaoneations" "$random_seed"

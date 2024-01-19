@@ -858,9 +858,7 @@ if __name__ == '__main__' and testing == True:
     ce_012 = add_op_to_intersection(ce_01, class_2)
 
     # test of random_ce_with_startnode
-    print('Testing random_ce_with_startnode')
     result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
-    print(334, dlsr.render(result))
 
     # for i in range(0, 10):
     #    result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
@@ -869,6 +867,6 @@ if __name__ == '__main__' and testing == True:
     # graph_dict = create_graph_from_ce(result, None, edge, 0)
     # print(335, graph_dict)
     graph_dict = get_graph_from_ce(result, None, edge)
-    print(336, graph_dict)
+    
 
 # ------------------ End Testing Phase

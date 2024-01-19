@@ -313,7 +313,8 @@ class GraphLibraryConverter():
         # test, if all node types are strings
         for nodetype in hetero_graph.node_types:
             assert isinstance(nodetype, str), "The node types are not strings."
-        # test, if it is bidirected
+        # test, if it is not directed
+        assert hetero_graph.is_undirected(), "The graph is not bidirected."
 
         # end tests
 
@@ -418,23 +419,23 @@ class GraphLibraryConverter():
     def add_edge_to_hdata(hetero_graph, start_type, edge_type, end_type, start_id: int, end_id: int):
         start_id_tensor = torch.tensor([start_id], dtype=torch.long)
         end_id_tensor = torch.tensor([end_id], dtype=torch.long)
+        start_id, end_id = int(start_id), int(end_id)
+        assert isinstance(hetero_graph, HeteroData), "The graph is not a heterogenous graph."
+
         if (start_type, edge_type, end_type) in hetero_graph.edge_types:
             list_ids_start, list_ids_end = [row.tolist()
                                             for row in hetero_graph[(start_type, edge_type, end_type)].edge_index]
             list_ids_start.append(start_id)
             list_ids_end.append(end_id)
             hetero_graph[(start_type, edge_type, end_type)].edge_index = torch.tensor([list_ids_start, list_ids_end])
-        elif (end_type, edge_type, start_type) in hetero_graph.edge_types:
-            list_ids_start, list_ids_end = [row.tolist()
-                                            for row in hetero_graph[(end_type, edge_type, start_type)].edge_index]
-            list_ids_start.append(end_id)
-            list_ids_end.append(start_id)
-            hetero_graph[(end_type, edge_type, start_type)].edge_index = torch.tensor([list_ids_start, list_ids_end])
+            changes_made = True
         else:
-            hetero_graph[start_type, edge_type, end_type].edge_index = (start_id_tensor, end_id_tensor)
+            hetero_graph[start_type, edge_type, end_type].edge_index = torch.tensor([[start_id], [end_id]])
+            changes_made = True
 
         return hetero_graph
 
+    @staticmethod
     def make_hdata_bidirected(hetero_graph):
         """
         This makes a heterogenous graph bidirected and checks on validity: Each edge should exist in 2 directions.
@@ -454,13 +455,15 @@ class GraphLibraryConverter():
                     if not any(end_id == reverse_edge_index[0][i] and start_id == reverse_edge_index[1][i] for i in range(len(reverse_edge_index[0]))):
                         # Add the reverse edge
                         # Assuming a function add_edge_to_hdata as defined previously
-                        GraphLibraryConverter.add_edge_to_hdata(
+                        hetero_graph = GraphLibraryConverter.add_edge_to_hdata(
                             hetero_graph, end_type, relation_type, start_type, end_id.item(), start_id.item())
                 else:
                     # Add the reverse edge
                     # Assuming a function add_edge_to_hdata as defined previously
-                    GraphLibraryConverter.add_edge_to_hdata(
+                    hetero_graph = GraphLibraryConverter.add_edge_to_hdata(
                         hetero_graph, end_type, relation_type, start_type, end_id.item(), start_id.item())
+        assert isinstance(hetero_graph, HeteroData), "The graph is not a heterogenous graph."
+        assert hetero_graph.is_undirected(), f"The graph {hetero_graph} is not undirected."
         return hetero_graph
 
 
@@ -734,6 +737,7 @@ class HeteroBAMotifDataset():
         labels.append(self._base_label)
         labels = list(set(labels))
         self.labels = labels
+        self._hdatagraph.labels = labels
 
         # save type_to_classify into hdatagraph
 
@@ -753,11 +757,9 @@ class HeteroBAMotifDataset():
             node_id, attr = node
             if 'label' not in attr or attr['label'] is None or attr['label'] == 'None':
                 self._graph.nodes[node_id]['label'] = self._base_label
-            if node_id < self._augmenter.number_nodes_of_orig_graph:
-                self._graph.nodes[node_id]['label'] = self._base_label
         return self._base_label
 
-    def _convert_labels_to_node_types(self, change_percent_labels=40):
+    def _convert_labels_to_node_types(self, change_percent_labels=60):
         """
         Converts the labels into node types and adds this to self._hdatagraph.
 
@@ -816,8 +818,9 @@ class HeteroBAMotifDataset():
         for node in self._graph.nodes(data=True):
             node_id, attr = node
             if str(attr['label']) == str(self._type_to_classify):
-                new_node_id = dict_current_to_new_indices[node_id]
-                label_list[new_node_id] = 1
+                if self._augmenter._list_node_in_motif_or_not[node_id] == 1:
+                    new_node_id = dict_current_to_new_indices[node_id]
+                    label_list[new_node_id] = 1
 
         hdata_graph[type_to_classify_str].y = torch.tensor(label_list)
 
@@ -846,8 +849,16 @@ class HeteroBAMotifDataset():
         nodes_with_data = list(self._graph.nodes(data=True))
         # first: Change all node without label to the base label
         for node_id, data in nodes_with_data:
-            if not hasattr(data, 'label') or data['label'] is None or data['label'] == 'None':
+            if data['label'] is None or data['label'] == 'None':
                 data['label'] = base_label
+            else:
+                data['label'] = str(data['label'])
+
+        new_labels = []
+        for node_id, data in nodes_with_data:
+            new_labels.append(data['label'])
+        for i in range(0, len(labels)):
+            assert labels[i] in new_labels, ("The label " + str(labels[i]) + " is not in the labels.", new_labels)
         # Second: Save all nodes without base_label in a list
         nodes_with_data = list(self._graph.nodes(data=True))
         node_ids_with_baselabel = []
@@ -862,7 +873,7 @@ class HeteroBAMotifDataset():
         for node_id, data in self._graph.nodes(data=True):
             if node_id in node_ids_with_baselabel:
                 if random.random() < change_percent/100:
-                    self._graph.add_node(node_id, label=labels[random.randint(0, number_labels-1)])
+                    self._graph.add_node(node_id, label=labels[random.randint(0, len(labels)-1)])
                     # data['label'] = labels[random.randint(0, number_labels-1)]
                     changes_nodes += 1
             if changes_nodes >= (len(node_ids_with_baselabel)*change_percent)/100:
@@ -871,6 +882,32 @@ class HeteroBAMotifDataset():
 
         # end tests
         return self._graph
+
+    def print_statistics_to_dataset(dataset: HeteroData):
+        """
+        Adds statistics to the dataset.
+        """
+        # Number of nodes of each type, number of edges, number of motifs,
+        # From node to classify: How many percent of the nodes are in a motif / have label 1?
+        assert isinstance(dataset, HeteroData), "The dataset is not a heterogenous graph."
+        # Number of nodes of each type
+        print("Number of nodes of each type:")
+        if hasattr(dataset, 'labels'):
+            labels = dataset.labels
+        elif hasattr(dataset, 'node_types'):
+            labels = dataset.node_types
+        else:
+            raise Exception("NotImplemented:The dataset has no labels or node types.")
+        for label in labels:
+            print("Number of nodes of type " + str(label) + ": " +
+                  str(dataset[label].num_nodes))
+        print("Node type to be classified: " + str(dataset.type_to_classify))
+        print("Number of nodes of each label")
+        ground_truth_labels = dataset[dataset.type_to_classify].y.tolist()
+        set_ground_truth_labels = set(ground_truth_labels)
+        for value in list(set_ground_truth_labels):
+            print("Number of nodes of label " + str(value) + ": " +
+                  str(sum(1 for element in ground_truth_labels if element == value)))
 
     # getter and setter methods
 
@@ -969,6 +1006,8 @@ def count_ints_total(input_list, intput):
         if element == intput:
             count += 1
     return count
+    # short:
+    # return sum(1 for element in input_list if element == input_int)
 
 
 def count_ints_until_entry(input_list, intput, entry):  # works

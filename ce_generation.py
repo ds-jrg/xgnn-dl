@@ -80,7 +80,6 @@ def readout_OWLclass(ce: OWLClassExpression, list_nodetypes=[]):
 
 def length_ce(ce):
     length_metric = OWLClassExpressionLengthMetric.get_default()
-    print(ce)
     return length_metric.length(ce)
 
 
@@ -461,12 +460,6 @@ def create_random_ce_from_BAHetero(num_iter):
     return rand_ce
 
 
-
-
-
-
-
-
 # -------------------   Testing: Here, many instances are created to be able to test different scenarios.
 # testing: many outputs
 root_node_type = 'Author'
@@ -557,7 +550,6 @@ def create_test_ce_3011():
     filler_end = OWLObjectIntersectionOf([class_2, edge_end])
     edge_middle = OWLObjectSomeValuesFrom(property=edge, filler=filler_end)
     ce_321 = OWLObjectIntersectionOf([class_3, edge_middle])
-    print(128, 'ce', dlsr.render(ce_321))
 
     ce_3011 = OWLObjectIntersectionOf([class_3, OWLObjectSomeValuesFrom(property=edge, filler=OWLObjectIntersectionOf(
         [class_0, OWLObjectSomeValuesFrom(property=edge, filler=OWLObjectIntersectionOf([class_1, OWLObjectSomeValuesFrom(property=edge, filler=class_1)]))]))])
@@ -575,7 +567,6 @@ def create_test_ce_3012():
     filler_end = OWLObjectIntersectionOf([class_2, edge_end])
     edge_middle = OWLObjectSomeValuesFrom(property=edge, filler=filler_end)
     ce_321 = OWLObjectIntersectionOf([class_3, edge_middle])
-    print(128, 'ce', dlsr.render(ce_321))
 
     ce_3011 = OWLObjectIntersectionOf([class_3, OWLObjectSomeValuesFrom(property=edge, filler=OWLObjectIntersectionOf(
         [class_0, OWLObjectSomeValuesFrom(property=edge, filler=OWLObjectIntersectionOf([class_1, OWLObjectSomeValuesFrom(property=edge, filler=class_2)]))]))])

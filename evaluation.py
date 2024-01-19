@@ -222,10 +222,12 @@ def ce_confusion(ce,  motif='house'):
     # print(test_bla)
 
 
-def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo):
+def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo, aggregate='mean'):
     # avg_gnn_outs-lambda len_ce - lambda_var
     length_of_ce = length_ce(ce)
     mean = sum(list_gnn_outs) / len(list_gnn_outs)
+    if aggregate == 'max':
+        mean = max(list_gnn_outs)
     squared_diffs = [(x - mean) ** 2 for x in list_gnn_outs]
     sum_squared_diffs = sum(squared_diffs)
     variance = sum_squared_diffs / (len(list_gnn_outs))
@@ -449,6 +451,8 @@ class Accuracy_El:
                 self.list_results.append(copy.deepcopy(self.list_results[self.current_path_index]))
                 new_abstract_index = len(self.list_results) - 1
                 self.list_results[-1]['position'] = {'nodetype': 'abstract', 'id': 0}
+                if not isinstance(adjacent_edges, list):
+                    adjacent_edges = list(adjacent_edges)
                 edge = adjacent_edges[0]
                 if edge[1] == new_class:
                     # update the current path
@@ -468,7 +472,7 @@ class Accuracy_El:
                     if edge[1] == new_class:
                         self.list_results.append(copy.deepcopy(self.list_results[current_index]))
                         self.list_results[-1]['position'] = {'nodetype': edge[1], 'id': edge[0]}
-                        self.current_path_index = len(self.list_results) -1
+                        self.current_path_index = len(self.list_results) - 1
                         self._ce_accuracy_iterate_house(ce._filler)
                         count_current_path_index += 1
             self.list_results[new_abstract_index]['position'] = {'nodetype': 'abstract', 'id': 0}
@@ -486,7 +490,8 @@ class Accuracy_El:
         We then add up all the end-CE-results
         Simultaneously, we store the found nodes of the motif.
         """
-        print('Evaluation of the CE: ', dlsr.render(ce))
+        # if isinstance(ce, OWLClassExpression):
+        #    print('Evaluation of the CE: ', dlsr.render(ce))
         # Initialize the top class
         top_class = find_class(ce)
         if not remove_front(top_class.to_string_id()) == '3':
@@ -496,5 +501,6 @@ class Accuracy_El:
         self._calc_accuracy()
         sorted_list_results = sorted(
             self.list_results, key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
-        self.list_results.sort(key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
+        self.list_results.sort(key=lambda x: x['accuracy'] if x['accuracy']
+                               is not None else float('-inf'), reverse=True)
         return sorted_list_results[0]['accuracy']

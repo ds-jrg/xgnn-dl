@@ -20,6 +20,7 @@ logger.setLevel(logging.WARNING)
 
 # ---------------- utils
 def uniquify(path, extension='.pdf'):
+    counter = 0
     if path.endswith("_"):
         path += '1'
         counter = 1
@@ -110,6 +111,8 @@ def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explai
     colors = generate_colors(number_of_node_types_for_colors)
     if number_of_node_types_for_colors == 4:
         colors = ['#59a14f', '#f28e2b', '#4e79a7', '#e15759']
+    # if number_of_node_types_for_colors == 6:
+    #    colors = ['#59a14f', '#f28e2b', '#4e79a7', '#e15759', '#b07aa1', '#edc948']
     curent_nodetypes_to_all_nodetypes = []
     for _ in range(len(hd_graph.node_types)):
         all_nodetypes_index = list_all_nodetypes.index(hd_graph.node_types[_])
@@ -129,8 +132,8 @@ def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explai
     index = 0
     stop = False  # the prediction is always done for the first node
     for nodekey in homdata.node_type.tolist():
-        if label_to_explain != None:
-            if str(curent_nodetypes_to_all_nodetypes[nodekey][1]) == label_to_explain and stop == False:
+        if label_to_explain is not None:
+            if str(curent_nodetypes_to_all_nodetypes[nodekey][1]) == label_to_explain and stop is False:
                 node_labels_to_indices.update({index: '*'})
                 stop = True
             else:

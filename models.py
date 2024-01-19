@@ -28,7 +28,7 @@ class HeteroGNNTrainer:   # TODO: Test this class
         self.model.train()
         self.optimizer.zero_grad()
 
-        # Forward pass (modify according to your model's input requirements)
+        # Forward pass
         out = self.model(self.data.x_dict, self.data.edge_index_dict)
 
         # Assuming the task is node classification and labels are stored in data.y_dict
@@ -55,6 +55,7 @@ class HeteroGNNTrainer:   # TODO: Test this class
             return accuracy
 
     def train(self, epochs):
+        self.model.train()
         for epoch in range(epochs):
             loss = self.train_epoch()
             train_acc = self.evaluate(self.data[self.data.type_to_classify].train_mask)
@@ -63,6 +64,7 @@ class HeteroGNNTrainer:   # TODO: Test this class
         return self.model
 
     def test(self):
+        self.model.eval()
         test_acc = self.evaluate(self.data[self.data.type_to_classify].test_mask)
         print(f"Test Accuracy: {test_acc:.4f}")
         return test_acc

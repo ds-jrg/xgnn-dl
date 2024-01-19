@@ -55,7 +55,7 @@ def test_graph_dict_on_connectedness(graphdict):
     return is_connected
 
 
-def iterate_to_find_graphdicts(current_list, ce, origdata, num_graphdicts, maximum_iterations=20):
+def iterate_to_find_graphdicts(current_list, ce, origdata, num_graphdicts, maximum_iterations=30):
     if len(current_list) >= num_graphdicts:
         return current_list
     else:
@@ -157,12 +157,9 @@ def graphdict_and_features_to_heterodata(graph_dict, features_list):
     for name_tuple in features_list:
         name = name_tuple[0]
         name_str = str(name)
-        print('debug name', name_str)
-        print('debug features', name_tuple[1])
         hdata[name_str].x = name_tuple[1]
     # create edges
     # read from dict
-    print('Graphdict to hdata debug', graph_dict)
     for edge in graph_dict:
         start_list = graph_dict[edge][0].tolist()
         start_list = [int(x) for x in start_list]
@@ -199,5 +196,7 @@ def get_gnn_outs(hd_local, model_local, cat_to_explain):
         cat_to_explain = -1
     elif cat_to_explain is None:
         cat_to_explain = -1
-    result = round(out[0][cat_to_explain].item(), 4)
+    # debug!
+    # result = round(out[0][cat_to_explain].item(), 4)
+    result = round(out[0][-1].item(), 4)
     return result

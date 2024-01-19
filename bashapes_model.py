@@ -89,12 +89,10 @@ def train_GNN(retrain, bashapes, layers):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     bashapes, model = bashapes.to(device), model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=0.0005)
-    print('started train_GNN')
     # retrain = True
     path_name_saved = "content/models/"+'HeteroBAShapes'
     is_file_there = osp.isfile(path_name_saved)
     if (is_file_there == True and retrain == False):
-        print("using saved model")
         model.load_state_dict(torch.load(path_name_saved))
     else:
         print('training new model')
