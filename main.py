@@ -68,8 +68,8 @@ try:
 except Exception as e:
     print(f"Error deleting file: {e}")
     end_length = 10
-    number_of_ces = 300
-    number_of_graphs = 10
+    number_of_ces = 700
+    number_of_graphs = 100
     lambdaone = 0.5  # controls the length of the CE
     random_seed = 1
 # Further Parameters:
@@ -77,7 +77,7 @@ train_new_GNN = True
 layers = 2  # 2 or 4 for the bashapes hetero dataset
 start_length = 2
 
-num_top_results = 5
+num_top_results = 20
 save_ces = True  # Debugging: if True, creates new CEs and save the CEs to hard disk
 # hyperparameters for scoring
 

@@ -65,26 +65,8 @@ def iterate_to_find_graphdicts(current_list, ce, origdata, num_graphdicts, maxim
             # If this dict is a connected graph add it, if not, don't add it
             if test_graph_dict_on_connectedness(new_dict):
                 if not dict_in_list(new_dict, current_list):
-                    if len(current_list) < num_graphdicts:
-                        current_list.append(new_dict)
-        if len(current_list) >= num_graphdicts:
-            return current_list
-        else:
-            if isinstance(origdata.node_types[0], str):
-                list_ce_nodetypes = list()
-                list_ce_edgetypes = list()
-                for nodetype in origdata.node_types:
-                    nt_ce = OWLClass(IRI(NS, nodetype))
-                    list_ce_nodetypes.append(nt_ce)
-                for edgetype in origdata.edge_types:
-                    et_ce = OWLObjectProperty(IRI(NS, edgetype[1]))
-                    list_ce_edgetypes.append(et_ce)
-                list_ce_edgetypes = list(set(list_ce_edgetypes))
-            else:
-                list_ce_nodetypes = origdata.node_types
-                list_ce_edgetypes = origdata.edge_types
-            new_ce = mutate_ce(ce, list_ce_nodetypes, list_ce_edgetypes)
-            return iterate_to_find_graphdicts(current_list, new_ce, origdata, num_graphdicts)
+                    current_list.append(new_dict)
+        return current_list
 
 
 def generate_graphdicts_for_ce(ce, origdata, num_graphdicts=10):
