@@ -163,7 +163,7 @@ def dblp_model(retrain):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.002, weight_decay=0.001)
     path_name_saved = "content/models/"+'DBLP'
     is_file_there = osp.isfile(path_name_saved)
-    if (is_file_there == True and retrain == False):
+    if (is_file_there is True and retrain is False):
         print("using saved model")
         modeldblp.load_state_dict(torch.load(path_name_saved))
     else:

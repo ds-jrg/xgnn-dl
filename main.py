@@ -1,6 +1,7 @@
 # import GNN_playground #this is only locally important
 # print('GNN_playground durchgelaufen')
 import bashapes_model as bsm
+from ManipulateScores import ManipulateScores
 from datasets import create_hetero_ba_houses, initialize_dblp
 from datasets import HeteroBAMotifDataset, GenerateRandomGraph, GraphMotifAugmenter
 from generate_graphs import get_number_of_hdata, get_gnn_outs
@@ -16,11 +17,6 @@ import torch as th
 import pickle
 import os
 from models import dblp_model
-import torch.nn.functional as F
-import torch_geometric.transforms as T
-from torch_geometric.datasets import OGB_MAG, DBLP
-from torch_geometric.nn import HeteroConv, SAGEConv, Linear, to_hetero
-import torch_geometric
 from torch_geometric.data import HeteroData
 from random import randint
 import networkx as nx
@@ -68,7 +64,7 @@ try:
 except Exception as e:
     print(f"Error deleting file: {e}")
     end_length = 10
-    number_of_ces = 700
+    number_of_ces = 1000
     number_of_graphs = 100
     lambdaone = 0.5  # controls the length of the CE
     random_seed = 1
@@ -83,6 +79,17 @@ save_ces = True  # Debugging: if True, creates new CEs and save the CEs to hard 
 
 lambdatwo = 0  # controls the variance in the CE output on the different graphs for one CE
 aggr_fct = 'mean'  # 'max' or 'mean'
+
+
+# retraining Model and Dataset
+# TODO: Create a list of pre-defined datasets with models
+# For Code-Idea: Compare with GAIN-Presentation
+
+
+# Which parts of the Code should be run?
+retrain_GNN_and_dataset = False
+run_beam_search = False
+run_tests_ce = True
 
 
 # ----------------  utils
@@ -166,18 +173,14 @@ def select_ones(numbers, num_ones_to_keep):
 
 
 def top_unique_scores(results, num_top_results):
+    """
+    Returns the top scores from all evaluated CEs, which are saved in the list results.
+    Omits CEs with the same score.
+    """
     # Sort the list of dictionaries by 'score' in descending order
-    sorted_results = sorted(results, key=lambda x: x['score'], reverse=True)
-    unique_dicts = list()
-    seen_scores = set()
-    for d in sorted_results:
-        score = d['score']
-        if score not in seen_scores:
-            unique_dicts.append(d)
-            seen_scores.add(score)
-            if len(unique_dicts) >= 5:
-                break
-    return unique_dicts
+    sorted_results = list(sorted(results, key=lambda x: x['score'], reverse=True))
+    sorted_results = sorted_results[:num_top_results]
+    return sorted_results
 
 
 # ---------------  Find the best explanatory CEs for a dataset and GNN
@@ -244,7 +247,6 @@ def beam_search(hd, model, target_class, start_length, end_length, number_of_ces
             local_dict_results['CE'] = ce_here
             list_graphs = get_number_of_hdata(
                 ce_here, hd, num_graph_hdata=number_of_graphs)  # is some hdata object now
-            assert len(list_graphs) == number_of_graphs, (len(list_graphs), number_of_graphs)
             local_dict_results['graphs'] = list_graphs
             local_dict_results['GNN_outs'] = list()
 
@@ -362,15 +364,16 @@ def beam_and_calc_and_output(hd, model, target_class, start_length, end_length,
     list_results = top_unique_scores(list_results, num_top_results)
     list_results = calc_fid_acc_top_results(list_results, model, target_class, hd)
     output_top_results(list_results, target_class, hd.node_types)
+    return list_results
 
 
 # -----------------  Test new Datasets and then delete this part -----------------------
 
 
-def test_new_datasets():
+def test_new_datasets(num_nodes=10000, num_motifs=2000):
     # test the new datasets
     # create BA Graph
-    ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=500, num_edges=3)
+    ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=num_nodes, num_edges=3)
     motif = {
         'labels': ['1', '2', '3', '4', '5'],
         'edges': [(0, 1), (0, 2), (0, 3), (0, 4)]
@@ -380,7 +383,7 @@ def test_new_datasets():
         'edges': [(0, 1), (0, 2), (1, 2), (1, 3), (2, 4), (3, 4)]
     }
     type_to_classify = '3'
-    synthetic_graph_class = GraphMotifAugmenter(motif='house', num_motifs=100, orig_graph=ba_graph_nx)
+    synthetic_graph_class = GraphMotifAugmenter(motif='house', num_motifs=num_motifs, orig_graph=ba_graph_nx)
     synthetic_graph = synthetic_graph_class.graph
     # Workaround, fix later
 
@@ -407,7 +410,7 @@ def train_gnn_on_dataset(dataset):
     model = HeteroGNNModel(dataset.metadata(), hidden_channels=16, out_channels=2,
                            node_type=dataset.type_to_classify, num_layers=2)
     model_trainer = HeteroGNNTrainer(model, dataset, learning_rate=0.01)
-    model = model_trainer.train(epochs=100)
+    model = model_trainer.train(epochs=300)
     # modelHeteroBSM = bsm.train_GNN(train_new_GNN, dataset, layers=layers)
     # modelHeteroBSM.eval()
     # end debug
@@ -442,19 +445,53 @@ def dataset_bashapes():
 # test ce_creation
 test_ce_new_datasets = True
 if test_ce_new_datasets:
-    delete_files_in_folder('content/plots')
-    dataset = test_new_datasets()
-    model = train_gnn_on_dataset(dataset)
-    out = model(dataset.x_dict, dataset.edge_index_dict)  # this works perfectly
-    test_gt = True
-    if test_gt:
-        beam_and_calc_and_output(hd=dataset, model=model, target_class='3',
-                                 start_length=2, end_length=end_length,
-                                 number_of_ces=number_of_ces, number_of_graphs=number_of_graphs,
-                                 num_top_results=num_top_results)
-        HeteroBAMotifDataset.print_statistics_to_dataset(dataset)
+    if retrain_GNN_and_dataset:
+        dataset = test_new_datasets()
+        model = train_gnn_on_dataset(dataset)
+        with open('content/dataset_bashapes.pkl', 'wb') as file:
+            pickle.dump(dataset, file)
+        with open('content/model_bashapes.pkl', 'wb') as file:
+            pickle.dump(model, file)
+    else:
+        try:
+            with open('content/dataset_bashapes.pkl', 'rb') as file:
+                dataset = pickle.load(file)
+            with open('content/model_bashapes.pkl', 'rb') as file:
+                model = pickle.load(file)
+        except Exception:
+            print("Error loading dataset and model from file.")
+            dataset = test_new_datasets()
+            model = train_gnn_on_dataset(dataset)
+            with open('content/dataset_bashapes.pkl', 'wb') as file:
+                pickle.dump(dataset, file)
+            with open('content/model_bashapes.pkl', 'wb') as file:
+                pickle.dump(model, file)
+    out = model(dataset.x_dict, dataset.edge_index_dict)
 
-    if test_gt:
+    test_gt = True
+    if run_beam_search:
+        delete_files_in_folder('content/plots')
+        list_results = beam_and_calc_and_output(hd=dataset, model=model, target_class=dataset.type_to_classify,
+                                                start_length=2, end_length=end_length,
+                                                number_of_ces=number_of_ces, number_of_graphs=number_of_graphs,
+                                                num_top_results=num_top_results)
+        HeteroBAMotifDataset.print_statistics_to_dataset(dataset)
+        with open('content/list_results.pkl', 'wb') as file:
+            pickle.dump(list_results, file)
+    run_tests_ce = True
+    if run_tests_ce:
+        with open('content/list_results.pkl', 'rb') as file:
+            list_results = pickle.load(file)
+        # change graphs and see if score changes.
+        manipulated_scores = ManipulateScores(orig_scores=list_results, model=model,
+                                              target_class=dataset.type_to_classify)
+        new_scores = manipulated_scores.score_wo_one_three_edges(list_results)
+        print('Test Done')
+
+        # Furthermore: Change graphs of best CEs and reevaluate the GNN Score.
+        # This is done in the function: ce_confusion_iterative(ce, dataset, list_of_classes)
+    run_tests_ce = False
+    if run_tests_ce:
         # create CE
         class_3 = OWLClass(IRI(NS, '3'))
         class_2 = OWLClass(IRI(NS, '2'))
@@ -526,53 +563,3 @@ print(1080, ce_to_tree_list(ce_test_here))
 
 list_3011 = ['Intersection', ['3'], ['to', ['Intersection', ['0'], ['to', ['Intersection', ['1'], ['to', ['1']]]]]]]
 '''
-
-
-# ---------------------- evaluation DBLP
-# this does not work accordingly
-
-if run_DBLP:
-    delete_files_in_folder('content/plots/DBLP')
-    datadblp, targetdblp = initialize_dblp()
-    retrain = False  # set to True, if Dataset should be retrained.
-    modeldblp = dblp_model(retrain)
-    # create_ce_and_graphs_to_heterodataset(datadblp, modeldblp, 'DBLP', targetdblp, cat_to_explain=-1,
-    #                                     graphs_per_ce=16, iterations=iterations, compute_acc=False)
-
-
-# ---------------------- evaluation HeteroBAShapes
-# run_BAShapes = True
-if run_BAShapes:
-    bashapes = create_hetero_ba_houses(500, 100)  # TODO: Save BAShapes to some file, code already somewhere
-    delete_files_in_folder('content/plots')
-    # train GNN 2_hop
-    modelHeteroBSM = bsm.train_GNN(train_new_GNN, bashapes, layers=layers)
-    start_time = time.time()
-    beam_and_calc_and_output(hd=bashapes, model=modelHeteroBSM, target_class='3',
-                             start_length=start_length, end_length=end_length,
-                             number_of_ces=number_of_ces, number_of_graphs=number_of_graphs,
-                             num_top_results=num_top_results)
-    end_time = time.time()
-
-    # Calculate elapsed time
-    elapsed_time = end_time - start_time
-    print(f"Parameters:\n"
-          f"  Layers: {layers}\n"
-          f"  Start Length: {start_length}\n"
-          f"  End Length: {end_length}\n"
-          f"  Number of CEs: {number_of_ces}\n"
-          f"  Number of Graphs: {number_of_graphs}\n"
-          f"  Num Top Results: {num_top_results}\n"
-          f"  Save CEs: {save_ces}\n"
-          f"  Lambda One: {lambdaone}\n"
-          f"  Lambda Two: {lambdatwo}\n"
-          f"Runtime: {elapsed_time:.4f} seconds")
-    # create_ce_and_graphs_to_heterodataset(bashapes, modelHeteroBSM, 'HeteroBAShapes_BA2hop', '3', cat_to_explain=-1,
-    #                                      graphs_per_ce=16, iterations=iterations, compute_acc=True, random_seed=random_seed)
-    # train GNN 4_hop: Later, we can use this to compare the results of the 2_hop and 4_hop GNNs
-    # modelHeteroBSM = bsm.train_GNN(True, bashapes, layers=4)
-    # create_ce_and_graphs_to_heterodataset(bashapes, modelHeteroBSM, 'HeteroBAShapes_BA4hop', '3', cat_to_explain=-1,
-    #                                      graphs_per_ce=16, iterations=iterations, compute_acc=True, random_seed=random_seed)
-
-
-# ------------ Testing zone for CEs
