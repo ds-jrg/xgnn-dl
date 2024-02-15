@@ -883,6 +883,27 @@ class HeteroBAMotifDataset():
         # end tests
         return self._graph
 
+    def get_number_3_1_attached_to_motifs(self):
+        """
+        1. get graph from augmenter
+        2. get all nodes of type 1 and type 3
+        3. count the number of nodes of them, which are connected to the other type
+        4. return this number
+        """
+        count = 0
+        graph_from_augmenter = self._augmenter.graph
+        nodes_in_motif = self._augmenter._list_node_in_motif_or_not
+        for node_id, data in graph_from_augmenter.nodes(data=True):
+            if data['label'] == '1' and nodes_in_motif[node_id] == 1:
+                for neighbor in graph_from_augmenter.neighbors(node_id):
+                    if graph_from_augmenter.nodes[neighbor]['label'] == '3':
+                        count += 1
+            if data['label'] == '3' and nodes_in_motif[node_id] == 1:
+                for neighbor in graph_from_augmenter.neighbors(node_id):
+                    if graph_from_augmenter.nodes[neighbor]['label'] == '1':
+                        count += 1
+        return count
+
     def print_statistics_to_dataset(dataset: HeteroData):
         """
         Adds statistics to the dataset.

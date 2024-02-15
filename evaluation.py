@@ -2,6 +2,7 @@
 
 # ----------- evaluating class expressions: Currently not in use. ------------
 import random as random
+import math
 import os.path as osp
 from torch_geometric.data import HeteroData
 import torch
@@ -34,6 +35,7 @@ def available_edges_with_nodeid(graph, current_type, current_id, edgetype='to'):
     return list_result
 
 
+# Old function, now use fidelity_el
 def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1, random_seed=1):
     fid_result = -1
     mask = datasetfid[node_type_expl].test_mask
@@ -228,6 +230,8 @@ def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo, aggregate='mean'):
     mean = sum(list_gnn_outs) / len(list_gnn_outs)
     if aggregate == 'max':
         mean = max(list_gnn_outs)
+    # make the score between -1 and 1, such that it is comparable between GNNs
+    # mean = math.tanh(mean)
     squared_diffs = [(x - mean) ** 2 for x in list_gnn_outs]
     sum_squared_diffs = sum(squared_diffs)
     variance = sum_squared_diffs / (len(list_gnn_outs))
@@ -339,7 +343,7 @@ def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl):
             mask_tf = 1
             break
     if mask_tf == 1:
-        indices_of_ones = [i for i, value in enumerate(mask.tolist()) if value == True]
+        indices_of_ones = [i for i, value in enumerate(mask.tolist()) if value is True]
         chosen_indices = random.sample(indices_of_ones, k=min(20, len(indices_of_ones)))
         mask = [i if i in chosen_indices else 0 for i in range(len(mask.tolist()))]
         mask = [x for x in mask if x != 0]
@@ -352,17 +356,41 @@ def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl):
             pred_list[index] = 0
         else:
             pred_list[index] = 1
+    tp_count, fp_count, tn_count, fn_count = 0, 0, 0, 0
     for id in mask.tolist():
         current_id = id
-        return_id = 1
         return_set = ce_fast_instance_checker(ce, dataset, node_type_to_expl, current_id)
         return_gnn = pred_list[id]  # get instead the gnn feedback
-        if not return_set:
-            return_id = 0
-        if return_id == return_gnn:
-            count += 1
-    fid_result = round(float(count) / float(len(mask.tolist())), 2)
-    return fid_result
+        return_id = 0 if not return_set else 1
+        if return_id == 1:
+            if return_gnn == 1:
+                tp_count += 1
+            if return_gnn == 0:
+                fn_count += 1
+        if return_id == 0:
+            if return_gnn == 1:
+                fp_count += 1
+            if return_gnn == 0:
+                tn_count += 1
+    if tp_count + tn_count + fn_count + fp_count == 0:
+        fid_result = 0
+    else:
+        fid_result = round(float(tp_count+tn_count) / float(tp_count+tn_count+fn_count+fp_count), 2)
+    if tp_count + fp_count == 0:
+        precision = 0
+    else:
+        precision = round(float(tp_count) / float(tp_count+fp_count), 2)
+    if tp_count + fn_count == 0:
+        recall = 0
+    else:
+        recall = round(float(tp_count) / float(tp_count+fn_count), 2)
+    if tn_count + fp_count == 0:
+        true_negative_rate = 0
+    else:
+        true_negative_rate = round(float(tn_count) / float(tn_count+fp_count), 2)
+    dict_result = {'fidelity': fid_result, 'precision': precision,
+                   'recall': recall, 'true_negative_rate': true_negative_rate}
+    return dict_result
 
 
 class Accuracy_El:
@@ -418,7 +446,7 @@ class Accuracy_El:
         """
         for dict in self.list_results:
             dict['accuracy'] = sum(1 for value in dict['result'].values() if value is True) / (5 + dict['fp'])
-        print(self.list_results[0]['result'], self.list_results[0]['fp'], self.list_results[0]['accuracy'])
+        # print(self.list_results[0]['result'], self.list_results[0]['fp'], self.list_results[0]['accuracy'])
 
     def _ce_accuracy_iterate_house(self, ce):
         """
@@ -430,9 +458,9 @@ class Accuracy_El:
             # Question: Here what to do exactly ?? Should we check, if the class is in the graph ??
             # Should we update the current position here? -> no, that is not possible
             self.list_results[self.current_path_index]['found_classes'] += 1
-            print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
+            # print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
             if remove_front(ce.to_string_id()) == self.list_results[self.current_path_index]['position']['nodetype']:
-                print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
+                # print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
                 self.list_results[self.current_path_index]['result'][(self.list_results[self.current_path_index]['position']['nodetype'],
                                                                       self.list_results[self.current_path_index]['position']['id'])] = True
             else:

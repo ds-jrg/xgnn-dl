@@ -130,16 +130,8 @@ def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explai
     list_node_types = homdata.node_type.tolist()
     node_labels_to_indices = dict()
     index = 0
-    stop = False  # the prediction is always done for the first node
     for nodekey in homdata.node_type.tolist():
-        if label_to_explain is not None:
-            if str(curent_nodetypes_to_all_nodetypes[nodekey][1]) == label_to_explain and stop is False:
-                node_labels_to_indices.update({index: '*'})
-                stop = True
-            else:
-                node_labels_to_indices.update({index: ''})
-        else:
-            node_labels_to_indices.update({index: curent_nodetypes_to_all_nodetypes[nodekey][1]})
+        node_labels_to_indices.update({index: curent_nodetypes_to_all_nodetypes[nodekey][1]})
         index += 1
     color_map_of_nodes = []
     for typeindex in list_node_types:

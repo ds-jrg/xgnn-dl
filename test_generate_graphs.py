@@ -94,7 +94,7 @@ class TestGetGnnOuts(unittest.TestCase):
             data['2'].x = torch.tensor([[1.], [1.]])
             #
             data[('3', 'to', '2')].edge_index = torch.tensor([[0, 1], [1, 0]])
-            # data[('2', 'to', '3')].edge_index = torch.tensor([[0, 1], [1, 0]])
+            data[('2', 'to', '3')].edge_index = torch.tensor([[0, 1], [1, 0]])
             print('Test-data is directed?', data.is_directed())
             out = self.model(data.x_dict, data.edge_index_dict)
 

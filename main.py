@@ -10,6 +10,7 @@ from visualization import visualize_hd
 from evaluation import ce_score_fct, ce_confusion_iterative, fidelity_el, ce_fast_instance_checker, Accuracy_El
 from models import HeteroGNNModel, HeteroGNNTrainer
 from bashapes_model import HeteroGNNBA
+from utils import delete_files_in_folder, remove_front, top_unique_scores, remove_integers_at_end, get_last_number
 import torch
 import statistics
 # from dgl.data.rdf import AIFBDataset, AMDataset, BGSDataset, MUTAGDataset
@@ -63,22 +64,21 @@ try:
 
 except Exception as e:
     print(f"Error deleting file: {e}")
-    end_length = 10
-    number_of_ces = 1000
-    number_of_graphs = 100
-    lambdaone = 0.5  # controls the length of the CE
+    end_length = 5
+    number_of_ces = 20
+    number_of_graphs = 30
+    lambdaone = 0.0  # controls the length of the CE
     random_seed = 1
 # Further Parameters:
-train_new_GNN = True
 layers = 2  # 2 or 4 for the bashapes hetero dataset
 start_length = 2
 
-num_top_results = 20
+num_top_results = 10
 save_ces = True  # Debugging: if True, creates new CEs and save the CEs to hard disk
 # hyperparameters for scoring
 
 lambdatwo = 0  # controls the variance in the CE output on the different graphs for one CE
-aggr_fct = 'mean'  # 'max' or 'mean'
+aggr_fct = 'max'  # 'max' or 'mean'
 
 
 # retraining Model and Dataset
@@ -87,100 +87,16 @@ aggr_fct = 'mean'  # 'max' or 'mean'
 
 
 # Which parts of the Code should be run?
-retrain_GNN_and_dataset = False
-run_beam_search = False
+retrain_GNN_and_dataset = True
+run_beam_search = True
 run_tests_ce = True
 
 
+# tests
+visualize_twice = True
+
+
 # ----------------  utils
-
-def remove_front(s):
-    if len(s) == 0:
-        return s
-    else:
-        return s[len(xmlns):]
-
-
-def uniquify(path, extension='.pdf'):
-    if path.endswith("_"):
-        path += '1'
-        counter = 1
-    while os.path.exists(path+extension):
-        counter += 1
-        while path and path[-1].isdigit():
-            path = path[:-1]
-        path += str(counter)
-    return path
-
-
-def dummy_fct():
-    print('I am just a dummy function')
-
-
-def remove_integers_at_end(string):
-    pattern = r'\d+$'  # Matches one or more digits at the end of the string
-    result = re.sub(pattern, '', string)
-    return result
-
-
-def get_last_number(string):
-    pattern = r'\d+$'  # Matches one or more digits at the end of the string
-    match = re.search(pattern, string)
-    if match:
-        last_number = match.group()
-        return int(last_number)
-    else:
-        return None
-
-
-def delete_files_in_folder(folder_path):
-    """Deletes all files in the specified folder."""
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print(f"Error deleting file: {e}")
-
-
-def graphdict_and_features_to_heterodata(graph_dict, features_list=[]):
-    hdata = HeteroData()
-    # create features and nodes
-    for name_tuple in features_list:
-        name = name_tuple[0]
-        hdata[name].x = name_tuple[1]
-    # create edges
-    # read from dict
-    for edge in graph_dict:
-        hdata[edge[0], edge[1], edge[2]].edge_index = torch.tensor([graph_dict[edge][0].tolist(),
-                                                                    graph_dict[edge][1].tolist()], dtype=torch.long)
-    return hdata
-
-
-def select_ones(numbers, num_ones_to_keep):
-    ones_indices = [i for i, num in enumerate(numbers) if num == 1]
-
-    if len(ones_indices) <= num_ones_to_keep:
-        return numbers
-
-    zeros_indices = random.sample(ones_indices, len(ones_indices) - num_ones_to_keep)
-
-    for index in zeros_indices:
-        numbers[index] = 0
-
-    return numbers
-
-
-def top_unique_scores(results, num_top_results):
-    """
-    Returns the top scores from all evaluated CEs, which are saved in the list results.
-    Omits CEs with the same score.
-    """
-    # Sort the list of dictionaries by 'score' in descending order
-    sorted_results = list(sorted(results, key=lambda x: x['score'], reverse=True))
-    sorted_results = sorted_results[:num_top_results]
-    return sorted_results
 
 
 # ---------------  Find the best explanatory CEs for a dataset and GNN
@@ -248,6 +164,7 @@ def beam_search(hd, model, target_class, start_length, end_length, number_of_ces
             list_graphs = get_number_of_hdata(
                 ce_here, hd, num_graph_hdata=number_of_graphs)  # is some hdata object now
             local_dict_results['graphs'] = list_graphs
+            assert 'graphs' in local_dict_results, "The key 'graphs' does not exist in ce_result"
             local_dict_results['GNN_outs'] = list()
 
             for graph in list_graphs:
@@ -261,7 +178,8 @@ def beam_search(hd, model, target_class, start_length, end_length, number_of_ces
             local_dict_results['score'] = score
             new_list.append(local_dict_results)
         list_results = sorted(list_results + new_list, key=lambda x: x['score'], reverse=True)[:number_of_ces]
-        print(f'Round {_} of {end_length} is finised')
+        print(f'Round {_} of {end_length} is finished')
+
     # only give as feedback the best different top results. Check this, by comparing different scores.
     # In any case, give as feedback 5 CEs, to not throw any errors in the code
     return list_results
@@ -271,16 +189,18 @@ def calc_fid_acc_top_results(list_results, model, target_class, dataset):
     if isinstance(target_class, OWLClassExpression):
         target_class = remove_front(target_class.to_string_id())
     for rdict in list_results:
-        fidelity = fidelity_el(ce=rdict['CE'], dataset=dataset,
-                               node_type_to_expl=target_class, model=model, label_to_expl=1)
+        statistics_fidelity_dict = fidelity_el(ce=rdict['CE'], dataset=dataset,
+                                               node_type_to_expl=target_class, model=model, label_to_expl=1)
         # fidelity = fidelity_ce_testdata(datasetfid=dataset, modelfid=model,
         #                                ce_for_fid=rdict['CE'], node_type_expl=target_class, label_expl=-1)
 
         # accuracy = ce_confusion_iterative(rdict['CE'], dataset, [target_class, 0])
-        rdict['fidelity'] = fidelity
+        rdict['fidelity_dict'] = statistics_fidelity_dict
+        rdict['fidelity'] = statistics_fidelity_dict['fidelity']
         accuracy_class_instance = Accuracy_El()
         accuracy = accuracy_class_instance.ce_accuracy_to_house(rdict['CE'])
-        rdict['accuracy'] = accuracy
+        rdict['accuracy'] = round(accuracy, 3)
+        # assert 'graphs' in rdict, "The key 'graphs' does not exist in ce_result"
 
     # test this function and delete later!!
     class_3 = OWLClass(IRI(NS, '3'))
@@ -307,7 +227,13 @@ def calc_fid_acc_top_results(list_results, model, target_class, dataset):
 
 def output_top_results(list_results, target_class, list_all_nt):
     # here we visualize with visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explain, add_info='', name_folder='')
+    print('debug targer class: ', target_class)
+    # begin debugging
     for ce_result in list_results:
+        print(ce_result['score'])
+    # end debugging
+    for ce_result in list_results:
+        assert 'graphs' in ce_result, "The key 'graphs' does not exist in ce_result"
         # first we create the fitting caption
         ce = ce_result['CE']
         ce = replace_property_of_fillers(ce)
@@ -323,10 +249,14 @@ def output_top_results(list_results, target_class, list_all_nt):
             ce_str = ce
         caption = 'CE: ' + ce_str + '\n' + 'Score: ' + \
             str(ce_result['score']) + '\n' + 'Fidelity: ' + str(ce_result['fidelity']) + \
-            '\n' + 'Accuracy: ' + str(ce_result['accuracy'])
+            '\n' + 'Accuracy: ' + str(ce_result['accuracy']) + \
+            '\n' + 'recall: ' + str(ce_result['fidelity_dict']['recall']) + \
+            'precision: ' + str(ce_result['fidelity_dict']['precision']) + \
+            'tnr: ' + str(ce_result['fidelity_dict']['true_negative_rate'])
         # then, we create the fitting name for savings
         # in the form CE_x_Gr_y
         # where x is the number of the CE and y is the number of the graph
+        print('debugging: ', ce_result)
         for graph in ce_result['graphs']:
             str_addon_save = 'CE' + str(list_results.index(ce_result)) + '_Gr_' + str(ce_result['graphs'].index(graph))
             visualize_hd(graph, str_addon_save, list_all_nt, target_class, add_info=caption, name_folder='')
@@ -352,6 +282,7 @@ def beam_and_calc_and_output(hd, model, target_class, start_length, end_length,
     if save_ces:  # Debugging: if True, creates new CEs and save the CEs to hard disk
         list_results = beam_search(hd, model, target_class, start_length, end_length,
                                    number_of_ces, number_of_graphs, num_top_results)
+        # debugging:
     # For Debug: Save to hard disk and load again
         if not os.path.exists('content/Results'):
             os.makedirs('content/Results')
@@ -367,13 +298,13 @@ def beam_and_calc_and_output(hd, model, target_class, start_length, end_length,
     return list_results
 
 
-# -----------------  Test new Datasets and then delete this part -----------------------
+# -----------------  Test new Datasets  -----------------------
 
 
-def test_new_datasets(num_nodes=10000, num_motifs=2000):
+def test_new_datasets(num_nodes=20000, num_motifs=2000, num_edges=3):
     # test the new datasets
     # create BA Graph
-    ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=num_nodes, num_edges=3)
+    ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=num_nodes, num_edges=num_edges)
     motif = {
         'labels': ['1', '2', '3', '4', '5'],
         'edges': [(0, 1), (0, 2), (0, 3), (0, 4)]
@@ -382,7 +313,7 @@ def test_new_datasets(num_nodes=10000, num_motifs=2000):
         'labels': ['A', 'B', 'B', 'C', 'C'],
         'edges': [(0, 1), (0, 2), (1, 2), (1, 3), (2, 4), (3, 4)]
     }
-    type_to_classify = '3'
+    type_to_classify = '2'
     synthetic_graph_class = GraphMotifAugmenter(motif='house', num_motifs=num_motifs, orig_graph=ba_graph_nx)
     synthetic_graph = synthetic_graph_class.graph
     # Workaround, fix later
@@ -391,7 +322,7 @@ def test_new_datasets(num_nodes=10000, num_motifs=2000):
     dataset_class.augmenter = synthetic_graph_class
     dataset = dataset_class._convert_labels_to_node_types()
     print(dataset)
-    return dataset
+    return dataset, dataset_class
 
 
 def train_gnn_on_dataset(dataset):
@@ -407,10 +338,10 @@ def train_gnn_on_dataset(dataset):
     # end example test
     """
 
-    model = HeteroGNNModel(dataset.metadata(), hidden_channels=16, out_channels=2,
+    model = HeteroGNNModel(dataset.metadata(), hidden_channels=64, out_channels=2,
                            node_type=dataset.type_to_classify, num_layers=2)
     model_trainer = HeteroGNNTrainer(model, dataset, learning_rate=0.01)
-    model = model_trainer.train(epochs=300)
+    model = model_trainer.train(epochs=5000)
     # modelHeteroBSM = bsm.train_GNN(train_new_GNN, dataset, layers=layers)
     # modelHeteroBSM.eval()
     # end debug
@@ -446,7 +377,7 @@ def dataset_bashapes():
 test_ce_new_datasets = True
 if test_ce_new_datasets:
     if retrain_GNN_and_dataset:
-        dataset = test_new_datasets()
+        dataset, dataset_class = test_new_datasets()
         model = train_gnn_on_dataset(dataset)
         with open('content/dataset_bashapes.pkl', 'wb') as file:
             pickle.dump(dataset, file)
@@ -460,7 +391,7 @@ if test_ce_new_datasets:
                 model = pickle.load(file)
         except Exception:
             print("Error loading dataset and model from file.")
-            dataset = test_new_datasets()
+            dataset, dataset_class = test_new_datasets()
             model = train_gnn_on_dataset(dataset)
             with open('content/dataset_bashapes.pkl', 'wb') as file:
                 pickle.dump(dataset, file)
@@ -484,12 +415,22 @@ if test_ce_new_datasets:
             list_results = pickle.load(file)
         # change graphs and see if score changes.
         manipulated_scores = ManipulateScores(orig_scores=list_results, model=model,
-                                              target_class=dataset.type_to_classify)
-        new_scores = manipulated_scores.score_wo_one_three_edges(list_results)
-        print('Test Done')
+                                              target_class=dataset.type_to_classify, aggregation=aggr_fct)
+        manipulated_graphs = manipulated_scores.delete_list_of_graphs_1_3(list_results[0]['graphs'])
+        new_scores = manipulated_scores.score_manipulated_graphs(list_results, manipulated_graphs)
+        print('Running with manipulated scores: Done')
+        print('We have used datasets of the following: ')
+        print('Number of 3-1 edges: ', dataset['3', 'to', '1'].num_edges)
+        print('Number of 3-1 edges, where 1 or 3 is in the motif: ', dataset_class.get_number_3_1_attached_to_motifs())
+
+        # Further Test: Add 3-1 Edges
+        run_test_add_3_1 = True
+        if run_test_add_3_1:
+            new_scores = manipulated_scores.score_add_3_1_edges(list_results)
 
         # Furthermore: Change graphs of best CEs and reevaluate the GNN Score.
         # This is done in the function: ce_confusion_iterative(ce, dataset, list_of_classes)
+
     run_tests_ce = False
     if run_tests_ce:
         # create CE

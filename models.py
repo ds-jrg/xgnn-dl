@@ -78,18 +78,20 @@ class HeteroGNNModel(torch.nn.Module):
 
         for _ in range(num_layers):
             conv = HeteroConv({
-                edge_type: SAGEConv((-1, -1), hidden_channels, dropout=0.5)
+                edge_type: SAGEConv((-1, -1), hidden_channels, dropout=0.1)
                 for edge_type in metadata[1]
             })
             self.convs.append(conv)
         self.lin = Linear(hidden_channels, out_channels)
+        self.tanh = torch.nn.Tanh()
 
     def forward(self, x_dict, edge_index_dict):
         for conv in self.convs:
             x_dict = {key: F.leaky_relu(x)
                       for key, x in conv(x_dict, edge_index_dict).items()}
-        return self.lin(x_dict[self._nodetype])
-
+        x_dict[self._nodetype] = self.lin(x_dict[self._nodetype])
+        #x_dict[self._nodetype] = self.tanh(x_dict[self._nodetype])   # this makes all outs go to 1 somehow
+        return x_dict[self._nodetype]
 # Usage example
 # metadata = data.metadata  # Metadata from HeteroData object
 # model = HeteroGNNModel(metadata, hidden_channels=64, out_channels=num_classes, node_type='target_node_type')
