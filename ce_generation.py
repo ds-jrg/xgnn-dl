@@ -138,10 +138,22 @@ def update_class(ce: OWLClassExpression, list_result=[{'id': 0, 'edge_types': []
                 current_result[current_mp_id][1][1] = [current_id]
     return current_class, current_id, current_result, dict_class_ids
 
+# util function
 
+
+def get_ops(ce):
+    list_result = list()
+    for op in ce.operands():
+        if isinstance(op, OWLObjectIntersectionOf):
+            list_result = list_result + get_ops(op)
+        else:
+            list_result.append(op)
+    return list_result
 # -----------  Functions for creating a graph from a CE
 # current_id umbennen in current_node_id
 # choose_also_old_nodes umbennen in is_new_node_created; Ist dieser Parameter sinnvoll / wird dieser verwendet?
+
+
 def generate_cedict_from_ce(ce: OWLClassExpression,  current_id=-1, current_class='', current_mp_id=-1, current_result=list(), dict_class_ids=dict(), random_seed=1):
     '''
     Output: a dictionary of the form {[str,str,str] : [tensor,tensor]}, where the key represents (nodetype, edgetype, nodetype)-triples and the value the node-ids. 
@@ -207,14 +219,14 @@ def generate_cedict_from_ce(ce: OWLClassExpression,  current_id=-1, current_clas
         # cii = copy.deepcopy(current_id)
         # cci = copy.deepcopy(current_class)
         # cmi = copy.deepcopy(current_mp_id)
-        for op in ce.operands():
+        ops = get_ops(ce)
+        for op in ops:
             if isinstance(op, OWLClass):
                 op_classes.append(op)
                 current_class, current_id, current_result, dict_class_ids = update_class(
                     op, current_id=current_id, current_class=current_class, current_mp_id=current_mp_id, current_result=current_result, dict_class_ids=dict_class_ids, random_seed=random_seed)
                 # generate_cedict_from_ce(op, current_id = current_id, current_class = current_class, current_mp_id = current_mp_id, current_result = current_result)
-        for op in ce.operands():
-            if op not in op_classes:
+            else:
                 generate_cedict_from_ce(op, current_id=current_id, current_class=current_class,
                                         current_mp_id=current_mp_id, current_result=current_result, dict_class_ids=dict_class_ids)
     elif isinstance(ce, OWLObjectUnionOf):

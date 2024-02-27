@@ -7,7 +7,7 @@ from datasets import HeteroBAMotifDataset, GenerateRandomGraph, GraphMotifAugmen
 from generate_graphs import get_number_of_hdata, get_gnn_outs
 from create_random_ce import random_ce_with_startnode, get_graph_from_ce, mutate_ce, length_ce, length_ce, fidelity_ce_testdata, replace_property_of_fillers
 from visualization import visualize_hd
-from evaluation import ce_score_fct, ce_confusion_iterative, fidelity_el, ce_fast_instance_checker, Accuracy_El
+from evaluation import ce_score_fct, fidelity_el_binary_whole_dataset, fidelity_el, ce_fast_instance_checker, Accuracy_El, length_ce
 from models import HeteroGNNModel, HeteroGNNTrainer
 from bashapes_model import HeteroGNNBA
 from utils import delete_files_in_folder, remove_front, top_unique_scores, remove_integers_at_end, get_last_number
@@ -41,6 +41,13 @@ import pandas as pd
 import re
 import logging
 import time
+from datetime import datetime
+
+# Generate a unique filename with the current date and time
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+filename_results_scoring = f'results_txt/scores_{timestamp}.txt'
+with open(filename_results_scoring, 'w') as file:
+    file.write('Scoring results for the CE: \n')
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('matplotlib')
 logger.setLevel(logging.WARNING)
@@ -52,6 +59,10 @@ xmlns = "http://www.semanticweb.org/stefan/ontologies/2023/1/untitled-ontology-1
 NS = xmlns
 random_seed = 1
 random.seed(random_seed)
+torch.manual_seed(random_seed)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed_all(random_seed
+                               )  # For CUDA-enabled GPUs
 
 
 # -------- include values from shell script
@@ -60,20 +71,23 @@ try:
     number_of_ces = sys.argv[2]
     number_of_graphs = int(sys.argv[3])
     lambdaone = int(sys.argv[4])
-    random_seed = int(sys.argv[5])
+    lambdaone_fidelity = int(sys.argv[5])
+    random_seed = int(sys.argv[6])
 
 except Exception as e:
     print(f"Error deleting file: {e}")
-    end_length = 5
-    number_of_ces = 20
-    number_of_graphs = 30
-    lambdaone = 0.0  # controls the length of the CE
+    end_length = 12
+    number_of_ces = 1000
+    number_of_graphs = 100
+    lambdaone = 1  # controls the length of the CE
+    lambdaone_fidelity = 0  # controls the length of the CE
     random_seed = 1
 # Further Parameters:
 layers = 2  # 2 or 4 for the bashapes hetero dataset
+size_dataset = 10000  # 10000 for the bashapes hetero dataset
 start_length = 2
 
-num_top_results = 10
+num_top_results = 20
 save_ces = True  # Debugging: if True, creates new CEs and save the CEs to hard disk
 # hyperparameters for scoring
 
@@ -83,17 +97,14 @@ aggr_fct = 'max'  # 'max' or 'mean'
 
 # retraining Model and Dataset
 # TODO: Create a list of pre-defined datasets with models
-# For Code-Idea: Compare with GAIN-Presentation
 
 
 # Which parts of the Code should be run?
-retrain_GNN_and_dataset = True
-run_beam_search = True
-run_tests_ce = True
-
-
-# tests
-visualize_twice = True
+retrain_GNN_and_dataset = False
+run_beam_search = False
+run_tests_ce = False
+# Run on a new dataset with a new scoring function
+run_beam_search_fidelity = False
 
 
 # ----------------  utils
@@ -227,10 +238,10 @@ def calc_fid_acc_top_results(list_results, model, target_class, dataset):
 
 def output_top_results(list_results, target_class, list_all_nt):
     # here we visualize with visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explain, add_info='', name_folder='')
-    print('debug targer class: ', target_class)
+    # print('output top results: debug target class: ', target_class)
     # begin debugging
-    for ce_result in list_results:
-        print(ce_result['score'])
+    # for ce_result in list_results:
+    #    print(ce_result['score'])
     # end debugging
     for ce_result in list_results:
         assert 'graphs' in ce_result, "The key 'graphs' does not exist in ce_result"
@@ -256,7 +267,6 @@ def output_top_results(list_results, target_class, list_all_nt):
         # then, we create the fitting name for savings
         # in the form CE_x_Gr_y
         # where x is the number of the CE and y is the number of the graph
-        print('debugging: ', ce_result)
         for graph in ce_result['graphs']:
             str_addon_save = 'CE' + str(list_results.index(ce_result)) + '_Gr_' + str(ce_result['graphs'].index(graph))
             visualize_hd(graph, str_addon_save, list_all_nt, target_class, add_info=caption, name_folder='')
@@ -301,7 +311,7 @@ def beam_and_calc_and_output(hd, model, target_class, start_length, end_length,
 # -----------------  Test new Datasets  -----------------------
 
 
-def test_new_datasets(num_nodes=20000, num_motifs=2000, num_edges=3):
+def test_new_datasets(num_nodes=size_dataset, num_motifs=int(0.1*size_dataset), num_edges=3):
     # test the new datasets
     # create BA Graph
     ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=num_nodes, num_edges=num_edges)
@@ -321,7 +331,6 @@ def test_new_datasets(num_nodes=20000, num_motifs=2000, num_edges=3):
     dataset_class = HeteroBAMotifDataset(synthetic_graph, type_to_classify)
     dataset_class.augmenter = synthetic_graph_class
     dataset = dataset_class._convert_labels_to_node_types()
-    print(dataset)
     return dataset, dataset_class
 
 
@@ -341,7 +350,7 @@ def train_gnn_on_dataset(dataset):
     model = HeteroGNNModel(dataset.metadata(), hidden_channels=64, out_channels=2,
                            node_type=dataset.type_to_classify, num_layers=2)
     model_trainer = HeteroGNNTrainer(model, dataset, learning_rate=0.01)
-    model = model_trainer.train(epochs=5000)
+    model = model_trainer.train(epochs=1000)
     # modelHeteroBSM = bsm.train_GNN(train_new_GNN, dataset, layers=layers)
     # modelHeteroBSM.eval()
     # end debug
@@ -360,7 +369,6 @@ def dataset_debug():
     synthetic_graph = synthetic_graph_class.graph
     dataset_class = HeteroBAMotifDataset(synthetic_graph, type_to_classify)
     dataset = dataset_class._convert_labels_to_node_types()
-    print(dataset)
     return dataset
 
 
@@ -374,6 +382,13 @@ def dataset_bashapes():
 
 
 # test ce_creation
+number_to_letter = {
+    0: 'D',
+    1: 'C',
+    2: 'B',
+    3: 'A'
+}
+
 test_ce_new_datasets = True
 if test_ce_new_datasets:
     if retrain_GNN_and_dataset:
@@ -381,12 +396,16 @@ if test_ce_new_datasets:
         model = train_gnn_on_dataset(dataset)
         with open('content/dataset_bashapes.pkl', 'wb') as file:
             pickle.dump(dataset, file)
+        with open('content/dataset_class_bashapes.pkl', 'wb') as file:
+            pickle.dump(dataset_class, file)
         with open('content/model_bashapes.pkl', 'wb') as file:
             pickle.dump(model, file)
     else:
         try:
             with open('content/dataset_bashapes.pkl', 'rb') as file:
                 dataset = pickle.load(file)
+            with open('content/dataset_class_bashapes.pkl', 'rb') as file:
+                dataset_class = pickle.load(file)
             with open('content/model_bashapes.pkl', 'rb') as file:
                 model = pickle.load(file)
         except Exception:
@@ -395,6 +414,8 @@ if test_ce_new_datasets:
             model = train_gnn_on_dataset(dataset)
             with open('content/dataset_bashapes.pkl', 'wb') as file:
                 pickle.dump(dataset, file)
+            with open('content/dataset_class_bashapes.pkl', 'wb') as file:
+                pickle.dump(dataset_class, file)
             with open('content/model_bashapes.pkl', 'wb') as file:
                 pickle.dump(model, file)
     out = model(dataset.x_dict, dataset.edge_index_dict)
@@ -409,27 +430,59 @@ if test_ce_new_datasets:
         HeteroBAMotifDataset.print_statistics_to_dataset(dataset)
         with open('content/list_results.pkl', 'wb') as file:
             pickle.dump(list_results, file)
-    run_tests_ce = True
+
     if run_tests_ce:
         with open('content/list_results.pkl', 'rb') as file:
             list_results = pickle.load(file)
+        # Save to some file
+        # with open(filename_results_scoring, 'a') as file:
+        #    file.write('Showing changed scores for the CE: ' + str(list_results[0]['CE']) + '\n')
+        #    file.write('Showing, if Edges A-C are deleted' + '\n')
         # change graphs and see if score changes.
         manipulated_scores = ManipulateScores(orig_scores=list_results, model=model,
-                                              target_class=dataset.type_to_classify, aggregation=aggr_fct)
+                                              target_class=dataset.type_to_classify, aggregation=aggr_fct, file_name=filename_results_scoring)
         manipulated_graphs = manipulated_scores.delete_list_of_graphs_1_3(list_results[0]['graphs'])
-        new_scores = manipulated_scores.score_manipulated_graphs(list_results, manipulated_graphs)
+        new_scores = manipulated_scores.score_manipulated_graphs(manipulated_graphs)
         print('Running with manipulated scores: Done')
         print('We have used datasets of the following: ')
         print('Number of 3-1 edges: ', dataset['3', 'to', '1'].num_edges)
         print('Number of 3-1 edges, where 1 or 3 is in the motif: ', dataset_class.get_number_3_1_attached_to_motifs())
 
         # Further Test: Add 3-1 Edges
-        run_test_add_3_1 = True
+        run_test_add_3_1 = False
         if run_test_add_3_1:
-            new_scores = manipulated_scores.score_add_3_1_edges(list_results)
+            manipulated_graphs = manipulated_scores.list_of_graphs_add_3_1_edges(list_results[0]['graphs'])
+            # with open(filename_results_scoring, 'a') as file:
+            #    file.write('Showing, if Edges A-C are deleted' + '\n')
+            new_scores = manipulated_scores.score_manipulated_graphs(manipulated_graphs)
 
         # Furthermore: Change graphs of best CEs and reevaluate the GNN Score.
         # This is done in the function: ce_confusion_iterative(ce, dataset, list_of_classes)
+
+        # run all in one loop, specific for the house dataset
+        for ith_score in range(0, min(num_top_results, len(list_results))):
+            print(f'Scoring the {ith_score}th best CE')
+            with open(filename_results_scoring, 'a') as file:
+                file.write(f'Scoring the {ith_score}th best CE' + '\n')
+            for i in range(0, 4):
+                for j in range(i, 4):
+                    with open(filename_results_scoring, 'a') as file:
+                        # print('debug: ', len(list_results), ith_score)
+                        file.write('\tShowing changed scores for the CE: ' +
+                                   str(dlsr.render(list_results[ith_score]['CE'])) + '\n')
+                        file.write(
+                            f'\t\tShowing, if edges {number_to_letter[i]}-{number_to_letter[j]} are deleted' + '\n')
+                    manipulated_graphs = manipulated_scores.delete_list_of_graphs_i_j(
+                        list_graphs=list_results[ith_score]['graphs'], i=i, j=j)
+                    new_scores = manipulated_scores.score_manipulated_graphs(manipulated_graphs)
+                    with open(filename_results_scoring, 'a') as file:
+                        file.write('\tShowing changed scores for the CE: ' +
+                                   str(dlsr.render(list_results[ith_score]['CE'])) + '\n')
+                        file.write(
+                            f'\t\tShowing, if edges {number_to_letter[i]}-{number_to_letter[j]} are added' + '\n')
+                    manipulated_graphs = manipulated_scores.list_of_graphs_add_i_j_edges(graphs_to_change=list_results[ith_score]['graphs'],
+                                                                                         i=i, j=j)
+                    new_scores = manipulated_scores.score_manipulated_graphs(manipulated_graphs)
 
     run_tests_ce = False
     if run_tests_ce:
@@ -453,54 +506,377 @@ if test_ce_new_datasets:
         ce_3_2 = OWLObjectIntersectionOf([class_3, edge_to_two])
         ce_3 = class_3
         for ce_ in [ce_3_2, gt_ce]:
-            hd = dataset
-            node_types = []
-            metagraph = hd.edge_types  # [str,str,str]
-            edge_ces = []
-            target_class = '3'
-            number_of_ces = 1
-            number_of_graphs = 10
-            num_top_results = 1
+            hd_local = dataset
+            node_types_local = []
+            metagraph_local = hd_local.edge_types  # [str,str,str]
+            edge_ces_local = []
+            target_class_local = '3'
+            number_of_ces_local = 1
+            number_of_graphs_local = 10
+            num_top_results_local = 1
 
-            for mp in metagraph:
-                edge_ces.append([OWLObjectProperty(IRI(NS, mp[1]))])
-            for nt in hd.node_types:
+            for mp in metagraph_local:
+                edge_ces_local.append([OWLObjectProperty(IRI(NS, mp[1]))])
+            for nt in hd_local.node_types:
                 assert isinstance(nt, str), (nt, "This is not a string, but should be")
                 nt_str = str(nt)  # debugging: Ensure only strings are used
-                node_types.append(OWLClass(IRI(NS, nt_str)))
+                node_types_local.append(OWLClass(IRI(NS, nt_str)))
             list_results = []
             for _ in range(number_of_ces):
                 local_dict_results = dict()
                 ce_here = ce_
                 assert isinstance(ce_here, OWLClassExpression), (ce_here, "This is not a Class Expression")
                 local_dict_results['CE'] = ce_here
-                list_graphs = get_number_of_hdata(ce_here, hd, num_graph_hdata=number_of_graphs)
+                list_graphs = get_number_of_hdata(ce_here, hd_local, num_graph_hdata=number_of_graphs)
                 local_dict_results['graphs'] = list_graphs
                 local_dict_results['GNN_outs'] = list()
                 for graph in list_graphs:
-                    gnn_out = get_gnn_outs(graph, model, target_class)
+                    gnn_out = get_gnn_outs(graph, model, target_class_local)
                     local_dict_results['GNN_outs'].append(gnn_out)
                 score = ce_score_fct(ce_here, local_dict_results['GNN_outs'], lambdaone, lambdatwo)
                 local_dict_results['score'] = score
                 list_results.append(local_dict_results)
                 list_results = top_unique_scores(list_results, num_top_results)
-                list_results = calc_fid_acc_top_results(list_results, model, target_class, hd)
-                output_top_results(list_results, target_class, hd.node_types)
-            print(list_results)
+                list_results = calc_fid_acc_top_results(list_results, model, target_class_local, hd_local)
+                output_top_results(list_results, target_class_local, hd_local.node_types)
+            # print(list_results)
 
 
-# ------------------  Testing Zone -----------------------
-'''
-ce_test_here = create_test_ce_3011()[1] #3-1-2
-#print(919, dlsr.render(ce_test))
-#ce_confusion(ce_test, motif = 'house') #should output 0
-ce_last_class = find_last_class(ce_test_here)
-print(ce_last_class)
-print(1076, dlsr.render(ce_last_class))
-ce_last_class = create_test_ce_3011()[1]
-print(find_last_class(ce_test_here))
-print(1076, dlsr.render(find_last_class(ce_test_here)))
-print(1080, ce_to_tree_list(ce_test_here))
+# ------------------  Beam Search with fidelity -----------------------
+class BeamSearch:
+    """
+    Only working for Fidelity !!
+    """
 
-list_3011 = ['Intersection', ['3'], ['to', ['Intersection', ['0'], ['to', ['Intersection', ['1'], ['to', ['1']]]]]]]
-'''
+    def __init__(self, hd, model, target_class, start_length, end_length,
+                 number_of_ces, number_of_graphs, num_top_results, size_validation_and_test, new_edges, save_ces, lambdaone_fidelity=0):
+        self.hd = hd
+        self.model = model
+        self.target_class = target_class
+        self.start_length = start_length
+        self.end_length = end_length
+        self.number_of_ces = number_of_ces
+        self.number_of_graphs = number_of_graphs
+        self.num_top_results = num_top_results
+        # Validation and Test Dataset
+        self.validation_dataset, self.validation_dataset_class = self.create_new_dataset(size_validation_and_test,
+                                                                                         int(0.1*size_validation_and_test), new_edges)
+        self.test_dataset, self.test_dataset_class = self.create_new_dataset(size_validation_and_test,
+                                                                             int(0.1*size_validation_and_test), new_edges)
+
+        self.save_ces = save_ces
+        # list for classes of node types and edge types
+        self.metagraph = self.hd.edge_types  # [str,str,str]
+        self.node_types_ces = []
+        self.edge_ces = []
+        self.lambdaone_fidelity = lambdaone_fidelity
+
+        for mp in self.metagraph:
+            self.edge_ces.append(OWLObjectProperty(IRI(NS, mp[1])))
+        for nt in self.hd.node_types:
+            assert isinstance(nt, str), (self.nt, "This is not a string, but should be")
+            nt_str = str(nt)  # debugging: Ensure only strings are used
+            self.node_types_ces.append(OWLClass(IRI(NS, nt_str)))
+
+    def create_new_dataset(self, num_nodes, num_motifs, num_edges):
+        # test the new datasets
+        # create BA Graph
+        ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(num_nodes=num_nodes, num_edges=num_edges)
+        motif = {
+            'labels': ['1', '2', '3', '4', '5'],
+            'edges': [(0, 1), (0, 2), (0, 3), (0, 4)]
+        }
+        motif_house_letters = {
+            'labels': ['A', 'B', 'B', 'C', 'C'],
+            'edges': [(0, 1), (0, 2), (1, 2), (1, 3), (2, 4), (3, 4)]
+        }
+        type_to_classify = '2'
+        synthetic_graph_class = GraphMotifAugmenter(motif='house', num_motifs=num_motifs, orig_graph=ba_graph_nx)
+        synthetic_graph = synthetic_graph_class.graph
+        # Workaround, fix later
+
+        dataset_class = HeteroBAMotifDataset(synthetic_graph, type_to_classify)
+        dataset_class.augmenter = synthetic_graph_class
+        dataset = dataset_class._convert_labels_to_node_types()
+        return dataset, dataset_class
+
+    def evaluate_fidelity(self, ce):
+        """
+        1. Score GNN on the test dataset -> happens in the function fidelity_el
+        2. On all target-nodes, calculate the fidelity
+        3. Return the average fidelity
+        """
+        dict_results = fidelity_el_binary_whole_dataset(ce=ce, dataset=self.test_dataset, node_type_to_expl=self.target_class,
+                                                        model=self.model)
+        return dict_results['fidelity'], dict_results
+
+    def scoring_fidelity(self, ce):
+        """
+        1. Score GNN on the validation dataset -> happens in the function fidelity_el
+        2. On all target-nodes, calculate the fidelity
+        3. Return the average fidelity
+        """
+        dict_results = fidelity_el_binary_whole_dataset(ce=ce, dataset=self.validation_dataset, node_type_to_expl=str(self.target_class),
+                                                        model=self.model)
+
+        return dict_results['fidelity'], dict_results
+
+    def regularize_score(self, score, ce):
+        regularized_score = score[0] + self.lambdaone_fidelity * length_ce(ce)
+        return regularized_score, score[1]
+
+    def beam_search(self):
+        """
+        Performs beam search to generate a list of candidate class expressions (CEs) for a given target class.
+        """
+
+        if self.save_ces:  # Debugging: if True, creates new CEs and save the CEs to hard disk
+            list_results = self.beam_search_intern()
+            # debugging:
+        # For Debug: Save to hard disk and load again
+            if not os.path.exists('content/Results'):
+                os.makedirs('content/Results')
+            with open('content/Results/my_list_fidelity.pkl', 'wb') as f:
+                pickle.dump(list_results, f)
+        else:
+            with open('content/Results/my_list_fidelity.pkl', 'rb') as f:
+                list_results = pickle.load(f)
+        return list_results
+
+    def beam_search_intern(self):
+        """
+        1. Create n random CEs of start length
+        2. Enlarge the CEs -> get a list of 2n CEs
+        3. Score all CEs and keep the best n ones
+
+        All CEs re scored as a dict, with the keys CE and score
+        """
+        list_results = []
+        for _ in range(self.number_of_ces):
+            ce = random_ce_with_startnode(length=self.start_length, typestart=OWLClass(
+                IRI(NS, self.target_class)), list_of_classes=self.node_types_ces, list_of_edge_types=self.edge_ces)
+            score = self.scoring_fidelity(ce)
+            reg_score = self.regularize_score(score, ce)
+            list_results.append({'CE': ce, 'score': score, 'fidelity': score[0], 'reg_score': reg_score[0]})
+        print('Initialization of CEs is finished')
+        for _ in range(self.end_length - self.start_length):
+            list_start = copy.deepcopy(list_results)
+            for ce_dict in list_start:
+                ce_here = ce_dict['CE']
+                ce_here = mutate_ce(ce_here, self.node_types_ces, self.edge_ces)
+                score = self.scoring_fidelity(ce_here)
+                reg_score = self.regularize_score(score, ce_here)
+                list_results.append({'CE': ce_here, 'score': score, 'fidelity': score[0], 'reg_score': reg_score[0]})
+            # take only the best ones into the next round
+            list_results = sorted(list_results, key=lambda x: x['reg_score'], reverse=True)[:self.number_of_ces]
+            print(f'Round {_+1} of {self.end_length - self.start_length} is finished')
+        return list_results
+
+    def visualize_ce(self, ce, caption, name_folder, ce_id):
+        """
+        1. Create 10 graphs to the ce
+        2. Visualize the graphs in an own folder
+        """
+        number_graphs = 20
+        list_graphs = get_number_of_hdata(
+            ce, self.hd, num_graph_hdata=number_graphs)
+        # score the graphs with old scoring scoring function
+        list_gnn_outs = []
+        for graph in list_graphs:
+            gnn_out = get_gnn_outs(graph, self.model, self.target_class)
+            list_gnn_outs.append(gnn_out)
+        gnn_score = ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo, aggregate='max')
+        caption += '\n' + 'GNN Score: ' + str(gnn_score)
+        for id, graph in enumerate(list_graphs):
+            str_addon_save = 'CE' + str(ce_id) + '_Gr_' + str(id)
+            visualize_hd(graph, str_addon_save, self.hd.node_types,
+                         self.target_class, add_info=caption, name_folder=name_folder)
+
+
+if run_beam_search_fidelity:
+    delete_files_in_folder('Score_FidelityHeteroBAShapes')
+    try:
+        with open('content/dataset_bashapes.pkl', 'rb') as file:
+            dataset = pickle.load(file)
+        with open('content/dataset_class_bashapes.pkl', 'rb') as file:
+            dataset_class = pickle.load(file)
+        with open('content/model_bashapes.pkl', 'rb') as file:
+            model = pickle.load(file)
+    except Exception:
+        print("Error loading dataset and model from file.")
+        dataset, dataset_class = test_new_datasets()
+        model = train_gnn_on_dataset(dataset)
+        with open('content/dataset_bashapes.pkl', 'wb') as file:
+            pickle.dump(dataset, file)
+        with open('content/dataset_class_bashapes.pkl', 'wb') as file:
+            pickle.dump(dataset_class, file)
+        with open('content/model_bashapes.pkl', 'wb') as file:
+            pickle.dump(model, file)
+    # create new dataset
+    size_validation_and_test = 1000
+    new_edges = 3
+    target_class = dataset.type_to_classify
+    num_top_results = 20
+    bs = BeamSearch(hd=dataset, model=model, target_class=target_class,
+                    start_length=start_length, end_length=end_length, number_of_ces=number_of_ces,
+                    number_of_graphs=number_of_graphs, num_top_results=num_top_results,
+                    size_validation_and_test=size_validation_and_test,
+                    new_edges=new_edges, save_ces=save_ces, lambdaone_fidelity=lambdaone_fidelity)
+    results = bs.beam_search()
+
+    # Visualize the top results
+    for _ in range(num_top_results):
+        ce = results[_]['CE']
+        result_dict = bs.evaluate_fidelity(ce)
+        accuracy_class_instance = Accuracy_El()
+        accuracy = accuracy_class_instance.ce_accuracy_to_house(ce)
+        results[_]['accuracy'] = accuracy
+        results[_]['fidelity'] = result_dict[0]
+        results[_]['score'] = result_dict[1]
+        caption = 'CE: ' + str(dlsr.render(ce)) + '\n' + 'Fidelity: ' + str(results[_]['fidelity']) + \
+            '\n' + 'Accuracy: ' + str(results[_]['accuracy']) + \
+            '\n' + 'More Fidelity Measures: ' + '\n' + str(results[_]['score'])
+        bs.visualize_ce(ce, caption, name_folder='Score_Fidelity', ce_id=_)
+
+
+# -----------------  Visualize Single CEs -----------------------
+class VisualizeCe(BeamSearch):
+    def __init__(self, model, target_class, ce, name_folder, hd=None):
+        if hd is None:
+            self.hd = self.create_new_dataset(num_nodes=1000, num_motifs=100, num_edges=3)[0]
+        else:
+            self.hd = hd
+        self.model = model
+        self.target_class = target_class
+        self.ce = ce
+        self.name_folder = name_folder
+        self.results_dict = dict()
+
+    def get_results_for_ce(self):
+        self.results_dict = fidelity_el_binary_whole_dataset(ce=self.ce, dataset=self.hd, node_type_to_expl=self.target_class,
+                                                             model=self.model)
+        accuracy_class_instance = Accuracy_El()
+        accuracy = accuracy_class_instance.ce_accuracy_to_house(self.ce)
+        self.results_dict['accuracy'] = accuracy
+        # Additionally get GNN outs
+        number_graphs = 40
+        list_graphs = get_number_of_hdata(
+            self.ce, self.hd, num_graph_hdata=number_graphs)
+        # score the graphs with old scoring scoring function
+        list_gnn_outs = []
+        for graph in list_graphs:
+            gnn_out = get_gnn_outs(graph, self.model, self.target_class)
+            list_gnn_outs.append(gnn_out)
+        gnn_score = ce_score_fct(self.ce, list_gnn_outs, lambdaone, lambdatwo, aggregate='max')
+        self.results_dict['GNN_score'] = gnn_score
+        return self.results_dict
+
+    def visualize_results(self):
+        """
+        Visualizes the results of the current experiment.
+
+        If the results dictionary is empty, it retrieves the results for the current counterexample (CE).
+        The visualization includes the CE, fidelity, accuracy, and additional fidelity measures such as GNN score.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if not self.results_dict:
+            self.get_results_for_ce()
+        caption = 'CE: ' + str(dlsr.render(self.ce)) + '\n' + 'Fidelity: ' + str(self.results_dict['fidelity']) + \
+            '\n' + 'Accuracy: ' + str(self.results_dict['accuracy']) + \
+            '\n' + 'More Fidelity Measures: ' + \
+            '\n' + 'GNN Score: ' + str(self.results_dict['GNN_score']) + \
+            '\n' + 'tpr: ' + str(self.results_dict['recall']) + \
+            'tnr: ' + str(self.results_dict['true_negative_rate'])
+        self.visualize_ce(self.ce, caption, self.name_folder, ce_id=0)
+
+
+def return_ground_truth__ce_2():
+    class_3 = OWLClass(IRI(NS, '3'))
+    class_2 = OWLClass(IRI(NS, '2'))
+    class_1 = OWLClass(IRI(NS, '1'))
+    class_0 = OWLClass(IRI(NS, '0'))
+    edge = OWLObjectProperty(IRI(NS, 'to'))
+    edge_to_one = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
+    edge_to_two = OWLObjectSomeValuesFrom(property=edge, filler=class_2)
+    edge_to_three = OWLObjectSomeValuesFrom(property=edge, filler=class_3)
+    edge_to_123 = OWLObjectIntersectionOf([edge_to_one, edge_to_two, edge_to_three])
+    edge_to_22 = OWLObjectIntersectionOf([edge_to_two, edge_to_two])
+    edge_to_12 = OWLObjectIntersectionOf([edge_to_one, edge_to_two])
+    edge_from_2_to_123 = OWLObjectIntersectionOf([edge_to_123, class_2])
+    edge_from_3_to_22 = OWLObjectIntersectionOf([edge_to_22, class_3])
+    edge_from_1_to_12 = OWLObjectIntersectionOf([edge_to_12, class_1])
+    edge_to_123_and_22_and_12 = OWLObjectSomeValuesFrom(
+        property=edge, filler=OWLObjectIntersectionOf([edge_from_2_to_123, edge_from_3_to_22, edge_from_1_to_12]))
+    edge_to_1_to_12 = OWLObjectSomeValuesFrom(property=edge, filler=edge_from_1_to_12)
+    edge_to_2_to_123 = OWLObjectSomeValuesFrom(property=edge, filler=edge_from_2_to_123)
+    edge_to_3_to_22 = OWLObjectSomeValuesFrom(property=edge, filler=edge_from_3_to_22)
+    gt_ce_2 = OWLObjectIntersectionOf([class_2, edge_to_1_to_12, edge_to_2_to_123, edge_to_3_to_22])
+    return gt_ce_2
+
+
+def return_middle_gt_ce_2():
+    """
+    #2 - 1(2-1)3
+    """
+    class_3 = OWLClass(IRI(NS, '3'))
+    class_2 = OWLClass(IRI(NS, '2'))
+    class_1 = OWLClass(IRI(NS, '1'))
+    class_0 = OWLClass(IRI(NS, '0'))
+    edge = OWLObjectProperty(IRI(NS, 'to'))
+    edge_to_one = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
+    edge_to_two = OWLObjectSomeValuesFrom(property=edge, filler=class_2)
+    edge_to_three = OWLObjectSomeValuesFrom(property=edge, filler=class_3)
+    edge_2_to_1 = OWLObjectIntersectionOf([class_2, edge_to_one])
+    edge_to_2_to_1 = OWLObjectSomeValuesFrom(property=edge, filler=edge_2_to_1)
+    edge_3_to_2 = OWLObjectIntersectionOf([class_3, edge_to_two])
+    edge_to_3_to_2 = OWLObjectSomeValuesFrom(property=edge, filler=edge_3_to_2)
+    edge_1_to_1 = OWLObjectIntersectionOf([class_1, edge_to_one])
+    edge_to_1_to_1 = OWLObjectSomeValuesFrom(property=edge, filler=edge_1_to_1)
+
+    middle_gt_ce_2 = OWLObjectIntersectionOf([class_2, edge_to_1_to_1, edge_to_2_to_1, edge_to_3_to_2])
+    return middle_gt_ce_2
+
+
+def return_short_gt_ce_2():
+    """
+    #2 - 1(2-1)3
+    """
+    class_3 = OWLClass(IRI(NS, '3'))
+    class_2 = OWLClass(IRI(NS, '2'))
+    class_1 = OWLClass(IRI(NS, '1'))
+    class_0 = OWLClass(IRI(NS, '0'))
+    edge = OWLObjectProperty(IRI(NS, 'to'))
+    edge_to_one = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
+    edge_to_two = OWLObjectSomeValuesFrom(property=edge, filler=class_2)
+    edge_to_three = OWLObjectSomeValuesFrom(property=edge, filler=class_3)
+    edge_2_to_1 = OWLObjectIntersectionOf([class_2, edge_to_one])
+    edge_to_2_to_1 = OWLObjectSomeValuesFrom(property=edge, filler=edge_2_to_1)
+    short_gt_ce_2 = OWLObjectIntersectionOf([class_2, edge_to_one, edge_to_2_to_1, edge_to_three])
+    return short_gt_ce_2
+
+
+# ENDE
+delete_files_in_folder('GroundTruthHeteroBAShapes')
+ground_truth_ce = return_ground_truth__ce_2()
+short_ground_truth_ce = return_short_gt_ce_2()
+middle_gt_ce_2 = return_middle_gt_ce_2()
+
+visualize_gt_class = VisualizeCe(model=model, target_class=dataset.type_to_classify,
+                                 ce=ground_truth_ce, name_folder='GroundTruth')
+gt_dataset = visualize_gt_class.hd
+visualize_gt_class.visualize_results()
+# middle long CE
+visualize_middle_gt_class = VisualizeCe(model=model, target_class=dataset.type_to_classify,
+                                        ce=middle_gt_ce_2, name_folder='GroundTruthMiddle', hd=gt_dataset)
+visualize_middle_gt_class.visualize_results()
+
+
+# shorter gt
+visualize_short_gt_class = VisualizeCe(model=model, target_class=dataset.type_to_classify,
+                                       ce=short_ground_truth_ce, name_folder='GroundTruthshort', hd=gt_dataset)
+visualize_short_gt_class.visualize_results()

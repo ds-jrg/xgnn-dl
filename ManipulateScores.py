@@ -12,43 +12,36 @@ class ManipulateScores:
     Functions: creating new lists with manipulated graphs for evaluating the Scores; Returning manipulated lists
     """
 
-    def __init__(self, orig_scores=None, model=None, target_class=None, aggregation='max') -> None:
+    def __init__(self, orig_scores=None, model=None, target_class=None, aggregation='max', file_name='results') -> None:
         self._original_scores = orig_scores
         self._model = model
         self._target_class = target_class
         self._aggregation = aggregation
+        self._filename = file_name
 
-    def score_manipulated_graphs(self, scores, new_graphs: list):
+    def score_manipulated_graphs(self, new_graphs: list):
         """
         Scores are lists of dictionaries with the following keys: 'CE', 'graphs', 'GNN_outs', 'score', sorted by scores
         Input: List of scores as in Beamsearch
         Output: List of scores with all graphs that have one or three edges deleted
         """
-        manipulated_results = copy.deepcopy(scores)
-        old_scores = [round(g['score'], 2) for g in scores]
+        manipulated_results = copy.deepcopy(self._original_scores)
         # calculate old scores with regularization = 0; ensuring that only the GNN is taken into account
-
-        for local_result in manipulated_results:
-            local_result['GNN_outs'] = list()
-            local_result['old_GNN_outs'] = list()
-            for graph_old, graph_new in zip(new_graphs, local_result['graphs']):
-                gnn_out_old = get_gnn_outs(graph_old, self._model, self._target_class)
-                local_result['old_GNN_outs'].append(gnn_out_old)
-                # recalculate Scores
-                gnn_out = get_gnn_outs(graph_new, self._model, self._target_class)
-                local_result['GNN_outs'].append(gnn_out)
-            local_result['old_score'] = ce_score_fct(
-                local_result['CE'], local_result['old_GNN_outs'], 0.0, 0, self._aggregation)
-            local_result['score'] = ce_score_fct(
-                local_result['CE'], local_result['GNN_outs'], 0.0, 0, self._aggregation)
-
-        old_scores = [round(g['old_score'], 2) for g in manipulated_results]
-        new_scores = [round(g['score'], 2) for g in manipulated_results]
-        print('We have now omitted the regularization term for identifying the best graphs. ')
-        print('Now scores with and without edges between top and bottom nodes are presented: ')
-        print('old scores: ', old_scores)
-        print('new scores: ', new_scores)
-        return new_scores
+        graphs = manipulated_results[0]['graphs']
+        list_old_gnn_outs = []
+        list_new_gnn_outs = []
+        for graph_old, graph_new in zip(graphs, new_graphs):
+            gnn_out_old = get_gnn_outs(graph_old, self._model, self._target_class)
+            list_old_gnn_outs.append(round(gnn_out_old, 2))
+            gnn_out = get_gnn_outs(graph_new, self._model, self._target_class)
+            list_new_gnn_outs.append(round(gnn_out, 2))
+        maximal_gnn_pair = max(zip(list_old_gnn_outs, list_new_gnn_outs), key=lambda x: x[0])
+        #print('We have now omitted the regularization term for identifying the best graphs. ')
+        print(f'maximal score with edge: {maximal_gnn_pair[0]} and without edge: {maximal_gnn_pair[1]}')
+        with open(f'{self._filename}', 'a') as f:
+            f.write(
+                f'\t\t\tMaximal original score: {maximal_gnn_pair[0]} and score on changed graph: {maximal_gnn_pair[1]}' + '\n')
+        return list_new_gnn_outs
 
     def score_wo_one_three_edges(self, scores):
         """
@@ -183,6 +176,74 @@ class ManipulateScores:
                 index_of_node_3 = random.randint(0, num_nodes_type_3 - 1)
                 ManipulateScores.util_add_edge_to_graph(
                     graph, '1', 'to', '3', i, index_of_node_3)
+        return graph
+
+    @staticmethod
+    def delete_i_j_edges(graph_to_change, i, j):
+        i = str(i)
+        j = str(j)
+        graph = copy.deepcopy(graph_to_change)
+        if (i, 'to', j) in graph.edge_types:
+            del graph[i, 'to', j]
+        if (j, 'to', i) in graph.edge_types:
+            del graph[j, 'to', i]
+        return graph
+
+    @staticmethod
+    def delete_list_of_graphs_i_j(list_graphs, i: str, j: str) -> list:
+        """
+        Input: list of graphs as hdata, nodetype 1 to delete, nodetype 2 to delete
+        Output: list of graphs with all edges between node type i and nodetype j are deleted
+        """
+        i = str(i)
+        j = str(j)
+        new_list = []
+        for graph in list_graphs:
+            new_list.append(ManipulateScores.delete_i_j_edges(graph, i=i, j=j))
+        return new_list
+
+    @staticmethod
+    def list_of_graphs_add_i_j_edges(graphs_to_change, i, j):
+        """
+        Input: graphs_to_change as hdata
+        Output: List of graphs where all 3s have an edge to a 1 and the other way around
+        """
+        i = str(i)
+        j = str(j)
+        result_list = []
+        for graph in graphs_to_change:
+            result_list.append(ManipulateScores.add_i_j_edges(graph, i, j))
+        return result_list
+
+    @staticmethod
+    def add_i_j_edges(graph_to_change, i, j):
+        """
+        Input: graph as hdata
+        Output: Graph where all 3s have an edge to a 1 and the other way around
+
+        """
+        i = str(i)
+        j = str(j)
+        graph = copy.deepcopy(graph_to_change)
+        # 1. check all nodes of type 3
+        num_nodes_type_i = graph[i].x.shape[0]
+        num_nodes_type_j = graph[j].x.shape[0]
+        for _ in range(num_nodes_type_i):
+            # check, if this node has a connection to nodetype 1
+            indices_of_connected_one_nodes = ManipulateScores.util_get_neighbors_of_type(
+                graph, i, j, _)
+            if len(indices_of_connected_one_nodes) == 0:
+                index_of_node_1 = random.randint(0, num_nodes_type_j - 1)
+                ManipulateScores.util_add_edge_to_graph(
+                    graph, i, 'to', j, _, index_of_node_1)
+        for _ in range(num_nodes_type_j):
+            # check, if this node has a connection to nodetype 3
+            indices_of_connected_three_nodes = ManipulateScores.util_get_neighbors_of_type(
+                graph, j, i, _)
+            if len(indices_of_connected_three_nodes) == 0:
+                index_of_node_3 = random.randint(0, num_nodes_type_i - 1)
+                ManipulateScores.util_add_edge_to_graph(
+                    graph, j, 'to', i, _, index_of_node_3)
         return graph
 
     def delete_zero_from_graph(self):

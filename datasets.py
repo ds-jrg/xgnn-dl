@@ -323,6 +323,7 @@ class GraphLibraryConverter():
     @staticmethod
     def pyg_to_networkx(graph):
         # Implement conversion from PyG graph to Networkx graph
+        # see visualization.py, visualize_hd
         pass
 
     @staticmethod

@@ -180,5 +180,6 @@ def get_gnn_outs(hd_local, model_local, cat_to_explain):
         cat_to_explain = -1
     # debug!
     # result = round(out[0][cat_to_explain].item(), 4)
-    result = round(out[0][-1].item(), 4)
+    # give back the maximal value
+    result = round(max(out[0]).item(), 7)
     return result

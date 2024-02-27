@@ -1,0 +1,1222 @@
+Scoring results for the CE: 
+			Maximal original score: 12.52 and score on changed graph: 11.67
+Scoring the 0th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 12.12
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 12.52
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 12.28
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 12.52
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 5.87
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 12.51
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.97
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 12.52
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 12.52
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 12.52
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.91
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.27
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 11.67
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 12.52
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.08
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 12.2
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.75
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.73
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 12.52
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 14.26
+Scoring the 1th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.75
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 10.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.86
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 10.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 3.27
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.19
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.75
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 9.79
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.3
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 9.54
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.6
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.68
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.86
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 9.37
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.55
+Scoring the 2th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.73
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 11.13
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.84
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 11.13
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 5.51
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 11.13
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.57
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.13
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 11.13
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 10.76
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.91
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.7
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.21
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.13
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.25
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 11.13
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.4
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.31
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 11.13
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 12.91
+Scoring the 3th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.37
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 9.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.75
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 9.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 2.24
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.85
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.55
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 9.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 9.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.17
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 6.76
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.22
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.07
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.05
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 9.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.04
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 7.94
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.41
+Scoring the 4th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.57
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 6.57
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 4.6
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 6.57
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 3.27
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.23
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 9.17
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.57
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 5.49
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 5.97
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 5.5
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.29
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 6.57
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 4.4
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 4.11
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 5.8
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 5.45
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.57
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 8.54
+Scoring the 5th best CE
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.26
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 9.65
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.65
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 11.07
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.29
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 11.23
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.66
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 9.65
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.65
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 8.49
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.84
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 8.81
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.52
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.76
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 9.65
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 3.94
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 8.74
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.79
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((0 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)))) ⊓ (∃ to.0)) ⊓ (∃ to.2)))) ⊓ (∃ to.3)) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 9.65
+Scoring the 6th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.22
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 10.63
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.33
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 10.63
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 4.59
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.63
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.9
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.24
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.63
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 10.26
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.8
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.01
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.21
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.96
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.15
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.63
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.86
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 9.85
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.63
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.0)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.97
+Scoring the 7th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.36
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 8.75
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.03
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 9.44
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 0.58
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 8.36
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.75
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 8.36
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.36
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 5.16
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.52
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 7.61
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.24
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.53
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 4.8
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 8.36
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 5.47
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 7.45
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.36
+	Showing changed scores for the CE: 2 ⊓ (∃ to.((1 ⊓ (∃ to.((0 ⊓ (∃ to.2)) ⊓ (∃ to.3)))) ⊓ (∃ to.3))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 8.23
+Scoring the 8th best CE
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.31
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 10.76
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.13
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 11.46
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 4.72
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.76
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.06
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.81
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.76
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 9.67
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.19
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.13
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 11.16
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 12.91
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.29
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.76
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.49
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 8.65
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.39
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((0 ⊓ (∃ to.(1 ⊓ (∃ to.((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)))))) ⊓ (∃ to.2)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0)) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.1)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.76
+Scoring the 9th best CE
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.45
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 10.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 11.11
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 3.92
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 11.27
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.9
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 10.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.46
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 7.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.73
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.95
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.1
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.05
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.87
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((2 ⊓ (∃ to.((((0 ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3)))) ⊓ (∃ to.1))) ⊓ (∃ to.3) ⊓ (∃ to.2) ⊓ (∃ to.2)) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.0)) ⊓ (∃ to.0)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 12.05
+Scoring the 10th best CE
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 7.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.14
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 7.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.46
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 11.72
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 5.09
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 7.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 7.0
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.86
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 5.99
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.57
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 7.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.81
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 7.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 4.56
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 6.69
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.(((((0 ⊓ (∃ to.((1 ⊓ (∃ to.3)) ⊓ (∃ to.2)))) ⊓ (∃ to.1)) ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2))) ⊓ (∃ to.3) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.14
+Scoring the 11th best CE
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.82
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 10.23
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.96
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 10.83
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 4.43
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.23
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.13
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.23
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.23
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 9.3
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.1
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 9.62
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.23
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.33
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.8
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.23
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.21
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 9.45
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.23
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 11.42
+Scoring the 12th best CE
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.22
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 9.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.96
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 10.83
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 3.14
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 9.62
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.53
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 9.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 8.45
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.1
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 9.02
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.91
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.17
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 9.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 6.6
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 8.85
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.64
+	Showing changed scores for the CE: ((2 ⊓ (∃ to.((((0 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.1))) ⊓ (∃ to.2)) ⊓ (∃ to.1)) ⊓ (∃ to.3) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.82
+Scoring the 13th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges D-D are deleted
+			Maximal original score: 11.89 and score on changed graph: 4.93
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges D-D are added
+			Maximal original score: 11.89 and score on changed graph: 5.98
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges D-C are deleted
+			Maximal original score: 11.89 and score on changed graph: 4.93
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges D-C are added
+			Maximal original score: 11.89 and score on changed graph: 7.55
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges D-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 1.01
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges D-B are added
+			Maximal original score: 11.89 and score on changed graph: 8.61
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges D-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 5.17
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges D-A are added
+			Maximal original score: 11.89 and score on changed graph: 8.73
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges C-C are deleted
+			Maximal original score: 11.89 and score on changed graph: 4.93
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges C-C are added
+			Maximal original score: 11.89 and score on changed graph: 2.14
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges C-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 5.87
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges C-B are added
+			Maximal original score: 11.89 and score on changed graph: 3.3
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges C-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 4.44
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges C-A are added
+			Maximal original score: 11.89 and score on changed graph: 7.73
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges B-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 5.23
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges B-B are added
+			Maximal original score: 11.89 and score on changed graph: 4.93
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges B-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 4.72
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges B-A are added
+			Maximal original score: 11.89 and score on changed graph: 7.47
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges A-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 3.65
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.2) ⊓ (∃ to.0) ⊓ (∃ to.1)
+		Showing, if edges A-A are added
+			Maximal original score: 11.89 and score on changed graph: 4.93
+Scoring the 14th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-D are deleted
+			Maximal original score: 11.89 and score on changed graph: 9.22
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-D are added
+			Maximal original score: 11.89 and score on changed graph: 9.65
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-C are deleted
+			Maximal original score: 11.89 and score on changed graph: 9.22
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-C are added
+			Maximal original score: 11.89 and score on changed graph: 10.57
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 6.29
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-B are added
+			Maximal original score: 11.89 and score on changed graph: 10.8
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 5.33
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges D-A are added
+			Maximal original score: 11.89 and score on changed graph: 9.26
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-C are deleted
+			Maximal original score: 11.89 and score on changed graph: 9.22
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-C are added
+			Maximal original score: 11.89 and score on changed graph: 7.83
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 9.44
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-B are added
+			Maximal original score: 11.89 and score on changed graph: 8.88
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 7.8
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges C-A are added
+			Maximal original score: 11.89 and score on changed graph: 10.21
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges B-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 7.37
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges B-B are added
+			Maximal original score: 11.89 and score on changed graph: 9.22
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges B-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 3.34
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges B-A are added
+			Maximal original score: 11.89 and score on changed graph: 8.19
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges A-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 7.04
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.0)) ⊓ (∃ to.1))) ⊓ (∃ to.0) ⊓ (∃ to.2) ⊓ (∃ to.1)
+		Showing, if edges A-A are added
+			Maximal original score: 11.89 and score on changed graph: 9.22
+Scoring the 15th best CE
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 11.89 and score on changed graph: 9.78
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 11.89 and score on changed graph: 10.14
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 11.89 and score on changed graph: 9.78
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 11.89 and score on changed graph: 11.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 7.27
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 11.89 and score on changed graph: 11.4
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 6.77
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 11.89 and score on changed graph: 9.79
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 11.89 and score on changed graph: 9.78
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 11.89 and score on changed graph: 8.8
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 9.02
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 11.89 and score on changed graph: 9.0
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 7.32
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 11.89 and score on changed graph: 9.78
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 8.36
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 11.89 and score on changed graph: 9.78
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 4.72
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 11.89 and score on changed graph: 9.35
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 8.01
+	Showing changed scores for the CE: 2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 11.89 and score on changed graph: 9.78
+Scoring the 16th best CE
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 12.52 and score on changed graph: 10.64
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 12.52 and score on changed graph: 11.48
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.7
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 12.52 and score on changed graph: 11.79
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.43
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.23
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 12.52 and score on changed graph: 10.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 12.52 and score on changed graph: 9.32
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 9.44
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 12.52 and score on changed graph: 9.4
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 7.83
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.36
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 12.52 and score on changed graph: 10.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 4.72
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 12.52 and score on changed graph: 7.45
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 12.52 and score on changed graph: 8.46
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((((3 ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.0)) ⊓ (∃ to.3))) ⊓ (∃ to.2) ⊓ (∃ to.1) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.0) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 12.52 and score on changed graph: 10.22
+Scoring the 17th best CE
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 10.87 and score on changed graph: 10.22
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 10.87 and score on changed graph: 10.64
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 10.87 and score on changed graph: 10.22
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 10.87 and score on changed graph: 11.49
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 10.87 and score on changed graph: 7.7
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 10.87 and score on changed graph: 11.8
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 10.87 and score on changed graph: 7.43
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 10.87 and score on changed graph: 10.23
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 10.87 and score on changed graph: 10.22
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 10.87 and score on changed graph: 9.33
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 10.87 and score on changed graph: 9.44
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 10.87 and score on changed graph: 9.4
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 10.87 and score on changed graph: 7.84
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 10.87 and score on changed graph: 10.22
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 10.87 and score on changed graph: 8.36
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 10.87 and score on changed graph: 10.22
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 10.87 and score on changed graph: 4.72
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 10.87 and score on changed graph: 9.35
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 10.87 and score on changed graph: 8.46
+	Showing changed scores for the CE: (((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 10.87 and score on changed graph: 10.22
+Scoring the 18th best CE
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-D are deleted
+			Maximal original score: 11.89 and score on changed graph: 0.54
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-D are added
+			Maximal original score: 11.89 and score on changed graph: 0.52
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-C are deleted
+			Maximal original score: 11.89 and score on changed graph: 0.54
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-C are added
+			Maximal original score: 11.89 and score on changed graph: 2.34
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 7.33
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-B are added
+			Maximal original score: 11.89 and score on changed graph: 3.84
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 0.41
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges D-A are added
+			Maximal original score: 11.89 and score on changed graph: 4.54
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-C are deleted
+			Maximal original score: 11.89 and score on changed graph: 0.54
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-C are added
+			Maximal original score: 11.89 and score on changed graph: 4.79
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 3.13
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-B are added
+			Maximal original score: 11.89 and score on changed graph: 1.18
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 1.45
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges C-A are added
+			Maximal original score: 11.89 and score on changed graph: 3.35
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-B are deleted
+			Maximal original score: 11.89 and score on changed graph: 0.54
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-B are added
+			Maximal original score: 11.89 and score on changed graph: 0.54
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 3.37
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges B-A are added
+			Maximal original score: 11.89 and score on changed graph: 1.88
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges A-A are deleted
+			Maximal original score: 11.89 and score on changed graph: 1.29
+	Showing changed scores for the CE: ((((2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1)) ⊓ (∃ to.0)) ⊓ (∃ to.2)) ⊓ (∃ to.2)) ⊓ (∃ to.2)
+		Showing, if edges A-A are added
+			Maximal original score: 11.89 and score on changed graph: 2.57
+Scoring the 19th best CE
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges D-D are deleted
+			Maximal original score: 10.87 and score on changed graph: 9.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges D-D are added
+			Maximal original score: 10.87 and score on changed graph: 9.65
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges D-C are deleted
+			Maximal original score: 10.87 and score on changed graph: 9.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges D-C are added
+			Maximal original score: 10.87 and score on changed graph: 10.57
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges D-B are deleted
+			Maximal original score: 10.87 and score on changed graph: 6.29
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges D-B are added
+			Maximal original score: 10.87 and score on changed graph: 10.8
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges D-A are deleted
+			Maximal original score: 10.87 and score on changed graph: 5.33
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges D-A are added
+			Maximal original score: 10.87 and score on changed graph: 9.26
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges C-C are deleted
+			Maximal original score: 10.87 and score on changed graph: 9.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges C-C are added
+			Maximal original score: 10.87 and score on changed graph: 7.83
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges C-B are deleted
+			Maximal original score: 10.87 and score on changed graph: 9.44
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges C-B are added
+			Maximal original score: 10.87 and score on changed graph: 8.88
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges C-A are deleted
+			Maximal original score: 10.87 and score on changed graph: 7.8
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges C-A are added
+			Maximal original score: 10.87 and score on changed graph: 10.21
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges B-B are deleted
+			Maximal original score: 10.87 and score on changed graph: 7.37
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges B-B are added
+			Maximal original score: 10.87 and score on changed graph: 9.22
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges B-A are deleted
+			Maximal original score: 10.87 and score on changed graph: 3.34
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges B-A are added
+			Maximal original score: 10.87 and score on changed graph: 8.19
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges A-A are deleted
+			Maximal original score: 10.87 and score on changed graph: 7.04
+	Showing changed scores for the CE: (2 ⊓ (∃ to.(((3 ⊓ (∃ to.3)) ⊓ (∃ to.1)) ⊓ (∃ to.0))) ⊓ (∃ to.0) ⊓ (∃ to.1) ⊓ (∃ to.2)) ⊓ (∃ to.0)
+		Showing, if edges A-A are added
+			Maximal original score: 10.87 and score on changed graph: 9.22

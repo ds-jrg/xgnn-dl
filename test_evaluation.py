@@ -35,11 +35,13 @@ def test_find_adjacent_edges():
     hetero_data = HeteroData()
     hetero_data['Paper', 'r1', 'Author'].edge_index = torch.tensor([[0, 1], [1, 2]])
     hetero_data['Author', 'r1', 'Paper'].edge_index = torch.tensor([[1, 2], [0, 1]])
-    hetero_data['Paper', 'r2', 'Author'].edge_index = torch.tensor([[0, 1], [2, 3]])
+    hetero_data['Paper', 'r2', 'Author'].edge_index = torch.tensor([[0, 1, 2, 0], [2, 3, 4, 5]])
     hetero_data['Author', 'r3', 'Paper'].edge_index = torch.tensor([[1, 2, 3], [0, 0, 1]])
     # Test finding adjacent edges for a Paper node
     paper_edges = find_adjacent_edges(hetero_data, 'Paper', 0)
-    # assert paper_edges == [(0, 1, ('Paper', 'r1', 'Author')), (0, 1, ('Paper', 'r2', 'Author'))]
+    assert paper_edges == set([(1, 'Author', ('Paper', 'r1', 'Author')),
+                              (2, 'Author', ('Paper', 'r2', 'Author')),
+                              (5, 'Author', ('Paper', 'r2', 'Author'))]), paper_edges
 
     # Test finding adjacent edges for an Author node
     author_edges = find_adjacent_edges(hetero_data, 'Author', 1)
@@ -157,6 +159,8 @@ class TestCalcAccuracy(unittest.TestCase):
         self.assertEqual(self.evaluation_instance.list_results[2]['accuracy'], 0.2)
         self.assertEqual(self.evaluation_instance.list_results[3]['accuracy'], 0.0)
         print(1, 'Accuracy test passed')
+
+
 class TestAccuracyEl(unittest.TestCase):
     # some good CEs for this:
     class_3 = OWLClass(IRI(NS, '3'))
@@ -182,7 +186,7 @@ class TestAccuracyEl(unittest.TestCase):
 
     def test_ce_accuracy_to_house(self):
         # Define a sample Class Expression (CE)
-        sample_ce = self.three_to_two_to_one  
+        sample_ce = self.three_to_two_to_one
         result = self.accuracy_el_instance.ce_accuracy_to_house(sample_ce)
         self.assertIsNotNone(result, "The result should not be None")
         self.assertTrue(isinstance(result, float), "The result should be a float")
@@ -216,9 +220,5 @@ class TestCalcAccuracy(unittest.TestCase):
         self.assertEqual(self.evaluation_instance.list_results[3]['accuracy'], 0.0)
 
 
-
-
-   
-     
 if __name__ == '__main__':
     unittest.main()

@@ -10,6 +10,7 @@ import matplotlib.patches as patches
 import re
 import os
 import math
+import copy
 
 from graph_generation import graphdict_and_features_to_heterodata
 import logging
@@ -100,27 +101,51 @@ def visualize(dict_graph):
     plt.clf()
 
 
+number_to_letter = {
+    0: 'D',
+    1: 'C',
+    2: 'B',
+    3: 'A',
+}
+
 # This function is the main function to visualize
+
+
 def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explain, add_info='', name_folder=''):
     try:
         plt.clf()
-    except Exception as e:
-        print(f'An exception occurred while clearing the plot: {e}')
+    except Exception:
+        pass
     # create data for legend and caption
+    list_index_sorted = [int(x) for x in list_all_nodetypes]
+    list_all_nodetypes = sorted(list_index_sorted)
+    list_all_nodetypes = [str(x) for x in list_all_nodetypes]
+
     number_of_node_types_for_colors = len(list_all_nodetypes)
     colors = generate_colors(number_of_node_types_for_colors)
     if number_of_node_types_for_colors == 4:
         colors = ['#59a14f', '#f28e2b', '#4e79a7', '#e15759']
     # if number_of_node_types_for_colors == 6:
     #    colors = ['#59a14f', '#f28e2b', '#4e79a7', '#e15759', '#b07aa1', '#edc948']
-    curent_nodetypes_to_all_nodetypes = []
-    for _ in range(len(hd_graph.node_types)):
-        all_nodetypes_index = list_all_nodetypes.index(hd_graph.node_types[_])
-        curent_nodetypes_to_all_nodetypes.append([_, all_nodetypes_index])
+    current_nt_to_all_nt_dict = dict()
+    assert isinstance(hd_graph.node_types, list)
+    for _, nt in enumerate(hd_graph.node_types):
+
+        current_nt_to_all_nt_dict.update(
+            {str(nt): list_all_nodetypes.index(str(nt))})
     # create nx graph to visualize
+
     Gnew = nx.Graph()
-    homdata = hd_graph.to_homogeneous()
+    hd_graph_local = copy.deepcopy(hd_graph)
+    hd_graph_local.node_types = [int(x) for x in hd_graph_local.node_types]
+    homdata = hd_graph_local.to_homogeneous()
     num_nodes_of_graph = len(homdata.node_type.tolist())
+    different_hom_nodetypes = sorted(list(set(homdata.node_type.tolist())))
+    hom_index_to_hetero_index = dict()
+    different_het_nodetypes = sorted(list(set(hd_graph.node_types)))
+    for hom_index, het_index in zip(different_hom_nodetypes, different_het_nodetypes):
+        hom_index_to_hetero_index.update({str(hom_index): het_index})
+
     Gnew.add_nodes_from(list(range(num_nodes_of_graph)))
     # add edges
     list_edges_start, list_edges_end = homdata.edge_index.tolist()[0], homdata.edge_index.tolist()[1]
@@ -128,26 +153,36 @@ def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explai
     Gnew.add_edges_from(list_edges_for_networkx)
     # color nodes
     list_node_types = homdata.node_type.tolist()
+    if not isinstance(list_node_types, list):
+        try:
+            list_node_types = list_all_nodetypes.tolist()
+        except Exception:
+            list_node_types = list(list_all_nodetypes)
+    # list_node_types = [int(x) for x in list_node_types]
     node_labels_to_indices = dict()
     index = 0
-    for nodekey in homdata.node_type.tolist():
-        node_labels_to_indices.update({index: curent_nodetypes_to_all_nodetypes[nodekey][1]})
+    for node_index, nodekey in enumerate(list_node_types):
+        nk = hom_index_to_hetero_index[str(nodekey)]
+        node_labels_to_indices.update({index: current_nt_to_all_nt_dict[str(nk)]})
         index += 1
     color_map_of_nodes = []
-    for typeindex in list_node_types:
-        color_map_of_nodes.append(colors[curent_nodetypes_to_all_nodetypes[typeindex][1]])
+    for node_index, nodekey in enumerate(list_node_types):
+        nk = hom_index_to_hetero_index[str(nodekey)]
+        color_map_of_nodes.append(colors[current_nt_to_all_nt_dict[str(nk)]])
     # plt
     options = {
         'with_labels': 'True',
         'node_size': 500
     }
-    nx.draw(Gnew, node_color=color_map_of_nodes,  **options, labels=node_labels_to_indices)
+    labels_with_letters = {k: number_to_letter[v] for k, v in node_labels_to_indices.items()}
+    nx.draw(Gnew, node_color=color_map_of_nodes,  **options, labels=labels_with_letters)
     # create legend
     patch_list = []
     name_list = []
     for i in range(len(hd_graph.node_types)):
-        patch_list.append(plt.Circle((0, 0), 0.1, fc=colors[curent_nodetypes_to_all_nodetypes[i][1]]))
-        name_list.append(hd_graph.node_types[i])
+        nk = hom_index_to_hetero_index[str(i)]
+        patch_list.append(plt.Circle((0, 0), 0.1, fc=colors[current_nt_to_all_nt_dict[str(nk)]]))
+        name_list.append(number_to_letter[int(hd_graph.node_types[i])])
     # create caption
     caption_text = add_info
     caption_size = adjust_caption_size_exp(caption_length=len(add_info), max_size=18, min_size=8, rate=0.1)

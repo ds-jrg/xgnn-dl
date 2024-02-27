@@ -36,7 +36,7 @@ def available_edges_with_nodeid(graph, current_type, current_id, edgetype='to'):
 
 
 # Old function, now use fidelity_el
-def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1, random_seed=1):
+def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1):
     fid_result = -1
     mask = datasetfid[node_type_expl].test_mask
     mask_tf = 0
@@ -88,7 +88,6 @@ def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1,
     return fid_result
 
 
-# TODO: Think of cases, where this could not work: How would we find the edge 1-1 in the house, if there are no 2-3 edges ?
 # current_graph_node is of form ['3',0], ['2',0]. ['2',1], etc. [nodetype, nodeid_of_nodetype]
 def ce_confusion_iterative(ce, graph, current_graph_node):
     """
@@ -230,8 +229,6 @@ def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo, aggregate='mean'):
     mean = sum(list_gnn_outs) / len(list_gnn_outs)
     if aggregate == 'max':
         mean = max(list_gnn_outs)
-    # make the score between -1 and 1, such that it is comparable between GNNs
-    # mean = math.tanh(mean)
     squared_diffs = [(x - mean) ** 2 for x in list_gnn_outs]
     sum_squared_diffs = sum(squared_diffs)
     variance = sum_squared_diffs / (len(list_gnn_outs))
@@ -277,6 +274,16 @@ def find_adjacent_edges(hetero_data: HeteroData, node_type: str, node_id: int):
     return adjacent_edges
 
 
+def get_ops(ce):
+    list_result = list()
+    for op in ce.operands():
+        if isinstance(op, OWLObjectIntersectionOf):
+            list_result = list_result + get_ops(op)
+        else:
+            list_result.append(op)
+    return list_result
+
+
 def ce_fast_instance_checker(ce, dataset, current_node_type, current_id):
     """
     This function gives back the set of instances in the dataset, for which the CE holds true. 
@@ -307,32 +314,101 @@ def ce_fast_instance_checker(ce, dataset, current_node_type, current_id):
         top_class = find_class(ce)
         #  normalize CE-classes and node_type_expl to one format
         top_class = remove_front(top_class.to_string_id())
+        assert top_class is not None, "Top class is None"
         if top_class != current_node_type:
             return set()
+        list_ops_to_check = list()
 
-        for op in ce.operands():
+        list_ops_to_check = get_ops(ce)
+
+        for op in list_ops_to_check:
             if not isinstance(op, OWLClass):
-                valid_adjacent_nodes.update(ce_fast_instance_checker(op, dataset, current_node_type, current_id))
+                new_nodes_set = ce_fast_instance_checker(op, dataset, current_node_type, current_id)
+                if new_nodes_set != set():
+                    valid_adjacent_nodes.update(new_nodes_set)
+                else:
+                    return set()
+                # valid_adjacent_nodes.update(ce_fast_instance_checker(op, dataset, current_node_type, current_id))
     elif isinstance(ce, OWLObjectSomeValuesFrom):
         new_class = find_class(ce._filler)
         new_class = remove_front(new_class.to_string_id())
         adjacent_edges = find_adjacent_edges(dataset, current_node_type, current_id)
+
         for edge in adjacent_edges:
             if edge[1] == new_class:
-                pass
-                # valid_adjacent_nodes.add(edge)
-        for edge in adjacent_edges:
-            new_adjacent_nodes = ce_fast_instance_checker(ce._filler, dataset, edge[1], edge[0])
-            if not new_adjacent_nodes:
-                pass
-            else:
-                valid_adjacent_nodes.update(new_adjacent_nodes)
+                if isinstance(ce._filler, OWLObjectIntersectionOf):
+                    list_ops_to_check = get_ops(ce._filler)
+                    for op in list_ops_to_check:
+                        new_set_nodes = ce_fast_instance_checker(op, dataset, edge[1], edge[0])
+                        if new_set_nodes != set():
+                            valid_adjacent_nodes.update(new_set_nodes)
+                        else:
+                            return set()
+                else:
+                    valid_adjacent_nodes.update(ce_fast_instance_checker(ce._filler, dataset, edge[1], edge[0]))
     return valid_adjacent_nodes
 
 
-def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl):
+def fidelity_el_binary_whole_dataset(ce, dataset, node_type_to_expl, model):
+    """
+    Evaluate the fidelity of a CE on a whole dataset
+    """
+    if hasattr(node_type_to_expl, 'to_string_id'):
+        node_type_to_expl = remove_front(node_type_to_expl.to_string_id())
+    if isinstance(node_type_to_expl, int):
+        node_type_to_expl = str(node_type_to_expl)
+    # 1. Evaluate GNN
+    model.eval()
+    pred = model(dataset.x_dict, dataset.edge_index_dict).argmax(dim=-1)
+    pred_list = pred.tolist()
+
+    # 2. Evaluate the CE on the dataset
+    tp_count, fp_count, tn_count, fn_count = 0, 0, 0, 0
+    for id, gnn_value in enumerate(pred_list):
+        return_set = ce_fast_instance_checker(ce, dataset, node_type_to_expl, id)
+        return_id = 0 if not return_set else 1
+        if return_id == 1:
+            if return_id == gnn_value:
+                tp_count += 1
+            else:
+                fn_count += 1
+        else:
+            if return_id == gnn_value:
+                tn_count += 1
+            else:
+                fp_count += 1
+    # 3. Calculate the fidelity
+    # Checking for 0s
+    if tp_count + tn_count + fn_count + fp_count == 0:
+        fid_result = 0
+    else:
+        fid_result = round(float(tp_count+tn_count) / float(tp_count+tn_count+fn_count+fp_count), 2)
+    if tp_count + fp_count == 0:
+        precision = 0
+    else:
+        precision = round(float(tp_count) / float(tp_count+fp_count), 2)
+    if tp_count + fn_count == 0:
+        recall = 0
+    else:
+        recall = round(float(tp_count) / float(tp_count+fn_count), 2)
+    if tn_count + fp_count == 0:
+        true_negative_rate = 0
+    else:
+        true_negative_rate = round(float(tn_count) / float(tn_count+fp_count), 2)
+    dict_result = {'fidelity': fid_result, 'precision': precision,
+                   'recall': recall, 'true_negative_rate': true_negative_rate}
+    return dict_result
+
+
+def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl=-1):
+    """
+    Here: Doing only binary classification
+    0. Dataset Preprocessing: Only evaluate on the test dataset
+    1. Evaluate GNN on the dataset
+    2. Evaluate the CE on the dataset
+    3. Compare the results
+    """
     # find all ids of the test data of dataset
-    count = 0
     if hasattr(node_type_to_expl, 'to_string_id'):
         node_type_to_expl = remove_front(node_type_to_expl.to_string_id())
     mask = dataset[node_type_to_expl].test_mask
@@ -348,14 +424,19 @@ def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl):
         mask = [i if i in chosen_indices else 0 for i in range(len(mask.tolist()))]
         mask = [x for x in mask if x != 0]
         mask = torch.tensor(mask)
+    # END preprocessing
+
+    # Calculate GNN prediction
     model.eval()
     pred = model(dataset.x_dict, dataset.edge_index_dict).argmax(dim=-1)
     pred_list = pred.tolist()
     for index, value in enumerate(pred_list):
-        if value != label_to_expl:
+        if value == 0:
             pred_list[index] = 0
         else:
             pred_list[index] = 1
+
+    # Evaluate CE on the dataset
     tp_count, fp_count, tn_count, fn_count = 0, 0, 0, 0
     for id in mask.tolist():
         current_id = id
