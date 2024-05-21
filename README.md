@@ -1,9 +1,9 @@
-# ExplGNNswithDL: Explaining Graph Neural Networks (GNN) using Class Expressions (CE) from Description Logics (DL)
+# Utilizing Description Logics for Global Explanations of Heterogeneous Graph Neural Networks
 
 We introduce a methodology to explain GNNs using Class Expressions (CE). Our approach is designed to work on heterogeneous datasets with diverse node types, edge types, and node features. The core idea is to leverage Class Expressions (CE) from the description logic EL, which provides support for intersections and exist-relations.
 
 ## TL;DR
-We explain graph neural networks using class expressions from description logic, which are found by generating graphs from them and averaging the GNN output.
+We explain graph neural networks using class expressions from description logic with one approach and two different scoring funcitons, one to generate faithful explanations and one to detect spurious correlations.
 
 ## Overview
 
@@ -18,25 +18,7 @@ Our primary goal is to identify a CE which is valid for graphs that maximize the
 
 ## Abstract
 
-Graph Neural Networks (GNNs) have emerged as
-powerful tools for node and graph classification on
-graph-structured data, but they lack explainability,
-particularly when it comes to understanding their
-behavior at global level. Current research mainly
-utilizes subgraphs of the input as local explanations and generates graphs as global explanations.
-However, these graph-based methods have limited
-expressiveness in explaining a class with multiple
-sufficient explanations. To achieve more expressive explanations, we propose utilizing class ex-
-pressions (CEs) from the field of description logic
-(DL). We demonstrate our approach on heterogeneous graphs with different node types, which we
-explain with CEs in the description logic EL. To
-identify the most fitting explanation, we construct
-multiple graphs for each CE and aggregate their
-GNN output. In contrast to optimizing the GNN, as
-a baseline we optimize the CE’s fidelity directly on
-a validation dataset. Our approach offers a more expressive mechanism for explaining GNNs in node
-classification tasks and addresses the limitations of
-existing graph-based explanations
+Graph Neural Networks (GNNs) are effective for node classification in graph-structured data, but they lack explainability, especially at the global level. Current research mainly utilizes subgraphs of the input as local explanations or generates new graphs as global explanations. However, these graph-based methods are limited in their ability to explain classes with multiple sufficient explanations. To provide more expressive explanations, we propose utilizing class expressions (CEs) from the field of description logic (DL). Our approach explains heterogeneous graphs with different types of nodes using CEs in the EL description logic. To identify the best explanation among multiple candidate explanations, we employ and compare two different scoring functions: (1) For a given CE, we construct multiple graphs, have the GNN make a prediction for each graph, and aggregate the predicted scores. (2) We score the CE in terms of fidelity, i.e., we compare the predictions of the GNN to the predictions by the CE on a separate validation set. Instead of subgraph-based explanations, we offer CE-based explanations.
 
 ## Explanations to the Code
 
