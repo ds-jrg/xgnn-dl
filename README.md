@@ -41,7 +41,7 @@ existing graph-based explanations
 ## Explanations to the Code
 
 #### Installation
-Please follow the instructions for the virtual environment `hot2` from Section 3 in `https://github.com/mathematiger/Hands_on_GraphXAI` for installation with pip. Then run the shell `./run_egel.sh` or directly main.py
+Run the file `requirements.txt` for installation with pip. Then run the shell `./run_egel.sh` or directly `main.py`
 
 #### Overview of the results
 These can be found in the following folders:
