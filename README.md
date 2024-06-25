@@ -85,3 +85,22 @@ Further parameters contain the setting:
 
 `num_top_results` gives the number of results, which should be visualized in the end.
 
+
+
+
+# Parameters which lead to (comparable) results of the paper
+
+Using the file `run_egel.sh` we set the parameters to:
+
+`end_length = 12`
+
+`number_of_ces = 10000`
+
+`number_of_graphs = 100`
+
+`lambdaone = 1`
+
+`lambdaone_fidelity` = 0
+
+`random_seed` = 1
+
