@@ -10,7 +10,11 @@ import dgl
 import sys
 import copy
 from ce_generation import generate_cedict_from_ce
+<<<<<<< HEAD
 from create_random_ce import length_ce, remove_front, find_class, count_classes
+=======
+from create_random_ce import length_ce, remove_front
+>>>>>>> 49e980e (update)
 from graph_generation import compute_prediction_ce
 import pandas as pd
 
@@ -35,8 +39,12 @@ def available_edges_with_nodeid(graph, current_type, current_id, edgetype='to'):
     return list_result
 
 
+<<<<<<< HEAD
 # Old function, now use fidelity_el
 def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1):
+=======
+def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1, random_seed=1):
+>>>>>>> 49e980e (update)
     fid_result = -1
     mask = datasetfid[node_type_expl].test_mask
     mask_tf = 0
@@ -88,6 +96,10 @@ def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1)
     return fid_result
 
 
+<<<<<<< HEAD
+=======
+# TODO: Think of cases, where this could not work: How would we find the edge 1-1 in the house, if there are no 2-3 edges ?
+>>>>>>> 49e980e (update)
 # current_graph_node is of form ['3',0], ['2',0]. ['2',1], etc. [nodetype, nodeid_of_nodetype]
 def ce_confusion_iterative(ce, graph, current_graph_node):
     """
@@ -221,9 +233,15 @@ def ce_confusion(ce,  motif='house'):
                       }
     test_bla = ce_confusion_iterative(ce, motifgraph, ['3', 0])
     # print(test_bla)
+<<<<<<< HEAD
 
 
 def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo, aggregate='mean'):
+=======
+
+
+def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo):
+>>>>>>> 49e980e (update)
     # avg_gnn_outs-lambda len_ce - lambda_var
     length_of_ce = length_ce(ce)
     mean = sum(list_gnn_outs) / len(list_gnn_outs)
@@ -233,6 +251,7 @@ def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo, aggregate='mean'):
     sum_squared_diffs = sum(squared_diffs)
     variance = sum_squared_diffs / (len(list_gnn_outs))
     return mean-lambdaone*length_of_ce-lambdatwo*variance
+<<<<<<< HEAD
 
 
 def get_accuracy_baheteroshapes(ce):
@@ -613,3 +632,5 @@ class Accuracy_El:
         self.list_results.sort(key=lambda x: x['accuracy'] if x['accuracy']
                                is not None else float('-inf'), reverse=True)
         return sorted_list_results[0]['accuracy']
+=======
+>>>>>>> 49e980e (update)

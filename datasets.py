@@ -22,6 +22,7 @@ from torch_geometric.datasets import DBLP
 import torch_geometric.transforms as T
 
 
+<<<<<<< HEAD
 class PyGDataProcessor():
     """
     A class, which stores the principles data of a dataset in PyG.
@@ -1022,14 +1023,19 @@ Methods:
 # ------------------- Heterogeneous BAHouses Graphs ------------------------------
 
 
+=======
+>>>>>>> 49e980e (update)
 def count_ints_total(input_list, intput):
     count = 0
     for element in input_list:
         if element == intput:
             count += 1
     return count
+<<<<<<< HEAD
     # short:
     # return sum(1 for element in input_list if element == input_int)
+=======
+>>>>>>> 49e980e (update)
 
 
 def count_ints_until_entry(input_list, intput, entry):  # works
@@ -1166,7 +1172,10 @@ def initialize_dblp():
     data = dataset[0]
     data = data.to(device)
     return data, target
+<<<<<<< HEAD
 
 
 # ------------------------ tests --------------------------------
 print(GPUtil.getAvailable())
+=======
+>>>>>>> 49e980e (update)

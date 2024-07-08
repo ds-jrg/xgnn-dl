@@ -247,6 +247,7 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
             edge_class = list_of_edge_types
         # randomly select the number, which intersection or filler to mutate
         num_insections = count_intersections(ce)
+<<<<<<< HEAD
         if num_insections >= 2:
             number_to_mutate = random.randint(2, count_intersections(ce))
             # loop through all intersections until the number_to_mutate
@@ -254,6 +255,11 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
             if isinstance(intersection_to_mutate, int):
                 new_ce = mutate_ce(ce, list_of_classes, list_of_edge_types)
             if isinstance(intersection_to_mutate, OWLObjectIntersectionOf):
+=======
+        if num_insections > 0:
+            number_to_mutate = random.randint(0, count_intersections(ce))
+            if number_to_mutate == 0:
+>>>>>>> 49e980e (update)
                 if mutation == 'add_intersection_with_edge_with_class':
                     new_edge = OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)
                     list_of_operands = list(intersection_to_mutate._operands)
@@ -265,6 +271,7 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
                     new_ce = OWLObjectIntersectionOf(
                         [random_class, OWLObjectSomeValuesFrom(property=edge_class, filler=ce)])
             else:
+<<<<<<< HEAD
                 if isinstance(ce, OWLObjectIntersectionOf):
                     new_edge = OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)
                     list_of_operands = list(ce._operands)
@@ -272,6 +279,24 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
                     ce._operands = tuple(list_of_operands)
                     # intersection_to_mutate = add_op_to_intersection_deepcopy(intersection_to_mutate, new_edge)
                     new_ce = ce
+=======
+                # loop through all intersections until the number_to_mutate
+                intersection_to_mutate = find_nth_intersection(ce, number_to_mutate)
+                if isinstance(intersection_to_mutate, int):
+                    new_ce = OWLObjectIntersectionOf(
+                        [random_class, OWLObjectSomeValuesFrom(property=edge_class, filler=ce)])
+                if isinstance(intersection_to_mutate, OWLObjectIntersectionOf):
+                    if mutation == 'add_intersection_with_edge_with_class':
+                        new_edge = OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)
+                        list_of_operands = list(intersection_to_mutate._operands)
+                        list_of_operands.append(new_edge)
+                        intersection_to_mutate._operands = tuple(list_of_operands)
+                        # intersection_to_mutate = add_op_to_intersection_deepcopy(intersection_to_mutate, new_edge)
+                        new_ce = ce
+                    else:
+                        new_ce = OWLObjectIntersectionOf(
+                            [random_class, OWLObjectSomeValuesFrom(property=edge_class, filler=ce)])
+>>>>>>> 49e980e (update)
                 else:
                     print('This should not happen in the current implementation')
                     pass
@@ -279,6 +304,10 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
             # exchange the CE by adding the intersection to the top and add an edge
             new_ce = OWLObjectIntersectionOf([ce, OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)])
     if place_to_mutate == 'filler':
+<<<<<<< HEAD
+=======
+        number_to_mutate = random.randint(0, count_fillers(ce))
+>>>>>>> 49e980e (update)
         random_class = random.choice(list_of_classes)
         if isinstance(list_of_edge_types, list):
             edge_class = random.choice(list_of_edge_types)
@@ -858,7 +887,13 @@ if __name__ == '__main__' and testing == True:
     ce_012 = add_op_to_intersection(ce_01, class_2)
 
     # test of random_ce_with_startnode
+<<<<<<< HEAD
     result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
+=======
+    print('Testing random_ce_with_startnode')
+    result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
+    print(334, dlsr.render(result))
+>>>>>>> 49e980e (update)
 
     # for i in range(0, 10):
     #    result = random_ce_with_startnode(6, class_0, [class_0, class_1, class_2, class_3], [edge])
@@ -867,6 +902,10 @@ if __name__ == '__main__' and testing == True:
     # graph_dict = create_graph_from_ce(result, None, edge, 0)
     # print(335, graph_dict)
     graph_dict = get_graph_from_ce(result, None, edge)
+<<<<<<< HEAD
     
+=======
+    print(336, graph_dict)
+>>>>>>> 49e980e (update)
 
 # ------------------ End Testing Phase

@@ -10,7 +10,10 @@ import matplotlib.patches as patches
 import re
 import os
 import math
+<<<<<<< HEAD
 import copy
+=======
+>>>>>>> 49e980e (update)
 
 from graph_generation import graphdict_and_features_to_heterodata
 import logging
@@ -21,7 +24,10 @@ logger.setLevel(logging.WARNING)
 
 # ---------------- utils
 def uniquify(path, extension='.pdf'):
+<<<<<<< HEAD
     counter = 0
+=======
+>>>>>>> 49e980e (update)
     if path.endswith("_"):
         path += '1'
         counter = 1
@@ -109,6 +115,7 @@ number_to_letter = {
 }
 
 # This function is the main function to visualize
+<<<<<<< HEAD
 
 
 def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explain, add_info='', name_folder=''):
@@ -121,10 +128,19 @@ def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explai
     list_all_nodetypes = sorted(list_index_sorted)
     list_all_nodetypes = [str(x) for x in list_all_nodetypes]
 
+=======
+def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explain, add_info='', name_folder=''):
+    try:
+        plt.clf()
+    except Exception as e:
+        print(f'An exception occurred while clearing the plot: {e}')
+    # create data for legend and caption
+>>>>>>> 49e980e (update)
     number_of_node_types_for_colors = len(list_all_nodetypes)
     colors = generate_colors(number_of_node_types_for_colors)
     if number_of_node_types_for_colors == 4:
         colors = ['#59a14f', '#f28e2b', '#4e79a7', '#e15759']
+<<<<<<< HEAD
     # if number_of_node_types_for_colors == 6:
     #    colors = ['#59a14f', '#f28e2b', '#4e79a7', '#e15759', '#b07aa1', '#edc948']
     current_nt_to_all_nt_dict = dict()
@@ -146,6 +162,16 @@ def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explai
     for hom_index, het_index in zip(different_hom_nodetypes, different_het_nodetypes):
         hom_index_to_hetero_index.update({str(hom_index): het_index})
 
+=======
+    curent_nodetypes_to_all_nodetypes = []
+    for _ in range(len(hd_graph.node_types)):
+        all_nodetypes_index = list_all_nodetypes.index(hd_graph.node_types[_])
+        curent_nodetypes_to_all_nodetypes.append([_, all_nodetypes_index])
+    # create nx graph to visualize
+    Gnew = nx.Graph()
+    homdata = hd_graph.to_homogeneous()
+    num_nodes_of_graph = len(homdata.node_type.tolist())
+>>>>>>> 49e980e (update)
     Gnew.add_nodes_from(list(range(num_nodes_of_graph)))
     # add edges
     list_edges_start, list_edges_end = homdata.edge_index.tolist()[0], homdata.edge_index.tolist()[1]
@@ -153,6 +179,7 @@ def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explai
     Gnew.add_edges_from(list_edges_for_networkx)
     # color nodes
     list_node_types = homdata.node_type.tolist()
+<<<<<<< HEAD
     if not isinstance(list_node_types, list):
         try:
             list_node_types = list_all_nodetypes.tolist()
@@ -169,20 +196,47 @@ def visualize_hd(hd_graph, addname_for_save, list_all_nodetypes, label_to_explai
     for node_index, nodekey in enumerate(list_node_types):
         nk = hom_index_to_hetero_index[str(nodekey)]
         color_map_of_nodes.append(colors[current_nt_to_all_nt_dict[str(nk)]])
+=======
+    node_labels_to_indices = dict()
+    index = 0
+    stop = False  # the prediction is always done for the first node
+    for nodekey in homdata.node_type.tolist():
+        if label_to_explain != None:
+            if str(curent_nodetypes_to_all_nodetypes[nodekey][1]) == label_to_explain and stop == False:
+                node_labels_to_indices.update({index: '*'})
+                stop = True
+            else:
+                node_labels_to_indices.update({index: ''})
+        else:
+            node_labels_to_indices.update({index: curent_nodetypes_to_all_nodetypes[nodekey][1]})
+        index += 1
+    color_map_of_nodes = []
+    for typeindex in list_node_types:
+        color_map_of_nodes.append(colors[curent_nodetypes_to_all_nodetypes[typeindex][1]])
+>>>>>>> 49e980e (update)
     # plt
     options = {
         'with_labels': 'True',
         'node_size': 500
     }
+<<<<<<< HEAD
     labels_with_letters = {k: number_to_letter[v] for k, v in node_labels_to_indices.items()}
     nx.draw(Gnew, node_color=color_map_of_nodes,  **options, labels=labels_with_letters)
+=======
+    nx.draw(Gnew, node_color=color_map_of_nodes,  **options, labels=node_labels_to_indices)
+>>>>>>> 49e980e (update)
     # create legend
     patch_list = []
     name_list = []
     for i in range(len(hd_graph.node_types)):
+<<<<<<< HEAD
         nk = hom_index_to_hetero_index[str(i)]
         patch_list.append(plt.Circle((0, 0), 0.1, fc=colors[current_nt_to_all_nt_dict[str(nk)]]))
         name_list.append(number_to_letter[int(hd_graph.node_types[i])])
+=======
+        patch_list.append(plt.Circle((0, 0), 0.1, fc=colors[curent_nodetypes_to_all_nodetypes[i][1]]))
+        name_list.append(hd_graph.node_types[i])
+>>>>>>> 49e980e (update)
     # create caption
     caption_text = add_info
     caption_size = adjust_caption_size_exp(caption_length=len(add_info), max_size=18, min_size=8, rate=0.1)

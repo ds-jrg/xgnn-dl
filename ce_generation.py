@@ -80,6 +80,7 @@ def readout_OWLclass(ce: OWLClassExpression, list_nodetypes=[]):
 
 def length_ce(ce):
     length_metric = OWLClassExpressionLengthMetric.get_default()
+    print(ce)
     return length_metric.length(ce)
 
 
@@ -546,7 +547,14 @@ class ConceptUnionEL(ConceptEL):
 
 
 
+<<<<<<< HEAD
  
+=======
+
+
+
+
+>>>>>>> 49e980e (update)
 # -------------------   Testing: Here, many instances are created to be able to test different scenarios.
 # testing: many outputs
 root_node_type = 'Author'
