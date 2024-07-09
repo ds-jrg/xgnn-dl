@@ -23,7 +23,18 @@ Graph Neural Networks (GNNs) are effective for node classification in graph-stru
 ## Explanations to the Code
 
 #### Installation
-Run the file `requirements.txt` for installation with pip. Then run the shell `./run_egel.sh` or directly `main.py`
+Please run the following commands:
+
+`conda create -n xgnn-dl python=3.8`
+
+`conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia`
+
+`conda install -c pyg pyg=2.4`
+
+`conda env update --name xgnn-dl --file environment.yml`
+
+
+Then run the shell `./run_egel.sh` or directly `main.py`
 
 #### Overview of the results
 These can be found in the following folders:
