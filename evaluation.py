@@ -25,6 +25,8 @@ from owlapy.render import DLSyntaxObjectRenderer
 dlsr = DLSyntaxObjectRenderer()
 
 
+
+
 def available_edges_with_nodeid(graph, current_type, current_id, edgetype='to'):
     # graph is in dictionary form
     list_result = list()
