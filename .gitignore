@@ -124,4 +124,5 @@ __pycache__/
 Outtakes/
 Ontolearn_outtakes/
 superprop
-sortedcontainers-stubs
+sortedcontainers-stubs 
+XLit/

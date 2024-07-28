@@ -1,18 +1,17 @@
-import numpy
+
 import sys
 import copy
 import random
 import torch
 import copy
-import dgl
+
 # sys.path.append('/Ontolearn')
 # import generatingXgraphs
-import dgl
+
 # sys.path.append('/Ontolearn')
 # import generatingXgraphs
 from owlapy.class_expression import OWLClassExpression, OWLObjectUnionOf, OWLObjectCardinalityRestriction, OWLObjectMinCardinality
-from owlapy.class_expression import OWLClass, OWLObjectIntersectionOf, OWLObjectSomeValuesFrom
-from owlapy.owl_property import OWLObjectProperty
+from owlapy.class_expression import OWLClass, OWLObjectIntersectionOf, OWLCardinalityRestriction, OWLNaryBooleanClassExpression, OWLObjectRestriction
 from owlapy.render import DLSyntaxObjectRenderer
 
 
@@ -31,11 +30,6 @@ def return_top_intersection(ce):
             if result is not None:
                 return result
     # TODO: Add OWLOBjectSomeValuesFrom
-
-
-def length_ce(ce):
-    # length_metric = OWLClassExpressionLengthMetric.get_default()
-    return count_classes(ce)
 
 
 def length_ce(ce):
@@ -314,13 +308,204 @@ def find_nth_union(ce, n):  # we say n>=1
                 return result
             else:
                 return count + result
-    if isinstance(ce, OWLObjectSomeValuesFrom) or isinstance(ce, OWLObjectCardinalityRestriction):
+    if isinstance(ce, OWLObjectRestriction):
         find_nth_intersection(ce._filler, n)
     else:
         return 0
 
 
+class CEUtils():
+    """ 
+    Here, we gather all functions, which:
+    - "flatten" a CE by removing unions in unions or intersecs in intersecs
+    - return the n-th union/intersection/class/etc. of a class expression
+    - replace the n-th union/intersection/class/etc. of a CE with a new CE
+    - gather additional info, like depth, length, or width of a CE
+    """
+    __slots__ = ()
+
+    def __init__(self, ce=None):
+        if CE is not None:
+            self.ce = ce
+            # self.length = get_length(ce)
+            # self.width = get_width(ce)
+            # self.depth = get_depth(ce)
+
+    @staticmethod
+    def get_length(ce):
+        """
+        returns the number of "nodes" like union, class, intersection, etc.
+        adds the numbers up
+        """
+        pass
+
+    @staticmethod
+    def count_classes(ce):
+        count = 0
+        if isinstance(ce, OWLClass):
+            count += 1
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                count += CEUtils.count_classes(op)
+        elif isinstance(OWLObjectRestriction):
+            count += CEUtils.count_classes(ce._filler)
+        return count
+
+    @staticmethod
+    def count_existential_restrictions(ce):
+        count = 0
+        if isinstance(ce, OWLObjectRestriction):
+            count += 1
+            count += CEUtils.count_existential_restrictions(ce._filler)
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                count += CEUtils.count_existential_restrictions(op)
+        return count
+
+    @staticmethod
+    def count_intersections(ce):
+        count = 0
+        if isinstance(ce, OWLObjectIntersectionOf):
+            count += 1
+            for op in ce.operands():
+                count += CEUtils.count_intersections(op)
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                count += CEUtils.count_intersections(op)
+        elif isinstance(ce, OWLObjectRestriction):
+            count += CEUtils.count_intersections(ce._filler)
+
+    @staticmethod
+    def count_unions(ce):
+        count = 0
+        if isinstance(ce, OWLObjectUnionOf):
+            count += 1
+            for op in ce.operands():
+                count += CEUtils.count_unions(op)
+            return count
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                count += CEUtils.count_unions(op)
+            return count
+        elif isinstance(ce, OWLObjectRestriction):
+            return CEUtils.count_unions(ce._filler)
+        else:
+            return 0
+
+    @staticmethod
+    def return_nth_class(ce, n):
+        if isinstance(ce, OWLClass):
+            if n == 1:
+                return ce
+            else:
+                return n-1
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                result = CEUtils.return_nth_class(op, n-1)
+                if isinstance(result, OWLClass):
+                    return result
+            return 0
+        elif isinstance(ce, OWLObjectRestriction):
+            return CEUtils.return_nth_class(ce._filler, n)
+        return 0
+
+    @staticmethod
+    def return_nth_restriction(ce, n):
+        if isinstance(ce, OWLObjectRestriction):
+            if n == 1:
+                return ce
+            else:
+                return CEUtils.return_nth_restriction(ce._filler, n-1)
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                result = CEUtils.return_nth_restriction(op, n)
+                if isinstance(result, OWLObjectRestriction):
+                    return result
+            return 0
+        return 0
+
+    @staticmethod
+    def return_nth_intersection(ce, n):
+        if isinstance(ce, OWLObjectIntersectionOf):
+            if n == 1:
+                return ce
+            else:
+                n -= 1  # TODO: test, ob 2 intersections in einer Intersection gefunden werden
+                for op in ce.operands():
+                    result = CEUtils.return_nth_intersection(op, n)
+                    if isinstance(result, OWLObjectIntersectionOf):
+                        return result
+                return 0
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                result = CEUtils.return_nth_intersection(op, n)
+                if isinstance(result, OWLObjectIntersectionOf):
+                    return result
+            return 0
+        elif isinstance(ce, OWLObjectRestriction):
+            return CEUtils.return_nth_intersection(ce._filler, n)
+        return 0
+
+    @staticmethod
+    def return_nth_union(ce, n):
+        if isinstance(ce, OWLObjectUnionOf):
+            if n == 1:
+                return ce
+            else:
+                n -= 1  # TODO: test, ob 2 intersections in einer Intersection gefunden werden
+                for op in ce.operands():
+                    result = CEUtils.return_nth_union(op, n)
+                    if isinstance(result, OWLObjectUnionOf):
+                        return result
+                return 0
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                result = CEUtils.return_nth_union(op, n)
+                if isinstance(result, OWLObjectUnionOf):
+                    return result
+            return 0
+        elif isinstance(ce, OWLObjectRestriction):
+            return CEUtils.return_nth_union(ce._filler, n)
+        return 0
+
+    @staticmethod
+    def replace_nth_class(ce, n, newpropertyvalue, topce=None):
+        """
+        class C -> C AND exists to new class N 
+        """
+        if isinstance(ce, OWLClass):
+            if n == 1:
+                if isinstance(newpropertyvalue, OWLCardinalityRestriction):
+                    for op in topce.operands():
+                        if op == newpropertyvalue:
+                            newpropertyvalue._cardinality += 1
+                        return True
+                topce._operands += (newpropertyvalue,)
+                return True
+        if isinstance(ce, OWLNaryBooleanClassExpression):
+            for op in ce.operands():
+                if CEUtils.replace_nth_class(op, n, newpropertyvalue, topce) is True:
+                    return True
+                else:
+                    n -= 1
+        if isinstance(ce, OWLObjectRestriction):
+            return CEUtils.replace_nth_class(ce._filler, n, newpropertyvalue, topce)
+
+    @staticmethod
+    def replace_nth_existential_restriction():
+        pass
+
+    @staticmethod
+    def replace_nth_intersection():
+        pass
+
+    @staticmethod
+    def replace_nth_union():
+        pass
+
+
 # ----- mutate ce functions -----
+
 
 class Mutation:
     def __init__(self, list_of_classes, list_of_edgetypes):
@@ -483,10 +668,7 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
     if place_to_mutate == 'intersection':
         random_class = random.choice(list_of_classes)
 
-
-<< << << < HEAD
         edge_class = random.choice(list_of_edge_types)
-== == == =
         if isinstance(list_of_edge_types, list):
             edge_class = random.choice(list_of_edge_types)
         else:
@@ -495,7 +677,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
             edge_class = random.choice(list_of_edge_types)
         else:
             edge_class = list_of_edge_types
->>>>>> > 71bdbd76(Deleted all files except create_random_ce.py and main.py)
         # randomly select the number, which intersection or filler to mutate
         num_insections = count_intersections(ce)
         if num_insections > 0:
@@ -537,34 +718,14 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
     if place_to_mutate == 'filler':
         number_to_mutate = random.randint(0, count_fillers(ce))
         random_class = random.choice(list_of_classes)
-<<<<<<< HEAD
         edge_class = random.choice(list_of_edge_types)
         if number_to_mutate == 0:
-=======
-        if isinstance(list_of_edge_types, list):
-            edge_class = random.choice(list_of_edge_types)
-        else:
-            edge_class = list_of_edge_types
-        number_fillers = count_fillers(ce)
-        if number_fillers == 0:
-        if isinstance(list_of_edge_types, list):
-            edge_class = random.choice(list_of_edge_types)
-        else:
-            edge_class = list_of_edge_types
-        number_fillers = count_fillers(ce)
-        if number_fillers == 0:
->>>>>>> 71bdbd76 (Deleted all files except create_random_ce.py and main.py)
             if mutation == 'add_intersection_with_edge_with_class':
                 new_ce = OWLObjectIntersectionOf(
                     [ce, OWLObjectSomeValuesFrom(property=edge_class, filler=random_class)])
             else:
                 pass
         else:
-<<<<<<< HEAD
-=======
-            number_to_mutate = random.randint(1, number_fillers)
-            number_to_mutate = random.randint(1, number_fillers)
->>>>>>> 71bdbd76 (Deleted all files except create_random_ce.py and main.py)
             filler_to_mutate = find_nth_filler(ce, number_to_mutate)
             if mutation == 'add_intersection_with_edge_with_class':
                 if isinstance(filler_to_mutate, int):
@@ -588,13 +749,6 @@ def mutate_ce(ce, list_of_classes, list_of_edge_types):
 
 
 def random_ce_with_startnode(length, typestart, list_of_classes, list_of_edge_types):
-<<<<<<< HEAD
-=======
-    if isinstance(list_of_edge_types, list):
-        list_of_edge_types = list_of_edge_types[0]  # Only for debugging
-    if isinstance(list_of_edge_types, list):
-        list_of_edge_types = list_of_edge_types[0]  # Only for debugging
->>>>>>> 71bdbd76 (Deleted all files except create_random_ce.py and main.py)
     if length == 0:
         return typestart
     else:
