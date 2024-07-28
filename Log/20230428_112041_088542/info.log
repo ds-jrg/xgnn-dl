@@ -1,8 +1,0 @@
-2023-04-28 11:20:41,100 - ontolearn.abstracts:293 - INFO - Number of named classes: 3
-Number of individuals: 6
-Number of properties: 1
-2023-04-28 11:20:41,102 - ontolearn.knowledge_base:448 - INFO - E^+:[ stefan, martin, markus ]
-2023-04-28 11:20:41,102 - ontolearn.knowledge_base:449 - INFO - E^-:[ michelle, heinz, anna ]
-2023-04-28 11:20:41,461 - ontolearn.base_concept_learner:140 - INFO - Elapsed runtime: 0.3585 seconds
-2023-04-28 11:20:41,461 - ontolearn.base_concept_learner:141 - INFO - Number of concepts tested: 124
-2023-04-28 11:20:41,462 - ontolearn.base_concept_learner:146 - INFO - Current best concept: <class 'ontolearn.search.OENode'> at 0x831c4ac	(¬female) ⊓ (∃ hasChild.⊤)	Quality:1.0	Heuristic:0.6	Depth:1	H_exp:6	|RC|:0	|Indv.|:None
