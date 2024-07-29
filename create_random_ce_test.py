@@ -1,126 +1,75 @@
 # from create_random_ce import mutate_ce
-from owlapy.render import DLSyntaxObjectRenderer
-from owlapy.class_expression import OWLClass, OWLClassExpression, OWLObjectIntersectionOf, OWLObjectSomeValuesFrom
+from owlapy.class_expression import OWLClassExpression, OWLObjectUnionOf, OWLObjectCardinalityRestriction, OWLObjectMinCardinality
+from owlapy.class_expression import OWLClass, OWLObjectIntersectionOf, OWLCardinalityRestriction, OWLNaryBooleanClassExpression, OWLObjectRestriction
 from owlapy.owl_property import OWLObjectProperty
+from owlapy.render import DLSyntaxObjectRenderer
 import unittest
 from unittest.mock import patch
 import sys
 import os
-from create_random_ce import mutate_ce
+from create_random_ce import Mutation, CEUtils
+import copy
 
 dlsr = DLSyntaxObjectRenderer()
 xmlns = "http://www.semanticweb.org/stefan/ontologies/2023/1/untitled-ontology-11#"
 NS = xmlns
 
-
-class TestMutateCE(unittest.TestCase):
-    def test_add_intersection_at_first_intersection(self):
-        # Define your initial CE, list_of_classes, and list_of_edge_types
-        class_3 = OWLClass('#3')
-        class_2 = OWLClass('#2')
-        class_1 = OWLClass('#1')
-        class_0 = OWLClass('#0')
-        edge = OWLObjectProperty('#to')
-        # CE 3-2-1
-        edge_to_1 = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
-        edge_to_2 = OWLObjectSomeValuesFrom(property=edge, filler=class_2)
-        filler_with_2_edge_1 = OWLObjectIntersectionOf(
-            [class_2, edge_to_1, edge_to_2])
-        edge_to_filler = OWLObjectSomeValuesFrom(
-            property=edge, filler=filler_with_2_edge_1)
-        ce_321 = OWLObjectIntersectionOf([class_3, edge_to_filler])
-        ce = ce_321
-        list_of_classes = [class_0, class_1, class_2, class_3]
-        list_of_edge_types = [edge]
-
-        # ce after adding 0 to the 2nd Intersection (id=1)
-        # Call the function
-        filler_with_2_edge_1_and_intersect0 = OWLObjectIntersectionOf(
-            [class_0, filler_with_2_edge_1])
-        edge_to_filler_intersection0 = OWLObjectSomeValuesFrom(property=edge,
-                                                               filler=filler_with_2_edge_1_and_intersect0)
-        expected_ce = OWLObjectIntersectionOf(
-            [class_3, edge_to_filler_intersection0])
-        new_ce = mutate_ce(ce, list_of_classes, list_of_edge_types)
-        print('previous: %s' % dlsr.render(ce))
-        print('expected: ', dlsr.render(expected_ce),
-              'got:', dlsr.render(new_ce))
-        self.assertEqual(new_ce, expected_ce)
-
-    def test_mutate_filler_add(self):
-        pass
-        # Similar test for mutating filler
-
-    def test_no_intersections(self):
-        pass
-        # Test for handling no intersections
-
-    def test_invalid_intersection_number(self):
-        pass
-        # Test for invalid intersection number
-
-    def test_invalid_filler_number(self):
-        pass
-        # Test for invalid filler number
-
-
-if __name__ == '__main__':
-    unittest.main()
-
-dlsr = DLSyntaxObjectRenderer()
-xmlns = "http://www.semanticweb.org/stefan/ontologies/2023/1/untitled-ontology-11#"
-NS = xmlns
+class_3 = OWLClass('#3')
+class_2 = OWLClass('#2')
+class_1 = OWLClass('#1')
+class_0 = OWLClass('#0')
+edge = OWLObjectProperty('#to')
 
 
 class TestMutateCE(unittest.TestCase):
-    def test_add_intersection_at_first_intersection(self):
-        # Define your initial CE, list_of_classes, and list_of_edge_types
-        class_3 = OWLClass('#3')
-        class_2 = OWLClass('#2')
-        class_1 = OWLClass('#1')
-        class_0 = OWLClass('#0')
-        edge = OWLObjectProperty('#to')
-        # CE 3-2-1
-        edge_to_1 = OWLObjectSomeValuesFrom(property=edge, filler=class_1)
-        edge_to_2 = OWLObjectSomeValuesFrom(property=edge, filler=class_2)
-        filler_with_2_edge_1 = OWLObjectIntersectionOf(
-            [class_2, edge_to_1, edge_to_2])
-        edge_to_filler = OWLObjectSomeValuesFrom(
-            property=edge, filler=filler_with_2_edge_1)
-        ce_321 = OWLObjectIntersectionOf([class_3, edge_to_filler])
-        ce = ce_321
-        list_of_classes = [class_0, class_1, class_2, class_3]
-        list_of_edge_types = [edge]
+    def setUp(self):
+        self.ce_3_to_1 = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
+            cardinality=1, filler=class_1, property=edge)])
+        self.ce_3_to_1OR2 = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
+            cardinality=1, filler=OWLObjectUnionOf([class_1, class_2]), property=edge)])
 
-        # ce after adding 0 to the 2nd Intersection (id=1)
-        # Call the function
-        filler_with_2_edge_1_and_intersect0 = OWLObjectIntersectionOf(
-            [class_0, filler_with_2_edge_1])
-        edge_to_filler_intersection0 = OWLObjectSomeValuesFrom(property=edge,
-                                                               filler=filler_with_2_edge_1_and_intersect0)
-        expected_ce = OWLObjectIntersectionOf(
-            [class_3, edge_to_filler_intersection0])
-        new_ce = mutate_ce(ce, list_of_classes, list_of_edge_types)
-        print('previous: %s' % dlsr.render(ce))
-        print('expected: ', dlsr.render(expected_ce),
-              'got:', dlsr.render(new_ce))
-        self.assertEqual(new_ce, expected_ce)
+    def test_mutate_ce(self):
+        ce_3_to_1 = copy.deepcopy(self.ce_3_to_1)
+        ce_3_to_1OR2 = copy.deepcopy(self.ce_3_to_1OR2)
+        mutate = Mutation(list_of_classes=[class_1], list_of_edgetypes=[edge])
+        ce_mutated = mutate.mutate_global(ce_3_to_1)
+        self.assertIsInstance(ce_mutated, OWLClassExpression)
+        ce_mutated = mutate.mutate_global(ce_3_to_1OR2)
+        self.assertIsInstance(ce_mutated, OWLClassExpression)
+        insert_ce = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
+            cardinality=1, filler=class_1, property=edge)])
+        # check class
+        is_ce_mutated = CEUtils.replace_nth_class(
+            ce_3_to_1, 1, insert_ce)
+        self.assertEqual(is_ce_mutated, True)
+        # check intersection
+        is_ce_mutated = CEUtils.replace_nth_intersection(
+            ce_3_to_1OR2, insert_ce, 1)
+        self.assertEqual(is_ce_mutated, True)
+        # check union
+        is_ce_mutated = CEUtils.replace_nth_union(
+            ce_3_to_1OR2, insert_ce, 1)
+        self.assertEqual(is_ce_mutated, True)
+        # check cardinality restriction
+        is_ce_mutated = CEUtils.increase_nth_existential_restriction(
+            ce_3_to_1OR2, 1)
+        self.assertEqual(is_ce_mutated, True)
 
-    def test_mutate_filler_add(self):
-        pass
-        # Similar test for mutating filler
+        # Tests if they function correctly
 
-    def test_no_intersections(self):
-        pass
-        # Test for handling no intersections
-
-    def test_invalid_intersection_number(self):
-        pass
-        # Test for invalid intersection number
-
-    def test_invalid_filler_number(self):
-        pass
-        # Test for invalid filler number
+        # class
+        ce_3_to_1 = copy.deepcopy(self.ce_3_to_1)
+        ce_3_to_1or2 = copy.deepcopy(self.ce_3_to_1OR2)
+        is_ce_mutated = CEUtils.replace_nth_class(
+            ce=ce_3_to_1, n=1, newpropertyvalue=self.ce_3_to_1)
+        print(dlsr.render(ce_3_to_1),
+              "in contrast to", dlsr.render(ce_3_to_1))
+        ground_truth = OWLObjectIntersectionOf([OWLObjectMinCardinality(cardinality=1, filler=class_1, property=edge),
+                                                OWLObjectIntersectionOf([class_3,
+                                                                         OWLObjectMinCardinality(cardinality=1, filler=class_1, property=edge)])])
+        ground_truth_str = dlsr.render(ground_truth)
+        result_str = dlsr.render(ce_3_to_1)
+        self.assertEqual(result_str, ground_truth_str)
 
 
 if __name__ == '__main__':
