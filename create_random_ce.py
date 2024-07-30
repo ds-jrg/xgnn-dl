@@ -204,13 +204,13 @@ class CEUtils():
             return CEUtils.replace_nth_class(ce._filler, n, newpropertyvalue, ce)
 
     @staticmethod
-    def increase_nth_existential_restriction(ce, n):
+    def increase_nth_existential_restriction(ce, n, increase=1):
         """
         A ex. E >=m B -> A ex. E >=m+1 B 
         """
         if isinstance(ce, OWLCardinalityRestriction):
             if n == 1:
-                ce._cardinality += 1
+                ce._cardinality += increase
                 return True
             n -= 1
             return CEUtils.increase_nth_existential_restriction(ce._filler, n)
@@ -230,6 +230,11 @@ class CEUtils():
         """
         if isinstance(ce, OWLObjectIntersectionOf):
             if n == 1:
+                if isinstance(newedge, OWLCardinalityRestriction):
+                    for op in ce.operands():
+                        if op == newedge:
+                            op._cardinality += 1
+                            return True
                 ce._operands += (newedge,)
                 return True
             n -= 1
@@ -243,7 +248,7 @@ class CEUtils():
         return False
 
     @staticmethod
-    def replace_nth_union(ce, newclass, n, topce=None):
+    def replace_nth_cl_w_union(ce, newclass, n, topce=None):
         """
         A -> A or B  (A, B classes)
         return True if successful, else False
@@ -254,14 +259,15 @@ class CEUtils():
                 new_operands = tuple(
                     x for x in topce._operands if x != ce)
                 new_operands += (newunion,)
+                topce._operands = new_operands
                 return True
             n -= 1
         elif isinstance(ce, OWLNaryBooleanClassExpression):
             for op in ce.operands():
-                if CEUtils.replace_nth_union(op, newclass, n, ce):
+                if CEUtils.replace_nth_cl_w_union(op, newclass, n, ce):
                     return True
         elif isinstance(ce, OWLObjectRestriction):
-            return CEUtils.replace_nth_union(ce._filler, newclass, n, ce)
+            return CEUtils.replace_nth_cl_w_union(ce._filler, newclass, n, ce)
         return False
 
 # ----- mutate ce functions -----
@@ -349,7 +355,7 @@ class Mutation:
                 if total_unions == 0:
                     continue
                 n = random.randint(1, total_unions)
-                if CEUtils.replace_nth_union(ce=new_ce, n=n, newclass=self.new_class()):
+                if CEUtils.replace_nth_cl_w_union(ce=new_ce, n=n, newclass=self.new_class()):
                     return new_ce
             elif mutation == 'cardinality':
                 total_restrictions = CEUtils.count_existential_restrictions(
