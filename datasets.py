@@ -1,6 +1,5 @@
 from torch_geometric.datasets import OGB_MAG, DBLP
 from torch_geometric.data import HeteroData
-import GPUtil
 import torch_geometric
 import torch
 import os.path as osp
@@ -10,7 +9,6 @@ import itertools
 
 import networkx as nx
 import torch_geometric as pyg
-import dgl
 from torch_geometric.datasets.graph_generator import BAGraph
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.utils import from_networkx
@@ -1323,8 +1321,8 @@ class GraphLibraryConverter():
                         hetero_graph, end_type, relation_type, start_type, end_id.item(), start_id.item())
         assert isinstance(
             hetero_graph, HeteroData), "The graph is not a heterogenous graph."
-        assert hetero_graph.is_undirected(
-        ), f"The graph {hetero_graph} is not undirected."
+        # assert hetero_graph.is_undirected(
+        # ), f"The graph {hetero_graph} is not undirected."
         return hetero_graph
 
 

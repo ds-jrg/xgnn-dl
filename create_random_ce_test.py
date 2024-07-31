@@ -4,7 +4,6 @@ from owlapy.class_expression import OWLClass, OWLObjectIntersectionOf, OWLCardin
 from owlapy.owl_property import OWLObjectProperty
 from owlapy.render import DLSyntaxObjectRenderer
 import unittest
-from unittest.mock import patch
 import sys
 import os
 from create_random_ce import Mutation, CEUtils

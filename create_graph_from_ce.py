@@ -1,3 +1,161 @@
+from create_random_ce import CEUtils, Mutation
+import torch
+import torch_geometric
+from torch_geometric.data import HeteroData
+import copy
+import random
+from owlapy.class_expression import OWLClassExpression, OWLObjectUnionOf, OWLObjectCardinalityRestriction, OWLObjectMinCardinality
+from owlapy.class_expression import OWLClass, OWLObjectIntersectionOf, OWLCardinalityRestriction, OWLNaryBooleanClassExpression, OWLObjectRestriction
+from owlapy.owl_property import OWLObjectProperty
+from owlapy.render import DLSyntaxObjectRenderer
+from datasets import GraphLibraryConverter
+dlsr = DLSyntaxObjectRenderer()
+
+
+class PyGfromCE():
+    """
+    This class summarizes all functions, which are needed to create a PyG from a CE.
+    ultimate function:  "create_pyg_from_ce"
+    """
+
+    def __init__(self) -> None:
+        self.graph = HeteroData()
+        self.list_edges = []
+        self.prototype_edgetriple = {'start': None,
+                                     'edge': None,
+                                     'end': None,
+                                     'ids': {'start': 0, 'end': 1}}
+        self.list_current_edgetriples = []
+        self.current_position = 'start'
+        self.topce = None  # to store, if we are in union or intersection
+        self.current_class = None
+        self.is_in_filler = False
+
+    @staticmethod
+    def add_edge_to_graphdict(edge: dict, graphdict: dict):
+        """
+        1. get number of nodes of types to be added
+        2. add to graphdict (which can be directly used to create a hdata PyG Graph)
+        Create Graphs like:
+        hetero_graph[(start_type, edge_type, end_type)].edge_index = torch.tensor(
+                [list_ids_start, list_ids_end])
+        """
+        new_edge = (edge['start'], edge['edge'], edge['end'])
+        if new_edge not in graphdict:
+            graphdict[new_edge] = [[edge['ids']['start']], [
+                                   edge['ids']['end']]]
+        else:
+            graphdict[new_edge][0].append([edge['ids']['start']])
+            graphdict[new_edge][1].append([edge['ids']['end']])
+        return graphdict
+
+    def create_pyg_from_ce(self, ce):
+        """
+        Create a PyG from a CE.
+        current_class states the class of this level in the CE and ensures, that one node does not have different classses.
+        current_triples is the list of unfulfilled edges.
+        list_edges is the list of edges for Heterodata.
+        start_class is class for new edges
+        current_position is, if classes are added to beginning or ending
+        """
+        new_ce = CEUtils.flatten_ce_class_first(ce)
+
+        print('current ce: ', ce, 'new ce: ', new_ce)
+        assert isinstance(new_ce, OWLClassExpression)
+
+        def find_edges(ce, start_class=None, current_id=0):
+            """
+            All nary CEs have first classes and then further properties.
+            """
+            print('current ce: ', ce)
+            assert isinstance(ce, OWLClassExpression)
+            print('current list: ', self.list_current_edgetriples, self.list_edges)
+            if isinstance(ce, OWLClass):
+                if start_class is None:
+                    start_class = ce
+                    self.current_class = ce
+                for triple in self.list_current_edgetriples:
+                    if triple[self.current_position] is None:
+                        if triple['ids'][self.current_position] is None:
+                            triple['ids'][self.current_position] = current_id
+                        triple[self.current_position] = CEUtils.get_name_from_class_or_property(
+                            ce)
+                self.current_position = 'start'
+            elif isinstance(ce, OWLObjectCardinalityRestriction):
+                assert (self.current_position == 'start')
+                if start_class is None:
+                    start_class = self.current_class
+                for i in range(ce._cardinality):
+                    new_triple = copy.deepcopy(self.prototype_edgetriple)
+                    new_triple['start'] = str(dlsr.render(start_class))
+                    new_triple['ids']['start'] = current_id
+                    assert isinstance(
+                        ce._property, OWLObjectProperty)
+                    property_str = str(dlsr.render(ce._property))
+                    new_triple['edge'] = property_str
+                    self.current_position = 'end'
+                    new_ids = copy.deepcopy(current_id)
+                    print('new triple debug', new_triple)
+                    self.list_current_edgetriples.append(new_triple)
+                    find_edges(ce._filler, start_class, new_ids+1+i)
+            elif isinstance(ce, OWLObjectIntersectionOf):
+                for op in ce.operands():
+                    find_edges(op, None, current_id)
+            elif isinstance(ce, OWLObjectUnionOf):
+                operands_list = list(ce._operands)
+                subset_size = random.randint(1, len(operands_list))
+                random_subset = random.sample(operands_list, subset_size)
+                for op in random_subset:
+                    find_edges(op, start_class, current_id)
+            for triple in self.list_current_edgetriples:
+                if not any(value is None for value in triple.values()):
+                    self.list_edges.append(triple)
+                    self.list_current_edgetriples.remove(triple)
+
+        def renumber_edges():
+            """
+            input: triple + ids : {'start', 'end'}
+            output: triple + new_id for PyG, counting only nodes of 1 type
+            """
+            count_nodetypes = {}
+            new_triples = []
+            for triple in self.list_edges:
+                new_triple = copy.deepcopy(triple)
+                if new_triple['start'] not in count_nodetypes:
+                    count_nodetypes[new_triple['start']] = 0
+                    start_id = 0
+                else:
+                    count_nodetypes[new_triple['start']] += 1
+                    start_id = count_nodetypes[new_triple['start']]
+                    start_id += 1
+                if new_triple['end'] not in count_nodetypes:
+                    count_nodetypes[new_triple['end']] = 0
+                else:
+                    count_nodetypes[new_triple['end']] += 1
+                new_triple['ids']['start'] = start_id
+                new_triple['ids']['end'] = count_nodetypes[new_triple['end']]
+                new_triples.append(new_triple)
+            return new_triples
+        find_edges(new_ce)
+        edges = renumber_edges()
+        graphdict = {}
+        print('debug edges', edges)
+        print('debug edgelist', self.list_edges, self.list_current_edgetriples)
+        for edge in edges:
+            graphdict.update(self.add_edge_to_graphdict(edge, graphdict))
+        for key in graphdict:
+            list_ids_start, list_ids_end = graphdict[key]
+            graphdict[key] = torch.tensor([list_ids_start, list_ids_end])
+        print('debug gd', graphdict)
+        graph = HeteroData()
+        for key, values in graphdict.items():
+            graph[key].edge_index = values
+        print('debug', graph, graphdict)
+        graph = GraphLibraryConverter.make_hdata_bidirected(graph)
+        return graph
+
+
+# --------------- old functions, possible stupid, maybe okay -------------------------------
 def get_twisted_edge(edge):
     return (edge[2], edge[1], edge[0])
 
@@ -212,10 +370,12 @@ def is_valid_pyg_heterograph(graph_dict):
     The ids are represented as a tuple of two lists. The first list contains the ids of the startnodes.
     The second list contains the ids of the endnodes.
     Example:
-    graph_dict = {('A', 'edge', 'B'): ([0, 1, 2], [3, 4, 5]), ('B', 'edge', 'A'): ([0, 1, 2], [3, 4, 5])}
+    graph_dict = {('A', 'edge', 'B'): (
+        [0, 1, 2], [3, 4, 5]), ('B', 'edge', 'A'): ([0, 1, 2], [3, 4, 5])}
     This graph is not valid, because the ids of the startnodes and endnodes are not the same for the edge and its twisted edge.
     The correct representation would be:
-    graph_dict = {('A', 'edge', 'B'): ([0, 1, 2], [3, 4, 5]), ('B', 'edge', 'A'): ([3, 4, 5], [0, 1, 2])}
+    graph_dict = {('A', 'edge', 'B'): (
+        [0, 1, 2], [3, 4, 5]), ('B', 'edge', 'A'): ([3, 4, 5], [0, 1, 2])}
     """
     # Check if the dictionary is a dictionary
     if not isinstance(graph_dict, dict):
@@ -302,7 +462,7 @@ def update_current_ids(new_dict, nodetype, idstart, new_id):
 def integrate_new_to_old_dict(old_dict, new_dict, current_node_id, update_id):
     """
     Integrates a new dictionary into an old dictionary. The old dictionary correctly represents a graph.
-    The new dictionary is a graph, but it lacks correct node ids. 
+    The new dictionary is a graph, but it lacks correct node ids.
     And it may not be represented as a torch geometric heterodata object.
 
     Parameters:

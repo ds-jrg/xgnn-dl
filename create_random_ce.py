@@ -17,8 +17,6 @@ from owlapy.render import DLSyntaxObjectRenderer
 
 
 dlsr = DLSyntaxObjectRenderer()
-xmlns = "http://www.semanticweb.org/stefan/ontologies/2023/1/untitled-ontology-11#"
-NS = xmlns
 
 
 #  ----------- Functions for manipulating CEs
@@ -27,19 +25,23 @@ NS = xmlns
 class CEUtils():
     """ 
     Here, we gather all functions, which:
-    - "flatten" a CE by removing unions in unions or intersecs in intersecs
+    - TODO: "flatten" a CE by removing unions in unions or intersecs in intersecs
+    - get the edetypes or nodetypes of a property or class
     - return the n-th union/intersection/class/etc. of a class expression
     - replace the n-th union/intersection/class/etc. of a CE with a new CE
-    - gather additional info, like depth, length, or width of a CE
     """
     __slots__ = ()
 
-    def __init__(self, ce=None):
-        if ce is not None:
-            self.ce = ce
-            # self.length = get_length(ce)
-            # self.width = get_width(ce)
-            # self.depth = get_depth(ce)
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def get_name_from_class_or_property(ce):
+        if not isinstance(ce, OWLClass):
+            if not isinstance(ce, OWLObjectProperty):
+                print("ce must be of type OWLClass or OWLObjectProperty")
+                return None
+        return str(dlsr.render(ce))
 
     @staticmethod
     def count_classes(ce):
@@ -269,6 +271,63 @@ class CEUtils():
         elif isinstance(ce, OWLObjectRestriction):
             return CEUtils.replace_nth_cl_w_union(ce._filler, newclass, n, ce)
         return False
+
+    @staticmethod
+    def flatten_ce_class_first(ce):
+        new_ce = copy.deepcopy(ce)
+
+        def flatten_intersections(ce):
+            if isinstance(ce, OWLObjectIntersectionOf):
+                new_operands = []
+                for op in ce.operands():
+                    if isinstance(op, OWLObjectIntersectionOf):
+                        new_operands += op.operands()
+                    else:
+                        new_operands.append(op)
+                ce._operands = tuple(new_operands)
+            elif isinstance(ce, OWLNaryBooleanClassExpression):
+                new_operands = []
+                for op in ce.operands():
+                    new_operands.append(flatten_intersections(op))
+                ce._operands = tuple(new_operands)
+            elif isinstance(ce, OWLObjectRestriction):
+                flatten_intersections(ce._filler)
+
+        def flatten_unions(ce):
+            if isinstance(ce, OWLObjectUnionOf):
+                new_operands = []
+                for op in ce.operands():
+                    if isinstance(op, OWLObjectUnionOf):
+                        new_operands += op.operands()
+                    else:
+                        new_operands.append(op)
+                    ce._operands = tuple(new_operands)
+            elif isinstance(ce, OWLNaryBooleanClassExpression):
+                for op in ce.operands():
+                    flatten_unions(op)
+            elif isinstance(ce, OWLObjectRestriction):
+                flatten_unions(ce._filler)
+
+        def reorder_nary_first_classes(ce):
+            if isinstance(ce, OWLNaryBooleanClassExpression):
+                new_operands = []
+                for op in ce.operands():
+                    if isinstance(op, OWLClass):
+                        new_operands.append(op)
+                for op in ce.operands():
+                    if not isinstance(op, OWLClass):
+                        new_operands.append(op)
+                        reorder_nary_first_classes(op)
+                ce._operands = tuple(new_operands)
+            elif isinstance(ce, OWLObjectRestriction):
+                reorder_nary_first_classes(ce._filler)
+
+        flatten_intersections(new_ce)
+        flatten_unions(new_ce)
+        reorder_nary_first_classes(new_ce)
+
+        return new_ce
+
 
 # ----- mutate ce functions -----
 
