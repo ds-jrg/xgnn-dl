@@ -5,26 +5,153 @@ import random as random
 import os.path as osp
 from torch_geometric.data import HeteroData
 import torch
-import dgl
 import sys
 import copy
-import copy
-from ce_generation import generate_cedict_from_ce
-from create_random_ce import length_ce, remove_front, find_class, count_classes
-from create_random_ce import length_ce, remove_front
-from graph_generation import compute_prediction_ce
-import pandas as pd
-
-from owlapy.model import OWLObjectProperty, OWLObjectSomeValuesFrom
-from owlapy.model import OWLDataProperty
-from owlapy.model import OWLClass, OWLClassExpression
-from owlapy.model import OWLDeclarationAxiom, OWLDatatype, OWLDataSomeValuesFrom, OWLObjectIntersectionOf, OWLEquivalentClassesAxiom, OWLObjectUnionOf
-from owlapy.model import OWLDataPropertyDomainAxiom
-from owlapy.model import IRI
+from owlapy.class_expression import OWLClassExpression, OWLObjectUnionOf, OWLObjectCardinalityRestriction, OWLObjectMinCardinality
+from owlapy.class_expression import OWLClass, OWLObjectIntersectionOf, OWLCardinalityRestriction, OWLNaryBooleanClassExpression, OWLObjectRestriction
+from owlapy.owl_property import OWLObjectProperty
 from owlapy.render import DLSyntaxObjectRenderer
 dlsr = DLSyntaxObjectRenderer()
 
 
+# --------- new code ------------
+class InstanceChecker():
+    """
+    This class is used to find all instances, which fulfill a certain class expression
+    Input: graph (Heterodata), CE (owlapy)
+    Output: a list of labels for each node (saved as a list; index relates to index of node)
+    Summary of functions:
+    - fast_instance_checker_uic: Find all instances in the graph, which:
+        have unions
+        have intersections
+        have cardinality restrictions (minimum cardinality)
+
+    """
+
+    def __init__(self, hdatagraph) -> None:
+        self._graph = hdatagraph
+    # TODO: Run in parallel
+
+    @staticmethod
+    def get_adjacent_nodes(hdata, current_nodetype, current_id, new_edgetype=None, new_nodetypes=None) -> dict:
+        """
+            gets all adjacent nodes of the current node, with only the nodetypes wanted.
+            Input:
+            - hdata: graph 
+            - current_nodetype: node type of current node, where we want neighbors from
+            - current_id: id of current node
+            - new_edgetype: edge type of the edge we want to follow (if None, all edges are considered)
+            - new_nodetypes: list of node types we want to follow / we are looking for.
+                If None, then all nodes are considered. TODO: Implement this.
+        """
+        if new_edgetype is None:
+            new_edgetype = True
+
+        dict_adjacent_nodes = {}
+        for new_nodetype in new_nodetypes:
+            dict_adjacent_nodes[new_nodetype] = []
+        for edgetype in hdata.edge_types:
+            if edgetype[0] == current_nodetype and edgetype[1] == new_edgetype:
+                if new_nodetypes is None:
+
+                    for index, target_node in enumerate(hdata[edgetype]['edge_index'][0]):
+                        if target_node == current_id:
+                            dict_adjacent_nodes[edgetype[2]].append(
+                                hdata[edgetype]['edge_index'][1][index].item())
+                else:
+                    if edgetype[2] in new_nodetypes:
+                        for index, target_node in enumerate(hdata[edgetype]['edge_index'][0]):
+                            if target_node == current_id:
+                                dict_adjacent_nodes[edgetype[2]].append(
+                                    hdata[edgetype]['edge_index'][1][index].item())
+        return dict_adjacent_nodes
+
+    def fast_instance_checker_uic(self, ce):
+        """
+        This function gives back the set of nodes in the dataset, 
+        for which the CE holds true.
+        Workflow:
+        We start with all nodes and make this iteretively smaller.
+        In the first iteration, we only check the nodetypes available
+        Then, we check for all remaining nodes if the CE holds true.
+
+        For each .. we do : ..
+        intersection : We continue with all operands, all of them have to be satisfied
+        union: We continue with all operands, at least one of them has to be satisfied
+        cardinality : We continue with all operands of the new class
+
+        Current node-types and node-ids for each inters. and union are saved:
+        {node-type : [ids]}
+
+        The result is stored as "result_instances and is a dictionary
+        {node types: [node ids]}
+        """
+        hdata = self._graph
+        result_instances = {}
+        for node_type in hdata.node_types:
+            result_instances[node_type] = set(
+                range(len(hdata[node_type].num_nodes)))
+
+        def retrieve_top_classes(ce):
+            if isinstance(ce, OWLClass):
+                str_class = str(dlsr.render(ce))
+                return {str_class}
+            elif isinstance(ce, OWLObjectIntersectionOf):
+                result = set()
+                for op in ce.operands():
+                    result.update(op)
+                if len(result) >= 2:
+                    return set()
+                else:
+                    return result
+            elif isinstance(ce, OWLObjectUnionOf):
+                result = set()
+                for op in ce.operands():
+                    result.update(op)
+                return result
+            return set()
+        top_classes = retrieve_top_classes(ce)
+        for nodetype in hdata.node_types:
+            if nodetype not in top_classes:
+                result_instances.pop(nodetype, None)
+
+        def iterate_through_graph(ce, current_nodetype, current_id):
+            if isinstance(ce, OWLClass):
+                if str(current_nodetype) == str(dlsr.render(ce)):
+                    return True
+                return False
+            elif isinstance(ce, OWLObjectUnionOf):
+                for op in ce.operands():
+                    if iterate_through_graph(op, current_nodetype, current_id):
+                        return True
+                return False
+            elif isinstance(ce, OWLObjectIntersectionOf):
+                result = True
+                for op in ce.operands():
+                    result = result and iterate_through_graph(
+                        op, current_nodetype, current_id)
+                return result
+            elif isinstance(ce, OWLObjectMinCardinality):
+                # retrieve nodes that fit the edge type
+                # then run this function
+                # if counts of True higher or equal the cardinality
+                # return True
+                edgetype = str(dlsr.render(ce._property))
+                new_nodetypes = retrieve_top_classes(ce._filler)
+                dict_adjacent_nodes = get_adjacent_nodes(
+                    current_nodetype, current_id, edgetype, new_nodetypes)
+                # this is a dict: type : ids
+                number_trues = 0
+                for nodetype in dict_adjacent_nodes.keys():
+                    for id in dict_adjacent_nodes[nodetype]:
+                        if iterate_through_graph(ce._filler, current_nodetype=nodetype, current_id=id):
+                            number_trues += 1
+                if number_trues >= ce._cardinality:
+                    return True
+                return False
+
+
+# ---------- old code -------------
 
 
 def available_edges_with_nodeid(graph, current_type, current_id, edgetype='to'):
@@ -34,7 +161,8 @@ def available_edges_with_nodeid(graph, current_type, current_id, edgetype='to'):
         if key[0] == current_type and key[1] == edgetype:
             for _, indexvalue in enumerate(value[0].tolist()):
                 if current_id == indexvalue:
-                    list_result.append([key[2], value[1].tolist()[_], value[2][_]])
+                    list_result.append(
+                        [key[2], value[1].tolist()[_], value[2][_]])
     return list_result
 
 
@@ -52,7 +180,8 @@ def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1,
         list_labels = datasetfid[node_type_expl].y
         label_expl = max(set(list_labels))
     modelfid.eval()
-    pred = modelfid(datasetfid.x_dict, datasetfid.edge_index_dict).argmax(dim=-1)
+    pred = modelfid(datasetfid.x_dict,
+                    datasetfid.edge_index_dict).argmax(dim=-1)
     pred_list = pred.tolist()
     for index, value in enumerate(pred_list):
         if value != label_expl:
@@ -65,12 +194,16 @@ def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1,
         cedict = generate_cedict_from_ce(ce_for_fid)
         # mask = select_ones(mask, 100)
         # create new vector with samples only as true vector
-        smaller_mask = random.sample(mask.tolist(), k=min(200, len(mask.tolist())))
+        smaller_mask = random.sample(
+            mask.tolist(), k=min(200, len(mask.tolist())))
         mask = torch.tensor(smaller_mask)
     else:
-        indices_of_ones = [i for i, value in enumerate(mask.tolist()) if value == True]
-        chosen_indices = random.sample(indices_of_ones, k=min(20, len(indices_of_ones)))
-        mask = [i if i in chosen_indices else 0 for i in range(len(mask.tolist()))]
+        indices_of_ones = [i for i, value in enumerate(
+            mask.tolist()) if value == True]
+        chosen_indices = random.sample(
+            indices_of_ones, k=min(20, len(indices_of_ones)))
+        mask = [i if i in chosen_indices else 0 for i in range(
+            len(mask.tolist()))]
         mask = [x for x in mask if x != 0]
         mask = torch.tensor(mask)
         sys.exit()
@@ -79,7 +212,8 @@ def ce_fidelity(ce_for_fid, modelfid, datasetfid, node_type_expl, label_expl=-1,
     count_zeros_gnn = 0
     for index in mask.tolist():
         cedict = generate_cedict_from_ce(ce_for_fid)
-        result_ce_fid = compute_prediction_ce(cedict, metagraph, node_type_expl, index)
+        result_ce_fid = compute_prediction_ce(
+            cedict, metagraph, node_type_expl, index)
         if pred[index] == result_ce_fid:
             count_fids += 1
         if result_ce_fid == 0:
@@ -118,7 +252,8 @@ def ce_confusion_iterative(ce, graph, current_graph_node):
     elif isinstance(ce, OWLObjectProperty):
         edgdetype = remove_front(ce.to_string_id())
         # form should be [edge, endnodetype, endnodeid]
-        available_edges = available_edges_with_nodeid(graph, current_graph_node[0], current_graph_node[1], edgetype)
+        available_edges = available_edges_with_nodeid(
+            graph, current_graph_node[0], current_graph_node[1], edgetype)
         if len(available_edges) > 0:
             # TODO: Add this edge to result, as the edge has been found
             # result.update()
@@ -138,7 +273,8 @@ def ce_confusion_iterative(ce, graph, current_graph_node):
         else:
             edgetype = remove_front(ce._property.to_string_id())
         # form should be [edge, endnodetype, endnodeid]
-        available_edges = available_edges_with_nodeid(graph, current_graph_node[0], current_graph_node[1], edgetype)
+        available_edges = available_edges_with_nodeid(
+            graph, current_graph_node[0], current_graph_node[1], edgetype)
         current_best_length = len(result)
         result_copy = copy.deepcopy(result)
         local_result = set()
@@ -149,7 +285,8 @@ def ce_confusion_iterative(ce, graph, current_graph_node):
             for i in result_copy:
                 local_result.update(set(i))
             local_result.add(aved[2])
-            feed1, feed2, current_graph_node = ce_confusion_iterative(ce._filler, graph, [aved[0], aved[1]])
+            feed1, feed2, current_graph_node = ce_confusion_iterative(
+                ce._filler, graph, [aved[0], aved[1]])
             if feed2:
                 some_edgewas_true = True
                 # (319, feed1, current_graph_node)
@@ -169,14 +306,16 @@ def ce_confusion_iterative(ce, graph, current_graph_node):
         return_truth = True
         for op in ce.operands():  # TODO: First select class if available, then further edges
             if isinstance(op, OWLClass) == True:
-                feed1, feed2, current_graph_node = ce_confusion_iterative(op, graph, current_graph_node)
+                feed1, feed2, current_graph_node = ce_confusion_iterative(
+                    op, graph, current_graph_node)
                 if feed1 != None:
                     result.update(list(feed1))
                 if feed2 == False:
                     return_truth = False
         for op in ce.operands():
             if isinstance(op, OWLClass) == False:
-                feed1, feed2, current_graph_node = ce_confusion_iterative(op, graph, current_graph_node)
+                feed1, feed2, current_graph_node = ce_confusion_iterative(
+                    op, graph, current_graph_node)
                 if feed1 != None:
                     result.update(list(feed1))
                 if feed2 == False:
@@ -268,7 +407,8 @@ def find_adjacent_edges(hetero_data: HeteroData, node_type: str, node_id: int):
         if src_type == node_type:
             target_nodes = edge_data[1][mask]
             for target_node_id in target_nodes:
-                adjacent_edges.append((target_node_id.item(), dst_type, edge_type))
+                adjacent_edges.append(
+                    (target_node_id.item(), dst_type, edge_type))
             # Check for edges terminating at the given node
     # return dict of adjacent edges: {(str, str, str) : tensor[(tensor, tensor)]}
     adjacent_edges = set(adjacent_edges)
@@ -310,17 +450,20 @@ def ce_fast_instance_checker(ce, dataset, current_node_type, current_id):
 
         for op in ce.operands():
             if not isinstance(op, OWLClass):
-                valid_adjacent_nodes.update(ce_fast_instance_checker(op, dataset, current_node_type, current_id))
+                valid_adjacent_nodes.update(ce_fast_instance_checker(
+                    op, dataset, current_node_type, current_id))
     elif isinstance(ce, OWLObjectSomeValuesFrom):
         new_class = find_class(ce._filler)
         new_class = remove_front(new_class.to_string_id())
-        adjacent_edges = find_adjacent_edges(dataset, current_node_type, current_id)
+        adjacent_edges = find_adjacent_edges(
+            dataset, current_node_type, current_id)
         for edge in adjacent_edges:
             if edge[1] == new_class:
                 pass
                 # valid_adjacent_nodes.add(edge)
         for edge in adjacent_edges:
-            new_adjacent_nodes = ce_fast_instance_checker(ce._filler, dataset, edge[1], edge[0])
+            new_adjacent_nodes = ce_fast_instance_checker(
+                ce._filler, dataset, edge[1], edge[0])
             if not new_adjacent_nodes:
                 pass
             else:
@@ -341,9 +484,12 @@ def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl):
             mask_tf = 1
             break
     if mask_tf == 1:
-        indices_of_ones = [i for i, value in enumerate(mask.tolist()) if value == True]
-        chosen_indices = random.sample(indices_of_ones, k=min(20, len(indices_of_ones)))
-        mask = [i if i in chosen_indices else 0 for i in range(len(mask.tolist()))]
+        indices_of_ones = [i for i, value in enumerate(
+            mask.tolist()) if value == True]
+        chosen_indices = random.sample(
+            indices_of_ones, k=min(20, len(indices_of_ones)))
+        mask = [i if i in chosen_indices else 0 for i in range(
+            len(mask.tolist()))]
         mask = [x for x in mask if x != 0]
         mask = torch.tensor(mask)
     model.eval()
@@ -357,7 +503,8 @@ def fidelity_el(ce, dataset, node_type_to_expl, model, label_to_expl):
     for id in mask.tolist():
         current_id = id
         return_id = 1
-        return_set = ce_fast_instance_checker(ce, dataset, node_type_to_expl, current_id)
+        return_set = ce_fast_instance_checker(
+            ce, dataset, node_type_to_expl, current_id)
         return_gnn = pred_list[id]  # get instead the gnn feedback
         if not return_set:
             return_id = 0
@@ -403,10 +550,12 @@ class Accuracy_El:
                       }
         heterodata_motif = HeteroData()
         for edge, indices in dict_motif.items():
-            heterodata_motif[edge].edge_index = (indices[0], indices[1], torch.tensor(indices[2]))
+            heterodata_motif[edge].edge_index = (
+                indices[0], indices[1], torch.tensor(indices[2]))
         self.dict_motif = heterodata_motif
         self.list_results = list()
-        dict_found_nodes = {('3', 0): False, ('2', 0): False, ('2', 1): False, ('1', 0): False, ('1', 1): False}
+        dict_found_nodes = {('3', 0): False, ('2', 0): False,
+                            ('2', 1): False, ('1', 0): False, ('1', 1): False}
         number_of_false_positives = 0
         pos_graph = {'nodetype': '3', 'id': 0}
         dict_onepath = {'result': dict_found_nodes, 'position': pos_graph,
@@ -419,8 +568,10 @@ class Accuracy_El:
         Calculate the accuracy of the current path
         """
         for dict in self.list_results:
-            dict['accuracy'] = sum(1 for value in dict['result'].values() if value is True) / (5 + dict['fp'])
-        print(self.list_results[0]['result'], self.list_results[0]['fp'], self.list_results[0]['accuracy'])
+            dict['accuracy'] = sum(
+                1 for value in dict['result'].values() if value is True) / (5 + dict['fp'])
+        print(self.list_results[0]['result'], self.list_results[0]
+              ['fp'], self.list_results[0]['accuracy'])
 
     def _ce_accuracy_iterate_house(self, ce):
         """
@@ -432,9 +583,11 @@ class Accuracy_El:
             # Question: Here what to do exactly ?? Should we check, if the class is in the graph ??
             # Should we update the current position here? -> no, that is not possible
             self.list_results[self.current_path_index]['found_classes'] += 1
-            print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
+            print(remove_front(ce.to_string_id()),
+                  self.list_results[self.current_path_index]['position'])
             if remove_front(ce.to_string_id()) == self.list_results[self.current_path_index]['position']['nodetype']:
-                print(remove_front(ce.to_string_id()), self.list_results[self.current_path_index]['position'])
+                print(remove_front(ce.to_string_id()),
+                      self.list_results[self.current_path_index]['position'])
                 self.list_results[self.current_path_index]['result'][(self.list_results[self.current_path_index]['position']['nodetype'],
                                                                       self.list_results[self.current_path_index]['position']['id'])] = True
             else:
@@ -450,32 +603,40 @@ class Accuracy_El:
             # iterate somehow over all possible paths
             if len(adjacent_edges) == 1:
                 # append also an edge to abstract node and test that one
-                self.list_results.append(copy.deepcopy(self.list_results[self.current_path_index]))
+                self.list_results.append(copy.deepcopy(
+                    self.list_results[self.current_path_index]))
                 new_abstract_index = len(self.list_results) - 1
-                self.list_results[-1]['position'] = {'nodetype': 'abstract', 'id': 0}
+                self.list_results[-1]['position'] = {
+                    'nodetype': 'abstract', 'id': 0}
                 edge = adjacent_edges[0]
                 if edge[1] == new_class:
                     # update the current path
-                    self.list_results[self.current_path_index]['position'] = {'nodetype': edge[1], 'id': edge[0]}
+                    self.list_results[self.current_path_index]['position'] = {
+                        'nodetype': edge[1], 'id': edge[0]}
             elif len(adjacent_edges) == 0:
                 self.list_results[self.current_path_index]['fp'] += 1
-                self.list_results[self.current_path_index]['position'] = {'nodetype': 'abstract', 'id': 0}
+                self.list_results[self.current_path_index]['position'] = {
+                    'nodetype': 'abstract', 'id': 0}
                 new_abstract_index = self.current_path_index
             else:
                 # append also an edge to abstract node and test that one
-                self.list_results.append(copy.deepcopy(self.list_results[self.current_path_index]))
+                self.list_results.append(copy.deepcopy(
+                    self.list_results[self.current_path_index]))
                 new_abstract_index = len(self.list_results) - 1
                 count_current_path_index = 0
                 adjacent_edges = list(set(adjacent_edges))
                 current_index = copy.deepcopy(self.current_path_index)
                 for edge in adjacent_edges:
                     if edge[1] == new_class:
-                        self.list_results.append(copy.deepcopy(self.list_results[current_index]))
-                        self.list_results[-1]['position'] = {'nodetype': edge[1], 'id': edge[0]}
-                        self.current_path_index = len(self.list_results) -1
+                        self.list_results.append(copy.deepcopy(
+                            self.list_results[current_index]))
+                        self.list_results[-1]['position'] = {
+                            'nodetype': edge[1], 'id': edge[0]}
+                        self.current_path_index = len(self.list_results) - 1
                         self._ce_accuracy_iterate_house(ce._filler)
                         count_current_path_index += 1
-            self.list_results[new_abstract_index]['position'] = {'nodetype': 'abstract', 'id': 0}
+            self.list_results[new_abstract_index]['position'] = {
+                'nodetype': 'abstract', 'id': 0}
             self.current_path_index = new_abstract_index
             self._ce_accuracy_iterate_house(ce._filler)
 
@@ -500,5 +661,6 @@ class Accuracy_El:
         self._calc_accuracy()
         sorted_list_results = sorted(
             self.list_results, key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
-        self.list_results.sort(key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
+        self.list_results.sort(
+            key=lambda x: x['accuracy'] if x['accuracy'] is not None else float('-inf'), reverse=True)
         return sorted_list_results[0]['accuracy']
