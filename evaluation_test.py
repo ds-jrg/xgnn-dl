@@ -52,8 +52,7 @@ class TestMutateCE(unittest.TestCase):
         edge_name_31 = ('3', 'to', '1')
         data[edge_name_13].edge_index = edges_13
         data[edge_name_31].edge_index = edges_31
-        
-        
+
         self.hdata = data
 
         # ce
@@ -66,6 +65,9 @@ class TestMutateCE(unittest.TestCase):
         ce_1_2 = OWLObjectIntersectionOf([class_1, OWLObjectMinCardinality(
             cardinality=1, filler=class_2, property=edge)])
         self.ce_1_2 = ce_1_2
+        ce_card2_12 = OWLObjectIntersectionOf([class_1, OWLObjectMinCardinality(
+            cardinality=2, filler=class_2, property=edge)])
+        self.card2_12 = ce_card2_12
 
     def test_getadjacentnodes(self):
         ic = InstanceChecker(self.hdata)
@@ -80,7 +82,13 @@ class TestMutateCE(unittest.TestCase):
         true_nodes = ic.fast_instance_checker_uic(ce_1_2)
         print('Result fic', true_nodes)
         self.assertDictEqual(true_nodes, {'1': [0, 1, 2]})
-        
+
+        ce_c2_12 = self.card2_12
+        ic = InstanceChecker(self.hdata)
+        true_nodes = ic.fast_instance_checker_uic(ce_c2_12)
+        print('Result fic c2', true_nodes)
+        self.assertDictEqual(true_nodes, {'1': [1]})
+
 
 if __name__ == '__main__':
     unittest.main()
