@@ -419,7 +419,9 @@ class Mutation:
         """
         return a new edge (min. cardinality restriction)
         """
-        return OWLObjectMinCardinality(property=self.new_property(), cardinality=1, filler=self.new_class())
+        return OWLObjectMinCardinality(property=self.new_property(),
+                                       cardinality=1,
+                                       filler=self.new_class())
 
     def mutate_global(self, ce):
         """
