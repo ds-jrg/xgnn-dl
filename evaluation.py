@@ -32,8 +32,7 @@ class InstanceChecker():
         self._graph = hdatagraph
     # TODO: Run in parallel
 
-    @staticmethod
-    def get_adjacent_nodes(hdata, current_nodetype, current_id, new_edgetype=None, new_nodetypes=None) -> dict:
+    def get_adjacent_nodes(self, current_nodetype, current_id, new_edgetype=None, new_nodetypes=None) -> dict:
         """
             gets all adjacent nodes of the current node, with only the nodetypes wanted.
             Input:
@@ -48,22 +47,24 @@ class InstanceChecker():
             new_edgetype = True
 
         dict_adjacent_nodes = {}
+        assert new_edgetype is not None
+        assert new_nodetypes is not None
         for new_nodetype in new_nodetypes:
             dict_adjacent_nodes[new_nodetype] = []
-        for edgetype in hdata.edge_types:
+        for edgetype in self._graph.edge_types:
             if edgetype[0] == current_nodetype and edgetype[1] == new_edgetype:
                 if new_nodetypes is None:
 
-                    for index, target_node in enumerate(hdata[edgetype]['edge_index'][0]):
+                    for index, target_node in enumerate(self._graph[edgetype]['edge_index'][0]):
                         if target_node == current_id:
                             dict_adjacent_nodes[edgetype[2]].append(
-                                hdata[edgetype]['edge_index'][1][index].item())
+                                self._graph[edgetype]['edge_index'][1][index].item())
                 else:
                     if edgetype[2] in new_nodetypes:
-                        for index, target_node in enumerate(hdata[edgetype]['edge_index'][0]):
+                        for index, target_node in enumerate(self._graph[edgetype]['edge_index'][0]):
                             if target_node == current_id:
                                 dict_adjacent_nodes[edgetype[2]].append(
-                                    hdata[edgetype]['edge_index'][1][index].item())
+                                    self._graph[edgetype]['edge_index'][1][index].item())
         return dict_adjacent_nodes
 
     def fast_instance_checker_uic(self, ce):
@@ -87,33 +88,37 @@ class InstanceChecker():
         {node types: [node ids]}
         """
         hdata = self._graph
-        result_instances = {}
+        check_instances = {}
         for node_type in hdata.node_types:
-            result_instances[node_type] = set(
-                range(len(hdata[node_type].num_nodes)))
+            check_instances[node_type] = set(
+                range(hdata[node_type].num_nodes))
 
         def retrieve_top_classes(ce):
             if isinstance(ce, OWLClass):
                 str_class = str(dlsr.render(ce))
-                return {str_class}
+                return [str_class]
             elif isinstance(ce, OWLObjectIntersectionOf):
-                result = set()
+                result = list()
                 for op in ce.operands():
-                    result.update(op)
+                    new_class = retrieve_top_classes(op)
+                    if 0 < len(new_class):
+                        result.extend(new_class)
                 if len(result) >= 2:
-                    return set()
+                    return list()
                 else:
                     return result
             elif isinstance(ce, OWLObjectUnionOf):
-                result = set()
+                result = list()
                 for op in ce.operands():
-                    result.update(op)
+                    result.append(op)
                 return result
-            return set()
+            return list()
         top_classes = retrieve_top_classes(ce)
+        # check_instances are all instances
+        # which have the correct top class as a nodetype
         for nodetype in hdata.node_types:
             if nodetype not in top_classes:
-                result_instances.pop(nodetype, None)
+                check_instances.pop(nodetype, None)
 
         def iterate_through_graph(ce, current_nodetype, current_id):
             if isinstance(ce, OWLClass):
@@ -138,7 +143,7 @@ class InstanceChecker():
                 # return True
                 edgetype = str(dlsr.render(ce._property))
                 new_nodetypes = retrieve_top_classes(ce._filler)
-                dict_adjacent_nodes = get_adjacent_nodes(
+                dict_adjacent_nodes = self.get_adjacent_nodes(
                     current_nodetype, current_id, edgetype, new_nodetypes)
                 # this is a dict: type : ids
                 number_trues = 0
@@ -149,6 +154,13 @@ class InstanceChecker():
                 if number_trues >= ce._cardinality:
                     return True
                 return False
+        result_instances = dict()
+        for nodetype in check_instances:
+            for id in check_instances[nodetype]:
+                if iterate_through_graph(ce, current_nodetype=nodetype, current_id=id):
+                    result_instances.setdefault(
+                        str(nodetype), []).append(id)
+        return result_instances
 
 
 # ---------- old code -------------
@@ -362,7 +374,6 @@ def ce_confusion(ce,  motif='house'):
                                                        torch.tensor([0], dtype=torch.long), [-1])
                       }
     test_bla = ce_confusion_iterative(ce, motifgraph, ['3', 0])
-    # print(test_bla)
 
 
 def ce_score_fct(ce, list_gnn_outs, lambdaone, lambdatwo):
