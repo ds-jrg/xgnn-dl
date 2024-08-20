@@ -104,7 +104,7 @@ class TestMutateCE(unittest.TestCase):
             cardinality=1, filler=OWLObjectUnionOf([class_1, class_2]), property=edge)])
         print(
             f"{dlsr.render(ce_3_to_1or2)} is mutated version of {dlsr.render(self.ce_3_to_1OR2)}")
-        #self.assertEqual(dlsr.render(ground_truth), dlsr.render(ce_3_to_1or2))
+        # self.assertEqual(dlsr.render(ground_truth), dlsr.render(ce_3_to_1or2))
 
         # cardinality
         ce_3_to_1 = copy.deepcopy(self.ce_3_to_1)
@@ -113,8 +113,41 @@ class TestMutateCE(unittest.TestCase):
             ce=ce_3_to_1, n=1)
         ground_truth = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
             cardinality=2, filler=class_1, property=edge)])
-        print(f"{dlsr.render(ce_3_to_1)} is mutated version of {dlsr.render(self.ce_3_to_1)}")
+        print(
+            f"{dlsr.render(ce_3_to_1)} is mutated version of {dlsr.render(self.ce_3_to_1)}")
         self.assertEqual(dlsr.render(ground_truth), dlsr.render(ce_3_to_1))
+
+
+class TestCEUtils(unittest.TestCase):
+    def setUp(self):
+        self.new_edge = OWLObjectMinCardinality(
+            cardinality=1, filler=class_1, property=edge)
+        self.ce_3_to_1 = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
+            cardinality=1, filler=class_1, property=edge)])
+        self.ce_3_to_1OR2 = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
+            cardinality=1, filler=OWLObjectUnionOf([class_1, class_2]), property=edge)])
+        self.ce_321 = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
+            cardinality=1,
+            filler=OWLObjectMinCardinality(cardinality=1,
+                                           filler=class_1,
+                                           property=edge),
+            property=edge)])
+
+    def test_get_max_depth(self):
+        max_depth = CEUtils.get_max_depth(self.ce_3_to_1)
+        self.assertEqual(max_depth, 1)
+        max_depth = CEUtils.get_max_depth(self.ce_321)
+        self.assertEqual(max_depth, 2)
+
+    def test_find_all_poosible_mutations(self):
+        possible_mutations = CEUtils.find_all_poosible_mutations(
+            self.ce_3_to_1)
+        self.assertEqual(len(possible_mutations), 3)
+        poss_mut_class = CEUtils.find_all_poosible_mutations(class_2)
+        self.assertEqual(len(poss_mut_class), 1)
+        poss_mutate_union = CEUtils.find_all_poosible_mutations(
+            self.ce_3_to_1OR2)
+        self.assertEqual(len(poss_mutate_union), 4)
 
 
 if __name__ == '__main__':

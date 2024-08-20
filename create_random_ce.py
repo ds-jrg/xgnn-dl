@@ -176,6 +176,8 @@ class CEUtils():
     def replace_nth_class(ce, n, newpropertyvalue, topce=None):
         """
         class C -> C AND exists to new class N 
+        This only works, if C is already in a larger Class expression
+        Not working, if ce is exactly one class
         """
         if isinstance(ce, OWLClass):
             if n == 1:
@@ -185,15 +187,14 @@ class CEUtils():
                             newpropertyvalue._cardinality += 1
                         return True
                 if isinstance(topce, OWLNaryBooleanClassExpression):
-                    print('begin topce', dlsr.render(topce))
                     topce._operands = tuple(
                         op for op in topce.operands() if op != ce)
                     topce._operands = topce._operands + (newpropertyvalue,)
-                    print('ce', dlsr.render(ce), 'topce', dlsr.render(topce))
                     return True
                 elif isinstance(topce, OWLObjectRestriction):
                     topce._filler = newpropertyvalue
                     return True
+
                 else:
                     raise Exception("Can't replace class in class expression")
         if isinstance(ce, OWLNaryBooleanClassExpression):
@@ -328,12 +329,58 @@ class CEUtils():
 
         return new_ce
 
+    @staticmethod
+    def get_max_depth(ce):
+        """
+        the max_depth returns the max number of restriction (edges)
+            from top-class to some bottom
+        Hence, max_depth represents the GNN depth of GNNs with .. layers
+        """
+        def get_max_depth_helper(ce):
+            depth = 0
+            if isinstance(ce, OWLNaryBooleanClassExpression):
+                for op in ce.operands():
+                    depth = max(depth, get_max_depth_helper(op))
+            elif isinstance(ce, OWLObjectRestriction):
+                depth += 1
+                depth += get_max_depth_helper(ce._filler)
+            return depth
+        return get_max_depth_helper(ce)
+
+    @staticmethod
+    def find_all_poosible_mutations(ce):
+        def find_all_poosible_mutations_helper(ce):
+            mutations = []
+            if isinstance(ce, OWLObjectIntersectionOf):
+                mutations += ['intersection']
+                if len(set(mutations)) == 4:
+                    return list(set(mutations))
+                for op in ce.operands():
+                    mutations += find_all_poosible_mutations_helper(op)
+            elif isinstance(ce, OWLObjectUnionOf):
+                mutations += ['union']
+                if len(set(mutations)) == 4:
+                    return list(set(mutations))
+                for op in ce.operands():
+                    mutations += find_all_poosible_mutations_helper(op)
+            elif isinstance(ce, OWLObjectRestriction):
+                mutations += ['cardinality']
+                if len(set(mutations)) == 4:
+                    return list(set(mutations))
+                mutations += find_all_poosible_mutations_helper(ce._filler)
+            elif isinstance(ce, OWLClass):
+                mutations += ['class']
+                if len(set(mutations)) == 4:
+                    return list(set(mutations))
+            return list(set(mutations))
+        return find_all_poosible_mutations_helper(ce)
+
 
 # ----- mutate ce functions -----
 
 
 class Mutation:
-    def __init__(self, list_of_classes, list_of_edgetypes):
+    def __init__(self, list_of_classes, list_of_edgetypes, max_depth=None):
         if isinstance(list_of_classes, list):
             for cls in list_of_classes:
                 if not isinstance(cls, OWLClass):
@@ -355,6 +402,9 @@ class Mutation:
         else:
             raise Exception(
                 "list_of_edge_types is not a list or OWLObjectProperty")
+        if max_depth is not None:
+            assert isinstance(max_depth, int), "max_depth must be an integer"
+            self.max_depth = max_depth
 
     def new_class(self):
         """
@@ -374,7 +424,7 @@ class Mutation:
     def mutate_global(self, ce):
         """
         This fct takes a CE and mutates it by performing a random action:
-        - add an intersection to a class: replac_nth_class
+        - add an intersection to a class: replace_nth_class
         - add an union to a class: replace_nth_union
         - add an edge to an intersection: replace_nth_intersection
         - increase a cardinality restriction by 1: 
@@ -424,6 +474,7 @@ class Mutation:
                 n = random.randint(1, total_restrictions)
                 if CEUtils.increase_nth_existential_restriction(ce=new_ce, n=n):
                     return new_ce
+
         raise ValueError("Mutation not possible")
 
     def random_ce_with_startnode(self, length, typestart):
