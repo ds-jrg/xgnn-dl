@@ -26,13 +26,16 @@ class TestMutateCE(unittest.TestCase):
             cardinality=1, filler=class_1, property=edge)
         self.ce_3_to_1 = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
             cardinality=1, filler=class_1, property=edge)])
+        self.ce_1_to_1 = OWLObjectIntersectionOf([class_1, OWLObjectMinCardinality(
+            cardinality=1, filler=class_1, property=edge)])
         self.ce_3_to_1OR2 = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
             cardinality=1, filler=OWLObjectUnionOf([class_1, class_2]), property=edge)])
 
     def test_mutate_ce(self):
         ce_3_to_1 = copy.deepcopy(self.ce_3_to_1)
         ce_3_to_1OR2 = copy.deepcopy(self.ce_3_to_1OR2)
-        mutate = Mutation(list_of_classes=[class_1], list_of_edgetypes=[edge])
+        mutate = Mutation(list_of_classes=[class_1], list_of_edgetypes=[
+                          edge], max_depth=3)
         ce_mutated = mutate.mutate_global(ce_3_to_1)
         self.assertIsInstance(ce_mutated, OWLClassExpression)
         ce_mutated = mutate.mutate_global(ce_3_to_1OR2)
@@ -60,26 +63,26 @@ class TestMutateCE(unittest.TestCase):
 
         # class
         ce_3_to_1 = copy.deepcopy(self.ce_3_to_1)
-        ce_3_to_1or2 = copy.deepcopy(self.ce_3_to_1OR2)
         is_ce_mutated = CEUtils.replace_nth_class(
-            ce=ce_3_to_1, n=1, newpropertyvalue=self.ce_3_to_1)
+            ce=ce_3_to_1, n=1, newpropertyvalue=OWLObjectMinCardinality(
+                cardinality=1, filler=class_1, property=edge))
         print(dlsr.render(ce_3_to_1),
               "in contrast to", dlsr.render(ce_3_to_1))
-        ground_truth = OWLObjectIntersectionOf([OWLObjectMinCardinality(cardinality=1, filler=class_1, property=edge),
-                                                OWLObjectIntersectionOf([class_3,
-                                                                         OWLObjectMinCardinality(cardinality=1, filler=class_1, property=edge)])])
+        ground_truth = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
+            cardinality=2, filler=class_1, property=edge)])
         ground_truth_str = dlsr.render(ground_truth)
         result_str = dlsr.render(ce_3_to_1)
         self.assertEqual(result_str, ground_truth_str)
         # class 2
         ce_3_to_1 = copy.deepcopy(self.ce_3_to_1)
-        ce_3_to_1or2 = copy.deepcopy(self.ce_3_to_1OR2)
+        print('------ class 2 ------')
         is_ce_mutated = CEUtils.replace_nth_class(
-            ce=ce_3_to_1, n=2, newpropertyvalue=self.ce_3_to_1)
+            ce=ce_3_to_1, n=2, newpropertyvalue=OWLObjectMinCardinality(
+                cardinality=1, filler=class_1, property=edge))
         print(dlsr.render(ce_3_to_1),
               "in contrast to", dlsr.render(ce_3_to_1))
         ground_truth = OWLObjectIntersectionOf([class_3, OWLObjectMinCardinality(
-            cardinality=1, filler=self.ce_3_to_1, property=edge)])
+            cardinality=1, filler=self.ce_1_to_1, property=edge)])
         ground_truth_str = dlsr.render(ground_truth)
         result_str = dlsr.render(ce_3_to_1)
         self.assertEqual(result_str, ground_truth_str)

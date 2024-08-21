@@ -175,35 +175,52 @@ class CEUtils():
     @staticmethod
     def replace_nth_class(ce, n, newpropertyvalue, topce=None):
         """
-        class C -> C AND exists to new class N 
+        Adds sth to a class:
+        class C -> C AND new_ce (new_ce should be a Cardinality restriction) 
         This only works, if C is already in a larger Class expression
         Not working, if ce is exactly one class
         """
+        print('curr ce: ', dlsr.render(ce), '; topce: ', topce, 'n=', n)
         if isinstance(ce, OWLClass):
             if n == 1:
-                if isinstance(newpropertyvalue, OWLCardinalityRestriction):
-                    for op in topce.operands():
-                        if op == newpropertyvalue:
-                            newpropertyvalue._cardinality += 1
+                if topce is None:
+                    topce = OWLObjectIntersectionOf([ce])
+                if isinstance(topce, OWLObjectIntersectionOf):
+                    if isinstance(newpropertyvalue, OWLCardinalityRestriction):
+                        for op in topce.operands():
+                            if op == newpropertyvalue:
+                                op._cardinality += 1
+                                return True
+                        topce._operands += (newpropertyvalue,)
                         return True
-                if isinstance(topce, OWLNaryBooleanClassExpression):
-                    topce._operands = tuple(
-                        op for op in topce.operands() if op != ce)
-                    topce._operands = topce._operands + (newpropertyvalue,)
-                    return True
+                    elif isinstance(newpropertyvalue, OWLObjectIntersectionOf):
+                        topce._operands += (newpropertyvalue,)
+                        return True
+                    print('sth has not gone well')
                 elif isinstance(topce, OWLObjectRestriction):
-                    topce._filler = newpropertyvalue
+                    new_filler = OWLObjectIntersectionOf(
+                        [ce, newpropertyvalue])
+                    topce._filler = new_filler
                     return True
-
+                elif isinstance(topce, OWLObjectUnionOf):
+                    # remove class from operands
+                    # add intersection([class, newpropertyvalue])
+                    list_operands = list(topce._operands)
+                    list_operands.remove(ce)
+                    list_operands.append(OWLObjectIntersectionOf(
+                        [ce, newpropertyvalue]))
+                    topce._operands = tuple(list_operands)
+                    return True
                 else:
                     raise Exception("Can't replace class in class expression")
-        if isinstance(ce, OWLNaryBooleanClassExpression):
+
+        elif isinstance(ce, OWLNaryBooleanClassExpression):
             for op in ce.operands():
                 if CEUtils.replace_nth_class(op, n, newpropertyvalue, ce):
                     return True
-                else:
+                if isinstance(op, OWLClass):
                     n -= 1
-        if isinstance(ce, OWLObjectRestriction):
+        elif isinstance(ce, OWLObjectRestriction):
             return CEUtils.replace_nth_class(ce._filler, n, newpropertyvalue, ce)
 
     @staticmethod
@@ -221,6 +238,8 @@ class CEUtils():
             for op in ce.operands():
                 if CEUtils.increase_nth_existential_restriction(op, n):
                     return True
+
+
         else:
             return False
 
@@ -404,7 +423,7 @@ class Mutation:
                 "list_of_edge_types is not a list or OWLObjectProperty")
         if max_depth is not None:
             assert isinstance(max_depth, int), "max_depth must be an integer"
-            self.max_depth = max_depth
+        self.max_depth = max_depth
 
     def new_class(self):
         """
@@ -427,56 +446,78 @@ class Mutation:
         """
         This fct takes a CE and mutates it by performing a random action:
         - add an intersection to a class: replace_nth_class
-        - add an union to a class: replace_nth_union
+        - add a union to a class: replace_nth_cl_w_union
         - add an edge to an intersection: replace_nth_intersection
-        - increase a cardinality restriction by 1: 
+        - increase a cardinality restriction by 1:
             increase_nth_existential_restriction
 
         If a mutation returns False, it means mutation is not possible 
             -> Try a new mutation
         As we mutate CEs with at least one class, sth must work
         """
-        possible_mutations = ['class', 'intersection', 'union', 'cardinality']
-        new_ce = copy.deepcopy(ce)
-        shuffled_mutations = copy.deepcopy(possible_mutations)
-        random.shuffle(shuffled_mutations)
-        for mutation in shuffled_mutations:
+        possible_mutations = CEUtils.find_all_poosible_mutations(ce)
+
+        random.shuffle(possible_mutations)
+
+        def random_mutation(mutation, ce):
+
             if mutation == 'class':
-                total_classes = CEUtils.count_classes(new_ce)
+                total_classes = CEUtils.count_classes(ce)
                 if total_classes == 1:
-                    continue
-                n = random.randint(1, total_classes)
-                if CEUtils.replace_nth_class(ce=new_ce,
-                                             n=n,
-                                             newpropertyvalue=self.new_class()
-                                             ):
-                    return new_ce
+                    new_ce = OWLObjectIntersectionOf([ce])
+                    return random_mutation('intersection', new_ce)
+                list_indices = [i for i in range(total_classes)]
+                random.shuffle(list_indices)
+                for i in list_indices:
+                    try_ce = copy.deepcopy(ce)
+                    if CEUtils.replace_nth_class(try_ce, i, self.new_class()):
+                        if CEUtils.get_max_depth(try_ce) <= self.max_depth:
+                            return try_ce
+                return False
+
             elif mutation == 'intersection':
-                total_intersections = CEUtils.count_intersections(new_ce)
+                total_intersections = CEUtils.count_intersections(ce)
                 if total_intersections == 0:
-                    continue
-                n = random.randint(1, total_intersections)
-                if CEUtils.replace_nth_intersection(ce=new_ce,
-                                                    n=n,
-                                                    newedge=self.new_edge()
-                                                    ):
-                    return new_ce
+                    return False
+                list_indices = [i for i in range(
+                    1, total_intersections)]
+                random.shuffle(list_indices)
+                for i in list_indices:
+                    try_ce = copy.deepcopy(ce)
+                    if CEUtils.replace_nth_intersection(
+                            try_ce, self.new_edge(), i):
+                        if CEUtils.get_max_depth(try_ce) <= self.max_depth:
+                            return try_ce
+                return False
+
             elif mutation == 'union':
-                total_unions = CEUtils.count_unions(new_ce)
+                total_unions = CEUtils.count_unions(ce)
                 if total_unions == 0:
-                    continue
-                n = random.randint(1, total_unions)
-                if CEUtils.replace_nth_cl_w_union(ce=new_ce, n=n, newclass=self.new_class()):
-                    return new_ce
+                    return False
+                list_indices = [i for i in range(
+                    1, total_unions)]
+                random.shuffle(list_indices)
+                for i in list_indices:
+                    try_ce = copy.deepcopy(ce)
+                    if CEUtils.replace_nth_cl_w_union(
+                            try_ce, self.new_class(), i):
+                        if CEUtils.get_max_depth(try_ce) <= self.max_depth:
+                            return try_ce
+                return False
             elif mutation == 'cardinality':
                 total_restrictions = CEUtils.count_existential_restrictions(
-                    new_ce)
+                    ce)
                 if total_restrictions == 0:
-                    continue
+                    return False
                 n = random.randint(1, total_restrictions)
-                if CEUtils.increase_nth_existential_restriction(ce=new_ce, n=n):
+                new_ce = copy.deepcopy(ce)
+                if CEUtils.increase_nth_existential_restriction(new_ce, n):
                     return new_ce
 
+        for mutation in possible_mutations:
+            new_ce = random_mutation(mutation, ce)
+            if new_ce is not False:
+                return new_ce
         raise ValueError("Mutation not possible")
 
     def random_ce_with_startnode(self, length, typestart):
