@@ -7,21 +7,10 @@ import torch
 # import generatingXgraphs
 
 
-from ontolearn.concept_learner import CELOE
-from ontolearn.model_adapter import ModelAdapter
-from owlapy.model import OWLNamedIndividual, IRI
-from owlapy.namespaces import Namespaces
+from owlapy.class_expression import OWLClassExpression, OWLObjectUnionOf, OWLObjectCardinalityRestriction, OWLObjectMinCardinality
+from owlapy.class_expression import OWLClass, OWLObjectIntersectionOf, OWLCardinalityRestriction, OWLNaryBooleanClassExpression, OWLObjectRestriction
+from owlapy.owl_property import OWLObjectProperty
 from owlapy.render import DLSyntaxObjectRenderer
-from examples.experiments_standard import ClosedWorld_ReasonerFactory
-from owlapy.model import OWLObjectProperty, OWLObjectSomeValuesFrom
-from owlapy.model import OWLDataProperty
-from owlapy.model import OWLClass, OWLClassExpression
-from owlapy.model import OWLDeclarationAxiom, OWLDatatype, OWLDataSomeValuesFrom, OWLObjectIntersectionOf, OWLEquivalentClassesAxiom, OWLObjectUnionOf
-from owlapy.model import OWLDataPropertyDomainAxiom
-from owlapy.model import IRI
-from owlapy.owlready2 import OWLOntologyManager_Owlready2
-from owlapy.render import DLSyntaxObjectRenderer
-from ontolearn.core.owl.utils import OWLClassExpressionLengthMetric
 
 
 # TODO: Erase all unneccessary seeds.
@@ -127,7 +116,8 @@ def update_class(ce: OWLClassExpression, list_result=[{'id': 0, 'edge_types': []
                 elif new_or_old_node == 0 and current_class in dict_class_ids:  # added to an old node, if 0
                     random_seed += 1
                     random.seed(random_seed)
-                    current_id = random.randint(0, dict_class_ids[current_class][-1])
+                    current_id = random.randint(
+                        0, dict_class_ids[current_class][-1])
                 else:  # create new node
                     if current_class in dict_class_ids:
                         current_id = len(dict_class_ids[current_class])
@@ -189,7 +179,8 @@ def generate_cedict_from_ce(ce: OWLClassExpression,  current_id=-1, current_clas
         current_result[current_mp_id][1][1] = [current_id]
         # print('here should be something implemented')
     elif isinstance(ce, OWLObjectProperty):  # append an edge, but without an endnode-type
-        new_mp = [[current_class, remove_front(ce.to_string_id()), ''], [[current_id], []]]
+        new_mp = [[current_class, remove_front(ce.to_string_id()), ''], [
+            [current_id], []]]
         current_result.append(new_mp)
         current_mp_id = len(current_result)
         # TODO: Map the end-node to some valid thing
@@ -224,7 +215,8 @@ def generate_cedict_from_ce(ce: OWLClassExpression,  current_id=-1, current_clas
             list_helpind.append(op)
         random_seed += 1
         random.seed(random_seed)
-        number_of_attributes = random.randint(1, len(list_helpind))  # random but not implemented yet
+        number_of_attributes = random.randint(
+            1, len(list_helpind))  # random but not implemented yet
         random_seed += 1
         random.seed(random_seed)
         attributes_to_add = random.sample(list_helpind, number_of_attributes)
@@ -262,7 +254,8 @@ def create_graphdict_from_cedict(ce_dict, list_of_node_types, list_of_edge_types
             else:
                 new_id = 0
             if new_class == '':
-                print(228, 'no available edge; this should not happen in the current implementation')
+                print(
+                    228, 'no available edge; this should not happen in the current implementation')
             mp[0][2] = new_class
             mp[1][1] = [new_id]
         if mp[0][0] == '':
@@ -274,30 +267,42 @@ def create_graphdict_from_cedict(ce_dict, list_of_node_types, list_of_edge_types
     for mp in ce_dict:
         # Here a new dictionary is created
         if (mp[0][0], mp[0][1], mp[0][2]) in dict_graph:
-            tensor_start_end = dict_graph[(mp[0][0], mp[0][1], mp[0][2])]  # += torch.tensor(mp[1][0])
+            # += torch.tensor(mp[1][0])
+            tensor_start_end = dict_graph[(mp[0][0], mp[0][1], mp[0][2])]
             tensor_start = tensor_start_end[0]
             tensor_end = tensor_start_end[1]
             # check if this edge was already created
-            dict_graph_pairs = list(zip(tensor_start.tolist(), tensor_end.tolist()))
-            if (mp[1][0][0], mp[1][1][0]) not in dict_graph_pairs:  # TODO: Check, if this is always fulfilled
-                tensor_start = torch.cat((tensor_start, torch.tensor(mp[1][0], dtype=torch.long)), 0)
-                tensor_end = torch.cat((tensor_end, torch.tensor(mp[1][1], dtype=torch.long)), 0)
-                dict_graph.update({(mp[0][0], mp[0][1], mp[0][2]): (tensor_start, tensor_end)})
+            dict_graph_pairs = list(
+                zip(tensor_start.tolist(), tensor_end.tolist()))
+            # TODO: Check, if this is always fulfilled
+            if (mp[1][0][0], mp[1][1][0]) not in dict_graph_pairs:
+                tensor_start = torch.cat(
+                    (tensor_start, torch.tensor(mp[1][0], dtype=torch.long)), 0)
+                tensor_end = torch.cat(
+                    (tensor_end, torch.tensor(mp[1][1], dtype=torch.long)), 0)
+                dict_graph.update(
+                    {(mp[0][0], mp[0][1], mp[0][2]): (tensor_start, tensor_end)})
                 tensor_start_end2 = dict_graph[(mp[0][2], mp[0][1], mp[0][0])]
                 tensor_start2 = tensor_start_end2[0]
                 tensor_end2 = tensor_start_end2[1]
-                tensor_start2 = torch.cat((tensor_start2, torch.tensor(mp[1][1], dtype=torch.long)), 0)
-                tensor_end2 = torch.cat((tensor_end2, torch.tensor(mp[1][0], dtype=torch.long)), 0)
-                dict_graph.update({(mp[0][2], mp[0][1], mp[0][0]): (tensor_start2, tensor_end2)})
+                tensor_start2 = torch.cat(
+                    (tensor_start2, torch.tensor(mp[1][1], dtype=torch.long)), 0)
+                tensor_end2 = torch.cat(
+                    (tensor_end2, torch.tensor(mp[1][0], dtype=torch.long)), 0)
+                dict_graph.update(
+                    {(mp[0][2], mp[0][1], mp[0][0]): (tensor_start2, tensor_end2)})
         else:
             # if mp[1][0] != mp[1][1]:
             if mp[0][0] != mp[0][2]:
-                dict_graph[(mp[0][0], mp[0][1], mp[0][2])] = (torch.tensor(mp[1][0]), torch.tensor(mp[1][1]))
-                dict_graph[(mp[0][2], mp[0][1], mp[0][0])] = (torch.tensor(mp[1][1]), torch.tensor(mp[1][0]))
+                dict_graph[(mp[0][0], mp[0][1], mp[0][2])] = (
+                    torch.tensor(mp[1][0]), torch.tensor(mp[1][1]))
+                dict_graph[(mp[0][2], mp[0][1], mp[0][0])] = (
+                    torch.tensor(mp[1][1]), torch.tensor(mp[1][0]))
             else:
                 tensor_equal_front = torch.tensor(mp[1][0]+mp[1][1])
                 tensor_equal_end = torch.tensor(mp[1][1]+mp[1][0])
-                dict_graph[(mp[0][2], mp[0][1], mp[0][0])] = (tensor_equal_front, tensor_equal_end)
+                dict_graph[(mp[0][2], mp[0][1], mp[0][0])] = (
+                    tensor_equal_front, tensor_equal_end)
     return dict_graph
 
 
@@ -338,7 +343,8 @@ def create_random_ce(list_classes_objprops, root_class, num_iterate=1, random_se
     # set_all_edges = set(list_all_edges)
     # list_all_edges = list(set(list_all_edges))
     # list_possible_expressions = ['add_edge', 'add_class', 'add_feature']
-    list_possible_expressions = ['add_edge_from_node', 'add_additional_edge', 'add_class']
+    list_possible_expressions = [
+        'add_edge_from_node', 'add_additional_edge', 'add_class']
     list_possible_expr_wo_class = copy.deepcopy(list_possible_expressions)
     list_possible_expr_wo_class.remove('add_class')
     list_possible_actions_just_add_edges = ['add_edge_from_node']
@@ -364,13 +370,15 @@ def create_random_ce(list_classes_objprops, root_class, num_iterate=1, random_se
         # choose random, if this is added with intersection or union
         random_seed += 1
         random.seed(random_seed)
-        inter_or_union = random.randint(0, 1)  # 0 for intersection, 1 for union
+        # 0 for intersection, 1 for union
+        inter_or_union = random.randint(0, 1)
         if action == 'add_class':
             if inter_or_union == 0:
                 if current_node_has_class:
                     random_seed += 1
                     random.seed(random_seed)
-                    action = random.choice(list_possible_actions_just_add_edges)
+                    action = random.choice(
+                        list_possible_actions_just_add_edges)
                 else:
                     # choose class
                     current_node_has_class = True
@@ -379,7 +387,8 @@ def create_random_ce(list_classes_objprops, root_class, num_iterate=1, random_se
                         print(390, 'here could be a mistake, please check!')
                         random_seed += 1
                         random.seed(random_seed)
-                        rnd_class = list_classes_objprops[random.randint(0, len(list_classes_objprops)-1)][0]
+                        rnd_class = list_classes_objprops[random.randint(
+                            0, len(list_classes_objprops)-1)][0]
                     else:
                         avail_classes = []
                         for sublist in list_classes_objprops:
@@ -387,23 +396,27 @@ def create_random_ce(list_classes_objprops, root_class, num_iterate=1, random_se
                                 avail_classes.append(sublist[0])
                         random_seed += 1
                         random.seed(random_seed)
-                        rnd_class = avail_classes[random.randint(0, len(avail_classes)-1)]
+                        rnd_class = avail_classes[random.randint(
+                            0, len(avail_classes)-1)]
                     current_classes.append(rnd_class)
                     # add to rest
                     if current_filler == '':
                         current_filler = rnd_class
                     else:
-                        current_filler = OWLObjectIntersectionOf([rnd_class, current_filler])
+                        current_filler = OWLObjectIntersectionOf(
+                            [rnd_class, current_filler])
             else:
                 random_seed += 1
                 random.seed(random_seed)
-                rnd_class = list_classes_objprops[random.randint(0, len(list_classes_objprops)-1)][0]
+                rnd_class = list_classes_objprops[random.randint(
+                    0, len(list_classes_objprops)-1)][0]
                 current_node_has_class = True
                 current_classes.append(rnd_class)
                 if current_filler == '':
                     current_filler = rnd_class
                 else:
-                    current_filler = OWLObjectUnionOf([rnd_class, current_filler])
+                    current_filler = OWLObjectUnionOf(
+                        [rnd_class, current_filler])
         if action == 'add_edge_from_node':
             # choose random edge from current node-type
             if current_filler == '':
@@ -422,10 +435,13 @@ def create_random_ce(list_classes_objprops, root_class, num_iterate=1, random_se
             obj_prop = rnd_edge
             if current_filler == '':
                 current_filler = random.choice(current_classes)
-                current_filler = OWLObjectSomeValuesFrom(property=obj_prop, filler=current_filler)
+                current_filler = OWLObjectSomeValuesFrom(
+                    property=obj_prop, filler=current_filler)
             else:
-                filler_new = OWLObjectIntersectionOf([current_filler, random.choice(current_classes)])
-                current_filler = OWLObjectSomeValuesFrom(property=obj_prop, filler=filler_new)
+                filler_new = OWLObjectIntersectionOf(
+                    [current_filler, random.choice(current_classes)])
+                current_filler = OWLObjectSomeValuesFrom(
+                    property=obj_prop, filler=filler_new)
             # delete all current info:
             # current_classes = [rnd_edge[1]]
             last_edge = rnd_edge
@@ -443,7 +459,8 @@ def create_random_ce(list_classes_objprops, root_class, num_iterate=1, random_se
             for el in sublist[1]:
                 if el not in list_avail_edges:
                     list_avail_edges.append(el)
-    pre_result = OWLObjectSomeValuesFrom(property=obj_prop, filler=current_filler)
+    pre_result = OWLObjectSomeValuesFrom(
+        property=obj_prop, filler=current_filler)
     result = OWLObjectIntersectionOf([root_class, current_filler])
     return result
 
@@ -454,98 +471,14 @@ def create_random_ce_from_BAHetero(num_iter):
     class2 = OWLClass(IRI(NS, '2'))
     class3 = OWLClass(IRI(NS, '3'))
     edge_type = OWLObjectProperty(IRI(NS, 'to'))
-    list_classes_objprops = [[class0, [edge_type]], [class1, [edge_type]], [class2, [edge_type]], [class3, [edge_type]]]
+    list_classes_objprops = [[class0, [edge_type]], [
+        class1, [edge_type]], [class2, [edge_type]], [class3, [edge_type]]]
     random_seed += 1
     random.seed(random_seed)
     rand_ce = create_random_ce(list_classes_objprops, class3, num_iter)
     return rand_ce
 
-
-
-
-
-
-
-
-# -------------------   Testing: Here, many instances are created to be able to test different scenarios.
-# testing: many outputs
-root_node_type = 'Author'
-
-
-class_paper = OWLClass(IRI(NS, "Paper"))  # is class expression
-class_author = OWLClass(IRI(NS, 'Author'))  # also class expression
-class_paper2 = OWLClass(IRI(NS, "Paper2"))
-class_author2 = OWLClass(IRI(NS, 'Author2'))
-class_paper3 = OWLClass(IRI(NS, "Paper3"))
-class_author3 = OWLClass(IRI(NS, 'Author3'))
-class_paper4 = OWLClass(IRI(NS, "Paper4"))
-class_author4 = OWLClass(IRI(NS, 'Author4'))
-data_prop = OWLDataProperty(IRI(NS, 'hasAge'))
-
-
-# inter_ce = OWLObjectIntersectionOf([class_paper, class_author, data_prop])   #data_prop not propertly working atm
-inter_ce = OWLObjectIntersectionOf([class_paper, class_author])
-inter_ce2 = OWLObjectIntersectionOf([class_paper2, class_author2])
-union_ce = OWLObjectUnionOf([class_paper, class_author])
-union_ce2 = OWLObjectUnionOf([class_paper2, class_author2])
-union_ce3 = OWLObjectUnionOf([class_paper3, class_author3])
-union_ce4 = OWLObjectUnionOf([class_paper4, class_author4])
-union_inter_inter2_ce = OWLObjectUnionOf([inter_ce, inter_ce2])
-inter_union_union2_ce = OWLObjectIntersectionOf([union_ce, union_ce2])
-union_union_union_2_ce = OWLObjectUnionOf([union_ce, union_ce2])
-union_union_union_2_ce2 = OWLObjectUnionOf([union_ce3, union_ce4])
-# print(class_expression_to_lists(inter_ce, root_node_type))
-u_u3_u3 = OWLObjectUnionOf([union_union_union_2_ce, union_union_union_2_ce2])
-obj_prop = OWLObjectProperty(IRI(NS, 'citesPaper'))
-obj_filler = union_ce
-obj_test = OWLObjectSomeValuesFrom(property=obj_prop, filler=obj_filler)
-'''  
-print(class_expression_to_lists(union_ce, root_node_type))
-print('Now: union of 2 intersections')
-print(class_expression_to_lists(union_inter_inter2_ce, root_node_type))
-print('Now: Union of 2 Unions')
-print(class_expression_to_lists(union_union_union_2_ce, root_node_type))
-
-print('Now: Intersection of 2 unions')
-print(class_expression_to_lists(inter_union_union2_ce, root_node_type))
-
-print('Now: Union of 2 Unions of unions')
-
-print(class_expression_to_lists(u_u3_u3, root_node_type))
-
-print('Now: Object Properties' )
-print(class_expression_to_lists(inter_cl_obj, root_node_type))
-
-
-
-print('Now: Data Properties' )
-
-print(class_expression_to_lists(inter_ce, root_node_type))
-
-
-print('Now: ObjectSomeValuesFrom')
-
-print(class_expression_to_lists(obj_test, root_node_type))
-#test
-for _ in range(10):
-    ce = create_random_ce_from_BAHetero(3)
-    print('created class expression',ce)
-    print(class_expression_to_lists(ce, '3'))
-'''
-
-
-'''
-#test 23.05.generate_cedict_from_ce
-print('520: generate_cedict_from_ce testing started')
-preresult = generate_cedict_from_ce(obj_test)
-print('560', preresult)
-print( dlsr.render(obj_test))
-graph_dict = create_graphdict_from_cedict(preresult, ['Paper', 'Author'], ['citesPaper'])
-print('628', graph_dict)
-
-'''
-
-
+# ----------------- TESTING ------------
 def create_test_ce_3011():
     class_3 = OWLClass(IRI(NS, '3'))
     class_2 = OWLClass(IRI(NS, '2'))

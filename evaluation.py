@@ -1,6 +1,7 @@
 # Here, some scoring functions and other evaluation functions are implemented
 
 # ----------- evaluating class expressions: Currently not in use. ------------
+from create_random_ce import CEUtils, Mutation
 import random as random
 import os.path as osp
 from torch_geometric.data import HeteroData
@@ -161,6 +162,46 @@ class InstanceChecker():
                     result_instances.setdefault(
                         str(nodetype), []).append(id)
         return result_instances
+
+
+class FidelityEvaluator():
+    """
+    This class is used to evaluate the fidelity of a given explanation.
+    Input: graph (Heterodata), CE (owlapy), gnn (PyG)
+    Output: fidelity score
+    Summary of functions:
+    - evaluate_fidelity: Evaluate the fidelity of a given explanation.
+    """
+
+    def __init__(self, hdata, gnn):
+        self.hdata = hdata
+        self.gnn = gnn
+        self.InstanceChecker = InstanceChecker(hdata)
+        self.type_to_explain = None
+
+    def fidelity_tp_fp_tn_fn(self, ce):
+        ce_instances = self.InstanceChecker.fast_instance_checker_uic(ce)
+        # TODO: .num_nodes is wrong
+        if self.type_to_explain is None:
+            type_to_explain = CEUtils.return_nth_class(ce, 1)
+            type_to_explain = str(dlsr.render(type_to_explain))
+        list_indices_01 = [
+            i in ce_instances for i in range(self.hdata[type_to_explain].num_nodes)]
+        result_gnn = list(self.gnn(self.hdata.x, self.hdata.edge_index))
+        # get tp, fp, tn, fn
+        tp = sum(list_indices_01[i] and result_gnn[i]
+                 for i in range(len(list_indices_01)))
+        fp = sum(list_indices_01[i] and not result_gnn[i]
+                 for i in range(len(list_indices_01)))
+        tn = sum(not list_indices_01[i] and not result_gnn[i]
+                 for i in range(len(list_indices_01)))
+        fn = sum(not list_indices_01[i] and result_gnn[i]
+                 for i in range(len(list_indices_01)))
+        return tp, fp, tn, fn
+
+    def score_fid_accuracy(self, ce):
+        tp, fp, tn, fn = self.fidelity_tp_fp_tn_fn(ce)
+        return (tp + tn) / (tp + tn + fp + fn)
 
 
 # ---------- old code -------------

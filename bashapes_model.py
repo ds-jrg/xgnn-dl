@@ -15,7 +15,6 @@ from random import randint
 import networkx as nx
 import numpy as np
 from matplotlib import pyplot as plt
-import dgl
 import colorsys
 import random
 # TODO: save bashapes and use it from saved 

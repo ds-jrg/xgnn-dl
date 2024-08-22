@@ -2,7 +2,6 @@
 
 
 from ce_generation import generate_cedict_from_ce
-import dgl
 import networkx as nx
 import colorsys
 import matplotlib.pyplot as plt
