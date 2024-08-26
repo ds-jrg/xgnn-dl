@@ -12,7 +12,7 @@ class SyntheticDatasets():
         # test the new datasets
         # create BA Graph
         ba_graph_nx = GenerateRandomGraph.create_BAGraph_nx(
-            num_nodes=num_nodes, num_edges=num_edges)
+            num_nodes=100, num_edges=3)
         motif_house_letters = {
             'labels': ['A', 'B', 'B', 'C', 'C'],
             'edges': [(0, 1), (0, 2), (1, 2), (1, 3), (2, 4), (3, 4)]

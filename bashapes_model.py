@@ -35,7 +35,7 @@ class HeteroGNNBA(torch.nn.Module):
         
         for _ in range(num_layers):
             conv = HeteroConv({
-                edge_type: SAGEConv((-1, -1), hidden_channels, dropout = 0.5)
+                edge_type: SAGEConv((-1, -1), hidden_channels)
                 for edge_type in metadata[1]
             })
             self.convs.append(conv)
@@ -44,7 +44,7 @@ class HeteroGNNBA(torch.nn.Module):
         for conv in self.convs:
             x_dict = {key: F.leaky_relu(x) 
             for key, x in conv(x_dict, edge_index_dict).items()}
-        return self.lin(x_dict['3'])
+        return self.lin(x_dict['B'])
 
 
 
