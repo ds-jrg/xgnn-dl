@@ -173,38 +173,44 @@ class FidelityEvaluator():
     - evaluate_fidelity: Evaluate the fidelity of a given explanation.
     """
 
-    def __init__(self, hdata, gnn):
+    def __init__(self, hdata, gnn, type_to_explain=None):
         self.hdata = hdata
         self.gnn = gnn
         self.InstanceChecker = InstanceChecker(hdata)
-        self.type_to_explain = None
+        self.type_to_explain = type_to_explain
+        result_gnn = self.gnn(
+            self.hdata.x_dict, self.hdata.edge_index_dict)
+        result_gnn = result_gnn.argmax(dim=-1)
+        self.result_gnn = list(int(i) for i in result_gnn)
 
     def fidelity_tp_fp_tn_fn(self, ce):
         ce_instances = self.InstanceChecker.fast_instance_checker_uic(ce)
-        # TODO: .num_nodes is wrong
+        # TODO: setting type_to_explain is wrong
         if self.type_to_explain is None:
             self.type_to_explain = CEUtils.return_nth_class(ce, 1)
             if isinstance(self.type_to_explain, OWLClassExpression):
                 self.type_to_explain = str(dlsr.render(self.type_to_explain))
+        if self.type_to_explain not in ce_instances.keys():
+            return 0, 0, 0, 0
         list_indices_01 = [
-            i in ce_instances for i in range(self.hdata[self.type_to_explain].num_nodes)]
-        result_gnn = self.gnn(self.hdata.x_dict, self.hdata.edge_index_dict)
-        result_gnn = result_gnn.argmax(dim=-1)
-        result_gnn = list(int(i) for i in result_gnn)
-        # get tp, fp, tn, fn
-        tp = sum(list_indices_01[i] and result_gnn[i]
+            i in ce_instances[self.type_to_explain] for i in range(self.hdata[self.type_to_explain].num_nodes)]
+        # compare to ground truth
+
+        # get tp, fp, tn, fn)
+        tp = sum(list_indices_01[i] and self.result_gnn[i]
                  for i in range(len(list_indices_01)))
-        fp = sum(list_indices_01[i] and not result_gnn[i]
+        fp = sum(list_indices_01[i] and not self.result_gnn[i]
                  for i in range(len(list_indices_01)))
-        tn = sum(not list_indices_01[i] and not result_gnn[i]
+        tn = sum(not list_indices_01[i] and not self.result_gnn[i]
                  for i in range(len(list_indices_01)))
-        fn = sum(not list_indices_01[i] and result_gnn[i]
+        fn = sum(not list_indices_01[i] and self.result_gnn[i]
                  for i in range(len(list_indices_01)))
         return tp, fp, tn, fn
 
     def score_fid_accuracy(self, ce):
         tp, fp, tn, fn = self.fidelity_tp_fp_tn_fn(ce)
-        print('curr Acc, ', (tp + tn) / (tp + tn + fp + fn))
+        if tp + fp + tn + fn == 0:
+            return 0
         return (tp + tn) / (tp + tn + fp + fn)
 
 
@@ -626,8 +632,6 @@ class Accuracy_El:
         for dict in self.list_results:
             dict['accuracy'] = sum(
                 1 for value in dict['result'].values() if value is True) / (5 + dict['fp'])
-        print(self.list_results[0]['result'], self.list_results[0]
-              ['fp'], self.list_results[0]['accuracy'])
 
     def _ce_accuracy_iterate_house(self, ce):
         """
@@ -707,7 +711,6 @@ class Accuracy_El:
         We then add up all the end-CE-results
         Simultaneously, we store the found nodes of the motif.
         """
-        print('Evaluation of the CE: ', dlsr.render(ce))
         # Initialize the top class
         top_class = find_class(ce)
         if not remove_front(top_class.to_string_id()) == '3':

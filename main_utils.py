@@ -51,14 +51,9 @@ def create_gnn_and_dataset(dataset_name,
 
     return gnn_cl, dataset, dataset_class
 
-    """
-    This function creates a GNN and a dataset
-    """
-    if retrain:
-        print("Retraining GNN and dataset")
-        dataset, dataset_class = SyntheticData.new_dataset_house(1000)
-        GNN_total_sdata = GNN_datasets(data=dataset, type_to_classify='B')
-        GNN_total_sdata.train_model(epochs=20)
-        return GNN_total_sdata, dataset
-    else:
-        return gnn, dataset
+
+def create_test_dataset(dataset='house', num_nodes=100):
+    if dataset == 'house':
+        SyntheticData = SyntheticDatasets()
+        dataset, _ = SyntheticData.new_dataset_house(num_nodes)
+    return dataset

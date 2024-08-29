@@ -34,7 +34,7 @@ class BeamHelper():
                 if not isinstance(edge, OWLObjectProperty):
                     str_edge = str(edge)
                     list_of_edgetypes[count] = OWLObjectProperty('#'+str_edge)
-        
+
         return list_of_classes, list_of_edgetypes
 
     def get_cl_to_explain(hdata):
@@ -83,9 +83,11 @@ class BeamSearch():
         self.scoring_function = scoring_function
         self.number_graphs = number_graphs
         edge_types = [i[1] for i in self.data.edge_types]
-        self.Mutation = Mutation(self.data.node_types,
-                                 edge_types, self.max_depth)
-
+        self.Mutation = Mutation(
+            list_of_classes=self.data.node_types,
+            list_of_edgetypes=edge_types,
+            max_depth=self.max_depth,
+        )
         self.FidelityEvaluation = FidelityEvaluator(self.data, self.gnn)
 
     def scoring(self, ce):
@@ -102,15 +104,16 @@ class BeamSearch():
         class_to_expl = BeamHelper.get_cl_to_explain(self.data)
         assert isinstance(class_to_expl, OWLClass)
         beam = [class_to_expl]*self.beam_width
+        print(f"Beam search is started with {self.beam_depth} rounds")
         for _ in range(self.beam_depth):
             new_beam = copy.deepcopy(beam)
             for ce in beam:
                 assert isinstance(ce, OWLClassExpression), ce
                 new_ce = self.Mutation.mutate_global(ce)
-                print(dlsr.render(new_ce))
                 assert new_ce != ce
                 new_beam.append(new_ce)
-            new_beam.sort(key=self.scoring)
+            new_beam.sort(key=self.scoring, reverse=True)
             beam = new_beam[:self.beam_width]
-        print(dlsr.render(beam[-1]))
+            print(f"Round {_+1} of beamsearch is done")
+            print(f"The best CE is {dlsr.render(beam[0])} with a score of {round(self.scoring(beam[0]),2)}")
         return beam

@@ -4,6 +4,7 @@ import copy
 import random
 import torch
 import copy
+import time
 
 # sys.path.append('/Ontolearn')
 # import generatingXgraphs
@@ -423,9 +424,9 @@ class Mutation:
                 "list_of_edge_types is not a list or OWLObjectProperty")
         if max_depth is not None:
             assert isinstance(max_depth, int), "max_depth must be an integer"
-        self.max_depth = 4
-        
-        
+            self.max_depth = max_depth
+        else:
+            self.max_depth = 4
 
     def new_class(self):
         """
@@ -458,8 +459,6 @@ class Mutation:
         As we mutate CEs with at least one class, sth must work
         """
         possible_mutations = CEUtils.find_all_poosible_mutations(ce)
-
-        random.shuffle(possible_mutations)
 
         def random_mutation(mutation, ce):
 
@@ -515,6 +514,7 @@ class Mutation:
                 new_ce = copy.deepcopy(ce)
                 if CEUtils.increase_nth_existential_restriction(new_ce, n):
                     return new_ce
+            return False
 
         for mutation in possible_mutations:
             new_ce = random_mutation(mutation, ce)

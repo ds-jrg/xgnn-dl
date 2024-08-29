@@ -943,12 +943,9 @@ class PyGDataProcessor():
                 train_size=validation_percent /
                 (validation_percent+test_percent),
             )
-            self._data[self._type_to_classify].train_mask = torch.tensor(
-                train_idx)
-            self._data[self._type_to_classify].val_mask = torch.tensor(
-                valid_idx)
-            self._data[self._type_to_classify].test_mask = torch.tensor(
-                test_idx)
+            self._data[self._type_to_classify].train_mask = train_idx.clone().detach()
+            self._data[self._type_to_classify].val_mask = valid_idx.clone().detach()
+            self._data[self._type_to_classify].test_mask = test_idx.clone().detach()
             self._convert_format_train_val_test()  # convert the format of the masks
         except Exception:
             print("Not possible to split the data into training, validation and test sets, probably not enough data")
