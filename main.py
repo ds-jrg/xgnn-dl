@@ -1,12 +1,30 @@
 # This File does the experiments and saves them to content/
 from beamsearch import BeamSearch
-import models
+from models import GNN_datasets
 from syntheticdatasets import SyntheticDatasets
 from bashapes_model import train_GNN
+from evaluation import FidelityEvaluator
+from main_utils import create_gnn_and_dataset
 
-SyntheticData = SyntheticDatasets()
-dataset, dataset_class = SyntheticData.new_dataset_house(100)
-print(dataset)
+# setup for parameters
 
-# gnn on dataset
-model_on_sdata = train_GNN(True, dataset, 2)
+retrain_GNN_and_data = False
+
+
+# ------- Code -----------
+gnn_cl, dataset, dataset_class = create_gnn_and_dataset('house_1000',
+                                                        'SAGE_2_20',
+                                                        gnn_epochs=20,
+                                                        gnn_layers=2,
+                                                        type_to_classify='B',
+                                                        retrain=retrain_GNN_and_data,
+                                                        )
+
+
+# beam search CEs
+beam_search = BeamSearch(gnn_cl.model, dataset)
+beam = beam_search.beam_search()
+
+
+# evaluation
+fideval = FidelityEvaluator(gnn_cl, dataset_class)

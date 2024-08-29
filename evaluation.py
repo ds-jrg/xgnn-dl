@@ -183,11 +183,14 @@ class FidelityEvaluator():
         ce_instances = self.InstanceChecker.fast_instance_checker_uic(ce)
         # TODO: .num_nodes is wrong
         if self.type_to_explain is None:
-            type_to_explain = CEUtils.return_nth_class(ce, 1)
-            type_to_explain = str(dlsr.render(type_to_explain))
+            self.type_to_explain = CEUtils.return_nth_class(ce, 1)
+            if isinstance(self.type_to_explain, OWLClassExpression):
+                self.type_to_explain = str(dlsr.render(self.type_to_explain))
         list_indices_01 = [
-            i in ce_instances for i in range(self.hdata[type_to_explain].num_nodes)]
-        result_gnn = list(self.gnn(self.hdata.x, self.hdata.edge_index))
+            i in ce_instances for i in range(self.hdata[self.type_to_explain].num_nodes)]
+        result_gnn = self.gnn(self.hdata.x_dict, self.hdata.edge_index_dict)
+        result_gnn = result_gnn.argmax(dim=-1)
+        result_gnn = list(int(i) for i in result_gnn)
         # get tp, fp, tn, fn
         tp = sum(list_indices_01[i] and result_gnn[i]
                  for i in range(len(list_indices_01)))
@@ -201,6 +204,7 @@ class FidelityEvaluator():
 
     def score_fid_accuracy(self, ce):
         tp, fp, tn, fn = self.fidelity_tp_fp_tn_fn(ce)
+        print('curr Acc, ', (tp + tn) / (tp + tn + fp + fn))
         return (tp + tn) / (tp + tn + fp + fn)
 
 

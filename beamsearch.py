@@ -4,6 +4,7 @@ import sys
 import copy
 import random
 import torch
+from torch_geometric.data import HeteroData
 import copy
 from owlapy.class_expression import OWLClassExpression, OWLObjectUnionOf, OWLObjectCardinalityRestriction, OWLObjectMinCardinality
 from owlapy.class_expression import OWLClass, OWLObjectIntersectionOf, OWLCardinalityRestriction, OWLNaryBooleanClassExpression, OWLObjectRestriction
@@ -19,16 +20,32 @@ class BeamHelper():
         """ 
         This functions takes a dataset
         Output: All nodetypes as classes
-            , all edgetypes as edges
+            , all edgetypes as edges (properties)
         """
-        return [], []
+        list_of_edgetypes = hdata.edge_types
+        list_of_classes = hdata.node_types
+        if isinstance(list_of_classes, list):
+            for count, cls_ in enumerate(list_of_classes):
+                if not isinstance(cls_, OWLClass):
+                    cls_str = str(cls_)
+                    list_of_classes[count] = OWLClass('#'+cls_str)
+        if isinstance(list_of_edgetypes, list):
+            for count, edge in enumerate(list_of_edgetypes):
+                if not isinstance(edge, OWLObjectProperty):
+                    str_edge = str(edge)
+                    list_of_edgetypes[count] = OWLObjectProperty('#'+str_edge)
+        
+        return list_of_classes, list_of_edgetypes
 
     def get_cl_to_explain(hdata):
         """
         This function takes a dataset
         Output: The class that should be explained
         """
-        return '1'  # as a OWLClass
+        for node_type in hdata.node_types:
+            if hasattr(hdata[node_type], 'y'):
+                return OWLClass('#'+str(node_type))
+        raise Exception("No class found")
 
 
 class BeamSearch():
@@ -51,24 +68,23 @@ class BeamSearch():
     def __init__(self,
                  gnn,
                  data,
-                 beam_width,
-                 beam_depth,
-                 scoring_function,
-                 regularization_length,
+                 beam_width=2,
+                 beam_depth=7,
+                 scoring_function=('fidelity', 'acc'),
                  max_depth=None,
                  number_graphs=10,
                  ):
         self.gnn = gnn
+        assert isinstance(data, HeteroData)
         self.data = data
         self.beam_width = beam_width
         self.beam_depth = beam_depth
         self.max_depth = max_depth
         self.scoring_function = scoring_function
-        self.regularization_length = regularization_length
         self.number_graphs = number_graphs
-
+        edge_types = [i[1] for i in self.data.edge_types]
         self.Mutation = Mutation(self.data.node_types,
-                                 self.data.edge_types, self.max_depth)
+                                 edge_types, self.max_depth)
 
         self.FidelityEvaluation = FidelityEvaluator(self.data, self.gnn)
 
@@ -83,16 +99,18 @@ class BeamSearch():
             pass
 
     def beam_search(self):
-        poss_classes, poss_edges = BeamHelper.get_all_classes_from_dataset(
-            self.data)
-        class_to_expl = BeamHelper.get_class_to_expl(self.data)
+        class_to_expl = BeamHelper.get_cl_to_explain(self.data)
         assert isinstance(class_to_expl, OWLClass)
         beam = [class_to_expl]*self.beam_width
-
         for _ in range(self.beam_depth):
+            new_beam = copy.deepcopy(beam)
             for ce in beam:
-                new_ce = self.Mutation.mutate_ce(ce)
-                beam.append(new_ce)
-            beam = beam.sort(key=self.scoring)
-            beam = beam[:self.beam_width]
+                assert isinstance(ce, OWLClassExpression), ce
+                new_ce = self.Mutation.mutate_global(ce)
+                print(dlsr.render(new_ce))
+                assert new_ce != ce
+                new_beam.append(new_ce)
+            new_beam.sort(key=self.scoring)
+            beam = new_beam[:self.beam_width]
+        print(dlsr.render(beam[-1]))
         return beam

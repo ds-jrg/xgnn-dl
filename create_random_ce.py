@@ -180,7 +180,6 @@ class CEUtils():
         This only works, if C is already in a larger Class expression
         Not working, if ce is exactly one class
         """
-        print('curr ce: ', dlsr.render(ce), '; topce: ', topce, 'n=', n)
         if isinstance(ce, OWLClass):
             if n == 1:
                 if topce is None:
@@ -196,7 +195,9 @@ class CEUtils():
                     elif isinstance(newpropertyvalue, OWLObjectIntersectionOf):
                         topce._operands += (newpropertyvalue,)
                         return True
+                    print('type', type(newpropertyvalue))
                     print('sth has not gone well')
+                    raise ValueError('type of newpropertyvalue not supported')
                 elif isinstance(topce, OWLObjectRestriction):
                     new_filler = OWLObjectIntersectionOf(
                         [ce, newpropertyvalue])
@@ -239,7 +240,6 @@ class CEUtils():
                 if CEUtils.increase_nth_existential_restriction(op, n):
                     return True
 
-
         else:
             return False
 
@@ -261,12 +261,12 @@ class CEUtils():
                 return True
             n -= 1
             for op in ce.operands():
-                CEUtils.replace_nth_intersection(op, newedge)
+                CEUtils.replace_nth_intersection(op, newedge, n)
         elif isinstance(ce, OWLNaryBooleanClassExpression):
             for op in ce.operands():
-                CEUtils.replace_nth_intersection(op, newedge)
+                CEUtils.replace_nth_intersection(op, newedge, n)
         elif isinstance(ce, OWLObjectRestriction):
-            CEUtils.replace_nth_intersection(ce._filler, newedge)
+            CEUtils.replace_nth_intersection(ce._filler, newedge, n)
         return False
 
     @staticmethod
@@ -401,20 +401,20 @@ class CEUtils():
 class Mutation:
     def __init__(self, list_of_classes, list_of_edgetypes, max_depth=None):
         if isinstance(list_of_classes, list):
-            for cls in list_of_classes:
-                if not isinstance(cls, OWLClass):
-                    raise Exception(
-                        "list_of_classes is not a list or OWLClass")
+            for count, cls_ in enumerate(list_of_classes):
+                if not isinstance(cls_, OWLClass):
+                    cls_str = str(cls_)
+                    list_of_classes[count] = OWLClass('#'+cls_str)
             self.list_of_classes = list_of_classes
         elif isinstance(list_of_classes, OWLClass):
             self.list_of_classes = [list_of_classes]
         else:
             raise Exception("list_of_classes is not a list or OWLClass")
         if isinstance(list_of_edgetypes, list):
-            for edge in list_of_edgetypes:
+            for count, edge in enumerate(list_of_edgetypes):
                 if not isinstance(edge, OWLObjectProperty):
-                    raise Exception(
-                        "list_of_edge_types is not a list or OWLObjectProperty")
+                    str_edge = str(edge)
+                    list_of_edgetypes[count] = OWLObjectProperty('#'+str_edge)
             self.list_of_edgetypes = list_of_edgetypes
         elif isinstance(list_of_edgetypes, OWLObjectProperty):
             self.list_of_edgetypes = [list_of_edgetypes]
@@ -423,7 +423,9 @@ class Mutation:
                 "list_of_edge_types is not a list or OWLObjectProperty")
         if max_depth is not None:
             assert isinstance(max_depth, int), "max_depth must be an integer"
-        self.max_depth = max_depth
+        self.max_depth = 4
+        
+        
 
     def new_class(self):
         """
@@ -470,7 +472,7 @@ class Mutation:
                 random.shuffle(list_indices)
                 for i in list_indices:
                     try_ce = copy.deepcopy(ce)
-                    if CEUtils.replace_nth_class(try_ce, i, self.new_class()):
+                    if CEUtils.replace_nth_class(try_ce, i, self.new_edge()):
                         if CEUtils.get_max_depth(try_ce) <= self.max_depth:
                             return try_ce
                 return False
@@ -480,7 +482,7 @@ class Mutation:
                 if total_intersections == 0:
                     return False
                 list_indices = [i for i in range(
-                    1, total_intersections)]
+                    1, total_intersections+1)]
                 random.shuffle(list_indices)
                 for i in list_indices:
                     try_ce = copy.deepcopy(ce)

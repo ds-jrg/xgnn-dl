@@ -11,12 +11,38 @@ from torch_geometric.data import HeteroData
 import os.path as osp
 
 
+class HeteroGNNSAGE(torch.nn.Module):
+    def __init__(self, metadata, hidden_channels, out_channels, num_layers, nodetype_classify):
+        super().__init__()
+
+        self.convs = torch.nn.ModuleList()
+        self.nodetype_classify = nodetype_classify
+
+        for _ in range(num_layers):
+            conv = HeteroConv({
+                edge_type: SAGEConv((-1, -1), hidden_channels)
+                for edge_type in metadata[1]
+            })
+            self.convs.append(conv)
+        self.lin = Linear(hidden_channels, out_channels)
+
+    def forward(self, x_dict, edge_index_dict):
+        for conv in self.convs:
+            x_dict = {key: F.leaky_relu(x)
+                      for key, x in conv(x_dict, edge_index_dict).items()}
+        return self.lin(x_dict[self.nodetype_classify])
+
+
 class GNN_datasets():
     def __init__(self,
                  data,
+                 num_layers=2,
                  type_to_classify=None,
+                 optimizer=None,
+                 model=None,
                  ):
         self.data = data
+        self.num_layers = num_layers
         if type_to_classify is None:
             self.type_to_classify = self.data.type_to_classify
         else:
@@ -26,6 +52,48 @@ class GNN_datasets():
         if not hasattr(self.data[self.type_to_classify], 'train_mask'):
             dataprocessor = PyGDataProcessor(self.data, self.type_to_classify)
             self.data = dataprocessor.add_training_validation_test()
+        if model is None:
+            self.model = HeteroGNNSAGE(self.data.metadata(), hidden_channels=64, out_channels=2,
+                                       nodetype_classify=self.type_to_classify, num_layers=self.num_layers)
+        if optimizer is None:
+            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.01)
+        else:
+            self.optimizer = optimizer
+
+    def train_epoch(self):
+        self.model.train()
+        self.optimizer.zero_grad()
+        out = self.model(self.data.x_dict, self.data.edge_index_dict)
+        mask = self.data[self.type_to_classify].train_mask
+        loss = F.cross_entropy(
+            out[mask], self.data[self.type_to_classify].y[mask])
+        loss.backward()
+        self.optimizer.step()
+        return float(loss)
+
+    @torch.no_grad()
+    def test(self):
+        self.model.eval()
+        pred = self.model(self.data.x_dict,
+                          self.data.edge_index_dict).argmax(dim=-1)
+        accs = []
+        for split in ['train_mask', 'val_mask', 'test_mask']:
+            mask = self.data[self.type_to_classify][split]
+            acc = (pred[mask] == self.data[self.type_to_classify].y[mask]
+                   ).sum() / mask.size(dim=-1)
+    # here mask.size not mask.sum(), because the mask is saved as the indices and not as boolean values
+            accs.append(float(acc))
+        return accs
+
+    def train_model(self, epochs):
+        self.model.train()
+        for epoch in range(1, epochs):
+            loss = self.train_epoch()
+            train_acc, val_acc, test_acc = self.test()
+            print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
+                  f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
+
+
 
 
 # ----------------- GNN for DBLP Dataset
