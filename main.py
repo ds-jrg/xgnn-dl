@@ -34,6 +34,7 @@ beam = beam_search.beam_search()
 test_ce_dataset = create_test_dataset(num_nodes=100)
 fideval = FidelityEvaluator(test_ce_dataset, gnn_cl.model, type_to_explain='B')
 
+print("Top 10 CEs:")
 for i in range(10):
     acc = fideval.score_fid_accuracy(beam[i])
     print(
