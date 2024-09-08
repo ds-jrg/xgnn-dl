@@ -3,7 +3,6 @@ import random
 from beamsearch import BeamSearch
 from models import GNN_datasets
 from syntheticdatasets import SyntheticDatasets
-from bashapes_model import train_GNN
 from evaluation import FidelityEvaluator
 from main_utils import create_gnn_and_dataset, create_test_dataset
 from owlapy.render import DLSyntaxObjectRenderer
