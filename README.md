@@ -23,7 +23,11 @@ Graph Neural Networks (GNNs) have emerged as powerful tools for node and graph c
 ## Explanations to the Code
 
 #### Installation
-Please follow the instructions for the virtual environment `hot2` from Section 3 in `https://github.com/mathematiger/Hands_on_GraphXAI` for installation with pip. Then run the shell `./run_egel.sh`
+Install `requirements.txt` in some Python version (working: 3.11, linux, macOS). 
+
+Troubleshoot: 
+- Delete all  imports of `dgl` -> This library is not working in this environment
+- Install missing packages, if asked so.
 
 #### Overview of the Files
 There is a vast summary of files, but only some are important:
@@ -46,3 +50,17 @@ There is a vast summary of files, but only some are important:
 2. **Beam Search** refers to the function `beam_search` in `main.py`
 3. **Create Graph** refers to the function `get_graph_from_ce` in `create_random_ce`
 4. **Accuracy** refers to the function `get_accuracy_baheteroshapes` in `evaluation.py`
+
+
+#### How to cite
+
+``` @xgnn-dl,
+  author       = {Dominik K{\"{o}}hler and
+                  Stefan Heindorf},
+  title        = {Utilizing Description Logics for Global Explanations of Heterogeneous
+                  Graph Neural Networks},
+  journal      = {CoRR},
+  volume       = {abs/2405.12654},
+  year         = {2024}
+}
+```
