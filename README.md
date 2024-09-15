@@ -54,6 +54,8 @@ There is a vast summary of files, but only some are important:
 
 #### How to cite
 
+Link: https://arxiv.org/pdf/2405.12654
+
 ``` @xgnn-dl,
   author       = {Dominik K{\"{o}}hler and
                   Stefan Heindorf},
