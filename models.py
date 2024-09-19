@@ -4,7 +4,7 @@
 # training function: num_layers, optimizer (loss,weight_decay), data, epochs =30,
 # output: model
 from torch.nn import Linear
-from torch_geometric.nn import RGCNConv, to_hetero
+from torch_geometric.nn import RGCNConv, to_hetero, FastRGCNConv
 from datasets import create_hetero_ba_houses, PyGDataProcessor
 import torch
 import torch.nn.functional as F
@@ -40,21 +40,23 @@ class HeteroGNNSAGE(torch.nn.Module):
 class RGCN(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels, num_relations, num_nodefeatures):
         super().__init__()
-        self.conv1 = RGCNConv(in_channels=num_nodefeatures,
-                              out_channels=hidden_channels, num_relations=num_relations)
+        self.conv1 = FastRGCNConv(in_channels=7,  # TODO: Number of nodes of nodetype!!
+                                  out_channels=16,
+                                  num_relations=num_relations)
+        self.conv2 = FastRGCNConv(16,
+                                  out_channels=out_channels,
+                                  num_relations=num_relations)
         # Adjusted dimensions
-        self.lin1 = Linear(hidden_channels, hidden_channels)
-        #self.conv2 = RGCNConv(in_channels=hidden_channels,
+        # self.lin1 = Linear(hidden_channels, hidden_channels)
+        # self.conv2 = RGCNConv(in_channels=hidden_channels,
         #                      out_channels=out_channels, num_relations=num_relations)
-        #self.lin2 = Linear(hidden_channels, out_channels)
+        # self.lin2 = Linear(hidden_channels, out_channels)
         print('RGCN model initialized.')
 
     def forward(self, x, edge_index, edge_type):
-        # First convolution and linear layer
-        x = self.conv1(x, edge_index, edge_type) + self.lin1(x)
-        x = x.relu()
-        # Second convolution and linear layer
-        #x = self.conv2(x, edge_index, edge_type) + self.lin2(x)
+        x = F.relu(self.conv1(None, edge_index, edge_type))
+        x = self.conv2(x, edge_index, edge_type)
+        return F.log_softmax(x, dim=1)
         return x
 
 # Heterogeneous RGCN
@@ -67,22 +69,18 @@ class HeteroRGCN(torch.nn.Module):
         assert isinstance(data, HeteroData)
 
         # Define the homogeneous RGCN model
-        model = RGCN(hidden_channels=64, out_channels=num_classes,
-                     num_nodefeatures=num_nodefeatures, num_relations=num_relations)
+        model = RGCN(hidden_channels=64, out_channels=2,
+                     num_nodefeatures=num_nodefeatures, num_relations=16)
 
         # Transform to heterogeneous model using data's metadata
-        print('debug metadata', data.metadata())
-        model = to_hetero(model, data.metadata(), debug=True)
-        self.model = model
-        self.lin = Linear(64, 2)
+        assert len(list(data.edge_index_dict.keys())
+                   ) == 16, "some relations are missing"
+        self.model = to_hetero(model, data.metadata(), debug=True)
+        # self.lin = Linear(64, 2)
 
-    def forward(self, x_dict, edge_index_dict) -> torch.Tensor:
-        print(edge_index_dict)
-        return self.model(x_dict, edge_index_dict)
+    def forward(self, x_dict, edge_index_dict, edge_type_dict) -> torch.Tensor:
+        return self.model(x_dict, edge_index_dict, edge_type_dict)
         # return self.lin(x_dict[self.nodetype_classify])
-
-
-
 
 
 class GNNDatasets():
@@ -117,7 +115,30 @@ class GNNDatasets():
     def train_epoch(self):
         self.model.train()
         self.optimizer.zero_grad()
-        out = self.model(self.data.x_dict, self.data.edge_index_dict)
+        try:
+            out = self.model(self.data.x_dict, self.data.edge_index_dict)
+        except TypeError:
+            for node_type, features in self.data.x_dict.items():
+                if features is None:
+                    raise ValueError(
+                        f"Node features for node type '{node_type}' are missing (None).")
+            print('TypeError in train_epoch')
+            relations_dict = {rel: i for i, rel in enumerate(
+                self.data.edge_index_dict.keys())}
+            # Correct the way edge_type_dict is created
+            edge_type_dict = {rel: torch.ones(self.data.edge_index_dict[rel].size(
+                1), dtype=torch.int64) for rel in relations_dict.keys()}
+            self.data.edge_type_dict = edge_type_dict
+            # Print edge_index_dict to see the available relations and their edge indices
+
+            # Check for None values in edge_index_dict
+            for relation, edge_index in self.data.edge_index_dict.items():
+                if edge_index is None:
+                    raise ValueError(
+                        f"Edge indices for relation '{relation}' are missing (None).")
+
+            out = self.model(
+                self.data.x_dict, self.data.edge_index_dict, self.data.edge_type_dict)
         mask = self.data[self.type_to_classify].train_mask
         loss = F.cross_entropy(
             out[mask], self.data[self.type_to_classify].y[mask])

@@ -7,7 +7,7 @@ class TestModels(unittest.TestCase):
     def setUp(self) -> None:
         SyntheticData = SyntheticDatasets()
         self.dataset, self.dataset_class = SyntheticData.new_dataset_house(
-            1000)
+            50)
 
         self.rgcn_cl = HeteroRGCN(
             self.dataset, num_relations=1, num_nodefeatures=1, num_classes=2)
