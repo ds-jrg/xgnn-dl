@@ -3,10 +3,12 @@
 
 # training function: num_layers, optimizer (loss,weight_decay), data, epochs =30,
 # output: model
+from torch.nn import Linear
+from torch_geometric.nn import RGCNConv, to_hetero
 from datasets import create_hetero_ba_houses, PyGDataProcessor
 import torch
 import torch.nn.functional as F
-from torch_geometric.nn import HeteroConv, SAGEConv, Linear, to_hetero
+from torch_geometric.nn import HeteroConv, SAGEConv, Linear, to_hetero, RGCNConv
 from torch_geometric.data import HeteroData
 import os.path as osp
 
@@ -33,7 +35,57 @@ class HeteroGNNSAGE(torch.nn.Module):
         return self.lin(x_dict[self.nodetype_classify])
 
 
-class GNN_datasets():
+# Homogeneous RGCN
+
+class RGCN(torch.nn.Module):
+    def __init__(self, hidden_channels, out_channels, num_relations, num_nodefeatures):
+        super().__init__()
+        self.conv1 = RGCNConv(in_channels=num_nodefeatures,
+                              out_channels=hidden_channels, num_relations=num_relations)
+        # Adjusted dimensions
+        self.lin1 = Linear(hidden_channels, hidden_channels)
+        #self.conv2 = RGCNConv(in_channels=hidden_channels,
+        #                      out_channels=out_channels, num_relations=num_relations)
+        #self.lin2 = Linear(hidden_channels, out_channels)
+        print('RGCN model initialized.')
+
+    def forward(self, x, edge_index, edge_type):
+        # First convolution and linear layer
+        x = self.conv1(x, edge_index, edge_type) + self.lin1(x)
+        x = x.relu()
+        # Second convolution and linear layer
+        #x = self.conv2(x, edge_index, edge_type) + self.lin2(x)
+        return x
+
+# Heterogeneous RGCN
+
+
+class HeteroRGCN(torch.nn.Module):
+    def __init__(self, data, num_relations, num_nodefeatures, num_classes):
+        super().__init__()
+        # Ensure the input is a HeteroData object
+        assert isinstance(data, HeteroData)
+
+        # Define the homogeneous RGCN model
+        model = RGCN(hidden_channels=64, out_channels=num_classes,
+                     num_nodefeatures=num_nodefeatures, num_relations=num_relations)
+
+        # Transform to heterogeneous model using data's metadata
+        print('debug metadata', data.metadata())
+        model = to_hetero(model, data.metadata(), debug=True)
+        self.model = model
+        self.lin = Linear(64, 2)
+
+    def forward(self, x_dict, edge_index_dict) -> torch.Tensor:
+        print(edge_index_dict)
+        return self.model(x_dict, edge_index_dict)
+        # return self.lin(x_dict[self.nodetype_classify])
+
+
+
+
+
+class GNNDatasets():
     def __init__(self,
                  data,
                  num_layers=2,
@@ -55,6 +107,8 @@ class GNN_datasets():
         if model is None:
             self.model = HeteroGNNSAGE(self.data.metadata(), hidden_channels=64, out_channels=2,
                                        nodetype_classify=self.type_to_classify, num_layers=self.num_layers)
+        else:
+            self.model = model
         if optimizer is None:
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.01)
         else:
@@ -92,8 +146,6 @@ class GNN_datasets():
             train_acc, val_acc, test_acc = self.test()
             print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
                   f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
-
-
 
 
 # ----------------- GNN for DBLP Dataset
