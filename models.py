@@ -11,6 +11,7 @@ import torch.nn.functional as F
 from torch_geometric.nn import HeteroConv, SAGEConv, Linear, to_hetero, RGCNConv
 from torch_geometric.data import HeteroData
 import os.path as osp
+import copy
 
 
 class HeteroGNNSAGE(torch.nn.Module):
@@ -38,47 +39,159 @@ class HeteroGNNSAGE(torch.nn.Module):
 # Homogeneous RGCN
 
 class RGCN(torch.nn.Module):
-    def __init__(self, hidden_channels, out_channels, num_relations, num_nodefeatures):
+    def __init__(self, data, num_relations, num_bases, hidden_layers, out_channels):
         super().__init__()
-        self.conv1 = FastRGCNConv(in_channels=7,  # TODO: Number of nodes of nodetype!!
-                                  out_channels=16,
-                                  num_relations=num_relations)
-        self.conv2 = FastRGCNConv(16,
-                                  out_channels=out_channels,
-                                  num_relations=num_relations)
-        # Adjusted dimensions
-        # self.lin1 = Linear(hidden_channels, hidden_channels)
-        # self.conv2 = RGCNConv(in_channels=hidden_channels,
-        #                      out_channels=out_channels, num_relations=num_relations)
-        # self.lin2 = Linear(hidden_channels, out_channels)
-        print('RGCN model initialized.')
+        self.conv1 = FastRGCNConv(data.num_nodes, hidden_layers, num_relations,
+                                  num_bases=num_bases)
+        self.conv2 = FastRGCNConv(hidden_layers, out_channels, num_relations,
+                                  num_bases=num_bases)
 
     def forward(self, x, edge_index, edge_type):
+        print('Debug edgeindex:', edge_index)
         x = F.relu(self.conv1(None, edge_index, edge_type))
         x = self.conv2(x, edge_index, edge_type)
         return F.log_softmax(x, dim=1)
-        return x
 
-# Heterogeneous RGCN
+
+class RGCN_train():
+    def __init__(self, data, type_to_explain) -> None:
+        self.data = copy.deepcopy(data)
+        num_relations = 16
+        num_bases = 30
+        hidden_layers = 32
+        self.type_to_explain = type_to_explain
+        if not hasattr(self.data, 'num_nodes'):
+            sum_nodes = 0
+            for nodetype in data.node_types:
+                sum_nodes += data[nodetype].num_nodes
+            self.data.num_nodes = sum_nodes
+        if not hasattr(self.data, 'edge_index'):
+            new_id = 0
+            hetero_homo_dict = {}
+            for nodetype in self.data.node_types:
+                for id in range(data[nodetype].num_nodes):
+                    hetero_homo_dict.update({f'{nodetype}_{id}': new_id})
+                    new_id += 1
+            # +1 was done in last step of for-loops above
+            self.data.nodes = list(range(new_id))
+            # create new edge_index
+
+            edge_index = {}
+            edge_type = []
+            edge_count = 0
+            train_idx = []
+            train_y = []
+            print('y values', self.data[type_to_explain].y)
+            total_list_indices1, total_list_indices2 = [], []
+            for edge, indices in self.data.edge_index_dict.items():
+                list_indices = indices.tolist()
+                for i in range(len(list_indices[0])):
+                    list_indices[0][i] = hetero_homo_dict[f'{edge[0]}_{list_indices[0][i]}']
+                    list_indices[1][i] = hetero_homo_dict[f'{edge[2]}_{list_indices[1][i]}']
+                    edge_type.append(edge_count)
+
+                total_list_indices1.extend(list_indices[0])
+                total_list_indices2.extend(list_indices[1])
+                edge_count += 1
+
+            # add training, test
+            train_idx = [hetero_homo_dict[f'{self.type_to_explain}_{i}']
+                         for i in self.data[type_to_explain].train_mask]
+            train_y = list(self.data[self.type_to_explain].y)
+            train_y = [train_y[i]
+                       for i in self.data[type_to_explain].train_mask]
+            val_idx = [hetero_homo_dict[f'{self.type_to_explain}_{i}']
+                       for i in self.data[type_to_explain].val_mask]
+            val_y = list(self.data[self.type_to_explain].y)
+            val_y = [val_y[i] for i in self.data[type_to_explain].val_mask]
+            test_idx = [hetero_homo_dict[f'{self.type_to_explain}_{i}']
+                        for i in self.data[type_to_explain].test_mask]
+            test_y = list(self.data[self.type_to_explain].y)
+            test_y = [test_y[i] for i in self.data[type_to_explain].test_mask]
+            train_idx = torch.tensor(train_idx)
+            test_idx = torch.tensor(test_idx)
+            train_y = torch.tensor(train_y)
+            test_y = torch.tensor(test_y)
+            self.data.train_idx = train_idx
+            self.data.val_idx = torch.tensor(val_idx)
+            self.data.test_idx = test_idx
+            self.data.train_y = train_y
+            self.data.val_y = torch.tensor(val_y)
+            self.data.test_y = test_y
+
+            self.data.train_idx = torch.tensor(list(set(train_idx)))
+            self.data.train_y = torch.tensor(
+                [1 for i in range(len(train_idx))])
+            self.data.edge_index = torch.tensor(
+                [total_list_indices1, total_list_indices2])
+            self.data.edge_type = torch.tensor(edge_type)
+
+        self.model = RGCN(data=self.data,
+                          num_relations=num_relations,
+                          num_bases=num_bases,
+                          hidden_layers=hidden_layers,
+                          out_channels=2,
+                          )
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.01)
+
+    def train_epoch(self):
+        self.model.train()
+        self.optimizer.zero_grad()
+        out = self.model(None, self.data.edge_index, self.data.edge_type)
+        loss = F.nll_loss(out[self.data.train_idx], self.data.train_y)
+        loss.backward()
+        self.optimizer.step()
+        return float(loss)
+
+    def train_model(self, epochs):
+        self.model.train()
+        for epoch in range(1, epochs):
+            loss = self.train_epoch()
+            train_acc, val_acc, test_acc = self.test()
+            print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
+                  f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
+
+    @torch.no_grad()
+    def test(self):
+        self.model.eval()
+        pred = self.model(None,
+                          self.data.edge_index, self.data.edge_type).argmax(dim=-1)
+        train_acc = (pred[self.data.train_idx] ==
+                     self.data.train_y).float().mean()
+        val_acc = (pred[self.data.val_idx] ==
+                   self.data.val_y).float().mean()
+        test_acc = (pred[self.data.test_idx] ==
+                    self.data.test_y).float().mean()
+        return train_acc, val_acc, test_acc
 
 
 class HeteroRGCN(torch.nn.Module):
+    """
+    Not useable!!
+    """
+
     def __init__(self, data, num_relations, num_nodefeatures, num_classes):
         super().__init__()
         # Ensure the input is a HeteroData object
         assert isinstance(data, HeteroData)
 
+        sum_nodes = 0
+        for nodetype in data.node_types:
+            sum_nodes += data[nodetype].num_nodes
+
         # Define the homogeneous RGCN model
-        model = RGCN(hidden_channels=64, out_channels=2,
-                     num_nodefeatures=num_nodefeatures, num_relations=16)
+        self.model = RGCN(hidden_channels=64, out_channels=2,
+                          num_nodes=sum_nodes, num_relations=16)
 
         # Transform to heterogeneous model using data's metadata
         assert len(list(data.edge_index_dict.keys())
                    ) == 16, "some relations are missing"
-        self.model = to_hetero(model, data.metadata(), debug=True)
+        # self.model = to_hetero(model, data.metadata(), debug=True)
         # self.lin = Linear(64, 2)
 
     def forward(self, x_dict, edge_index_dict, edge_type_dict) -> torch.Tensor:
+        # print('debugging forward in HeteroRGCN', x_dict.keys(),
+        #      edge_index_dict.keys(), edge_type_dict.keys())
         return self.model(x_dict, edge_index_dict, edge_type_dict)
         # return self.lin(x_dict[self.nodetype_classify])
 
@@ -138,7 +251,7 @@ class GNNDatasets():
                         f"Edge indices for relation '{relation}' are missing (None).")
 
             out = self.model(
-                self.data.x_dict, self.data.edge_index_dict, self.data.edge_type_dict)
+                None, self.data.edge_index_dict, self.data.edge_type_dict)
         mask = self.data[self.type_to_classify].train_mask
         loss = F.cross_entropy(
             out[mask], self.data[self.type_to_classify].y[mask])
