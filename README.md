@@ -30,6 +30,9 @@ Troubleshoot:
 - Install missing packages, if asked so.
 
 #### Overview of the Files
+
+In the folder `.swm` is an additional doc explaining details of the code.
+
 There is a vast summary of files, but only some are important:
 
 `create_random_ce.py` describes all functions, which are needed to create and mutate one CE, with some additional utility functions.
