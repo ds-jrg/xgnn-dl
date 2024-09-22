@@ -1,7 +1,7 @@
 import pickle
 import os
 from syntheticdatasets import SyntheticDatasets
-from models import GNN_datasets
+from models import GNNDatasets
 
 
 def create_gnn_and_dataset(dataset_name,
@@ -20,7 +20,7 @@ def create_gnn_and_dataset(dataset_name,
     os.makedirs(folder_path_ds, exist_ok=True)
     os.makedirs(folder_path_gnn, exist_ok=True)
     data_path = 'content/'+dataset_name+'_'+'dataset.pkl'
-    gnn_path = 'content/'+gnn_name+'_'+'gnn.pkl'
+    gnn_path = 'content/'+gnn_name+'_'+dataset_name+'_'+'gnn.pkl'
     if not retrain:
         try:
             with open(data_path, 'rb') as f:
@@ -30,16 +30,20 @@ def create_gnn_and_dataset(dataset_name,
         except Exception:
             retrain = True
     if retrain:
-        if dataset is None:
-            raise Exception("Dataset is None")
         if gnn is None:
             raise Exception("GNN is None")
-        if dataset == 'house':
-            SyntheticData = SyntheticDatasets()
-            dataset, dataset_class = SyntheticData.new_dataset_house(num_nodes)
+        if dataset_name == 'house':
+            dataset, dataset_class = SyntheticDatasets.new_dataset_house(
+                num_nodes)
+        elif dataset_name == 'circle5':
+            dataset, dataset_class = SyntheticDatasets.new_dataset_circle5(
+                num_nodes)
+        else:
+            raise Exception("Dataset is not recognized.")
 
         if gnn == 'SAGE':
-            gnn_cl = GNN_datasets(data=dataset, type_to_classify='B')
+            gnn_cl = GNNDatasets(
+                data=dataset, type_to_classify=type_to_classify)
             gnn_cl.train_model(epochs=20)
 
         # store everything
@@ -54,6 +58,7 @@ def create_gnn_and_dataset(dataset_name,
 
 def create_test_dataset(dataset='house', num_nodes=100):
     if dataset == 'house':
-        SyntheticData = SyntheticDatasets()
-        dataset, _ = SyntheticData.new_dataset_house(num_nodes)
+        dataset, _ = SyntheticDatasets.new_dataset_house(num_nodes)
+    elif dataset == 'circle5':
+        dataset, _ = SyntheticDatasets.new_dataset_circle5(num_nodes)
     return dataset

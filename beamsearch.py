@@ -104,7 +104,7 @@ class BeamSearch():
         class_to_expl = BeamHelper.get_cl_to_explain(self.data)
         assert isinstance(class_to_expl, OWLClass)
         beam = [class_to_expl]*self.beam_width
-        print(f"Beam search is started with {self.beam_depth} rounds")
+        print(f"Beam search started with {self.beam_depth} rounds")
         for _ in range(self.beam_depth):
             new_beam = copy.deepcopy(beam)
             for ce in beam:
@@ -115,5 +115,6 @@ class BeamSearch():
             new_beam.sort(key=self.scoring, reverse=True)
             beam = new_beam[:self.beam_width]
             print(f"Round {_+1} of beamsearch is done")
-            print(f"The best CE is {dlsr.render(beam[0])} with a score of {round(self.scoring(beam[0]),2)}")
+            print(
+                f"The best CE is {dlsr.render(beam[0])} with a score of {round(self.scoring(beam[0]),2)}")
         return beam

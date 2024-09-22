@@ -47,13 +47,13 @@ class RGCN(torch.nn.Module):
                                   num_bases=num_bases)
 
     def forward(self, x, edge_index, edge_type):
-        print('Debug edgeindex:', edge_index)
+        print('debug edgetype', edge_type)
         x = F.relu(self.conv1(None, edge_index, edge_type))
         x = self.conv2(x, edge_index, edge_type)
         return F.log_softmax(x, dim=1)
 
 
-class RGCN_train():
+class RGCNPreProcessor():
     def __init__(self, data, type_to_explain) -> None:
         self.data = copy.deepcopy(data)
         num_relations = 16
@@ -89,7 +89,7 @@ class RGCN_train():
                     list_indices[0][i] = hetero_homo_dict[f'{edge[0]}_{list_indices[0][i]}']
                     list_indices[1][i] = hetero_homo_dict[f'{edge[2]}_{list_indices[1][i]}']
                     edge_type.append(edge_count)
-
+                # build (homog.) adjacency matrix
                 total_list_indices1.extend(list_indices[0])
                 total_list_indices2.extend(list_indices[1])
                 edge_count += 1
@@ -132,7 +132,8 @@ class RGCN_train():
                           hidden_layers=hidden_layers,
                           out_channels=2,
                           )
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.01)
+        self.optimizer = torch.optim.Adam(
+            self.model.parameters(), lr=0.0005, weight_decay=0.0005)
 
     def train_epoch(self):
         self.model.train()
@@ -190,10 +191,7 @@ class HeteroRGCN(torch.nn.Module):
         # self.lin = Linear(64, 2)
 
     def forward(self, x_dict, edge_index_dict, edge_type_dict) -> torch.Tensor:
-        # print('debugging forward in HeteroRGCN', x_dict.keys(),
-        #      edge_index_dict.keys(), edge_type_dict.keys())
         return self.model(x_dict, edge_index_dict, edge_type_dict)
-        # return self.lin(x_dict[self.nodetype_classify])
 
 
 class GNNDatasets():
@@ -212,6 +210,7 @@ class GNNDatasets():
             self.type_to_classify = type_to_classify
 
         # ensure that the data has train, val and test splits
+        print('debug data', self.data)
         if not hasattr(self.data[self.type_to_classify], 'train_mask'):
             dataprocessor = PyGDataProcessor(self.data, self.type_to_classify)
             self.data = dataprocessor.add_training_validation_test()
@@ -242,7 +241,6 @@ class GNNDatasets():
             edge_type_dict = {rel: torch.ones(self.data.edge_index_dict[rel].size(
                 1), dtype=torch.int64) for rel in relations_dict.keys()}
             self.data.edge_type_dict = edge_type_dict
-            # Print edge_index_dict to see the available relations and their edge indices
 
             # Check for None values in edge_index_dict
             for relation, edge_index in self.data.edge_index_dict.items():
