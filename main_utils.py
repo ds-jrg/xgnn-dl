@@ -32,14 +32,9 @@ def create_gnn_and_dataset(dataset_name,
     if retrain:
         if gnn is None:
             raise Exception("GNN is None")
-        if dataset_name == 'house':
-            dataset, dataset_class = SyntheticDatasets.new_dataset_house(
-                num_nodes)
-        elif dataset_name == 'circle5':
-            dataset, dataset_class = SyntheticDatasets.new_dataset_circle5(
-                num_nodes)
-        else:
-            raise Exception("Dataset is not recognized.")
+        motif = getattr(SyntheticDatasets, f'motif_{dataset_name}')
+        dataset, dataset_class = SyntheticDatasets.new_dataset_motif(
+            num_nodes=num_nodes, motif=motif)
 
         if gnn == 'SAGE':
             gnn_cl = GNNDatasets(
@@ -56,9 +51,8 @@ def create_gnn_and_dataset(dataset_name,
     return gnn_cl, dataset, dataset_class
 
 
-def create_test_dataset(dataset='house', num_nodes=100):
-    if dataset == 'house':
-        dataset, _ = SyntheticDatasets.new_dataset_house(num_nodes)
-    elif dataset == 'circle5':
-        dataset, _ = SyntheticDatasets.new_dataset_circle5(num_nodes)
+def create_test_dataset(dataset_name='house', num_nodes=500):
+    motif = getattr(SyntheticDatasets, f'motif_{dataset_name}')
+    dataset, _ = SyntheticDatasets.new_dataset_motif(
+        num_nodes=num_nodes, motif=motif)
     return dataset

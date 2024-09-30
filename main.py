@@ -10,10 +10,12 @@ dlsr = DLSyntaxObjectRenderer()
 
 # setup for parameters
 
-retrain_GNN_and_data = False
-list_datasets = ['house', 'circle5']
-dict_types_to_classify = {'house': 'B', 'circle5': 'A'}
-gnn_parameters = [{'name': 'SAGE_2_20', 'gnn_layers': 2, 'epochs': 20},
+retrain_GNN_and_data = True
+list_datasets = ['house', 'circle5', 'star5', 'wheel5']
+list_datasets = ['star5', 'wheel5']
+dict_types_to_classify = {'house': 'A',
+                          'circle5': 'A', 'star5': 'A', 'wheel5': 'A'}
+gnn_parameters = [{'name': 'SAGE_2_20', 'gnn_layers': 4, 'epochs': 50},
                   ]
 
 
@@ -35,7 +37,7 @@ for ds in list_datasets:
         # beam search CEs
         beam_search = BeamSearch(gnns[ds].model,
                                  data[ds],
-                                 beam_width=10,
+                                 beam_width=50,
                                  beam_depth=3,
                                  # max_depth of created CEs, should be number of GNN layers
                                  max_depth=gnnparams['gnn_layers'],
@@ -43,7 +45,7 @@ for ds in list_datasets:
         beam = beam_search.beam_search()
 
         # return top CEs
-        test_ce_dataset = create_test_dataset(dataset=ds, num_nodes=100)
+        test_ce_dataset = create_test_dataset(dataset_name=ds, num_nodes=100)
         fideval = FidelityEvaluator(
             test_ce_dataset, gnns[ds].model, type_to_explain=dict_types_to_classify[ds])
         print(f"Top 10 CEs: of dataset {ds} and gnn {gnnparams['name']}")

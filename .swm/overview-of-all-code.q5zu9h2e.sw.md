@@ -36,22 +36,14 @@ Creating CEs:
 ## Creating and importing datasets
 
 - <SwmPath>[syntheticdatasets.py](/syntheticdatasets.py)</SwmPath> is the file to create all kind of synthetic datasets in the class <SwmToken path="/syntheticdatasets.py" pos="5:2:2" line-data="class SyntheticDatasets():">`SyntheticDatasets`</SwmToken>. Currently:
-  - A house motif <SwmToken path="/syntheticdatasets.py" pos="17:3:3" line-data="    def new_dataset_house(num_nodes, num_motifs=None, num_edges=3):">`new_dataset_house`</SwmToken> , with node types A,B,C (top to bottom) and D (for nodes not in the house). The dataset takes a BA Graph and adds house motifs to it. Then it creates node types, according to the position in the graph, and randomly changes node types in the BA Graph. The goal for the GNN is to predict for a certain node type, whether it is in the BAGraph or the motif.
+  - A house motif <SwmToken path="/syntheticdatasets.py" pos="51:3:3" line-data="    def new_dataset_house(num_nodes, num_motifs=None, num_edges=3):">`new_dataset_house`</SwmToken> , with node types A,B,C (top to bottom) and D (for nodes not in the house). The dataset takes a BA Graph and adds house motifs to it. Then it creates node types, according to the position in the graph, and randomly changes node types in the BA Graph. The goal for the GNN is to predict for a certain node type, whether it is in the BAGraph or the motif.
 - <SwmPath>[datasets.py](/datasets.py)</SwmPath> Has all utility functions to make datasets, divide them into test, validation, and training data, and convert them from one standard to the other (nxgraph <-> PyG <-> PyG Heterodata).
 
 ### Create a new synthetic motif-dataset:
 
 1. In the class <SwmToken path="/syntheticdatasets.py" pos="5:2:2" line-data="class SyntheticDatasets():">`SyntheticDatasets`</SwmToken>you add a class variable with the motif you want as a base motif. This is in networkx-style, with a dict labels for the node types and edges for the edges to connect nodes by id.&nbsp;
-2. Create a new function, similar to the current <SwmToken path="/syntheticdatasets.py" pos="17:3:3" line-data="    def new_dataset_house(num_nodes, num_motifs=None, num_edges=3):">`new_dataset_house`</SwmToken> function, and change the variable <SwmToken path="/syntheticdatasets.py" pos="25:1:1" line-data="        type_to_classify = &#39;B&#39;">`type_to_classify`</SwmToken> in your new function.
-3. In the file <SwmPath>[main_utils.py](/main_utils.py)</SwmPath> , extend in the function <SwmToken path="/main_utils.py" pos="7:2:2" line-data="def create_gnn_and_dataset(dataset_name,">`create_gnn_and_dataset`</SwmToken> after if <SwmToken path="/main_utils.py" pos="32:3:3" line-data="    if retrain:">`retrain`</SwmToken> an `elif dataset_name == NEWNAME:`calling your new-made function in the class <SwmToken path="/syntheticdatasets.py" pos="5:2:2" line-data="class SyntheticDatasets():">`SyntheticDatasets`</SwmToken>.
-4. Still in the file <SwmPath>[main_utils.py](/main_utils.py)</SwmPath>, extend in the function def <SwmToken path="/main_utils.py" pos="59:2:2" line-data="def create_test_dataset(dataset=&#39;house&#39;, num_nodes=100):">`create_test_dataset`</SwmToken>the if-statements by an `elif dataset == NEWNAME:`and copy from the above statements, just calling your own function, resulting in the line:&nbsp;
-
-```python
-dataset, _ = SyntheticDatasets.new_dataset_NEWNAME(num_nodes)
-```
-
-5. In the file <SwmPath>[main.py](/main.py)</SwmPath> , extend the list <SwmToken path="/main.py" pos="14:0:0" line-data="list_datasets = [&#39;house&#39;, &#39;circle5&#39;]">`list_datasets`</SwmToken> by your new name, and also add the new type to classify in the <SwmToken path="/main.py" pos="15:0:0" line-data="dict_types_to_classify = {&#39;house&#39;: &#39;B&#39;, &#39;circle5&#39;: &#39;A&#39;}">`dict_types_to_classify`</SwmToken>.&nbsp;
-6. Optional: Add a new gnn, by extending the list <SwmToken path="/main.py" pos="16:0:0" line-data="gnn_parameters = [{&#39;name&#39;: &#39;SAGE_2_20&#39;, &#39;gnn_layers&#39;: 2, &#39;epochs&#39;: 20},">`gnn_parameters`</SwmToken> by another dict with new parameters.
+2. In the file <SwmPath>[main.py](/main.py)</SwmPath> , extend the list <SwmToken path="/main.py" pos="14:0:0" line-data="list_datasets = [&#39;house&#39;, &#39;circle5&#39;]">`list_datasets`</SwmToken> by your new name, and also add the new type to classify in the <SwmToken path="/main.py" pos="15:0:0" line-data="dict_types_to_classify = {&#39;house&#39;: &#39;B&#39;, &#39;circle5&#39;: &#39;A&#39;}">`dict_types_to_classify`</SwmToken> (always use 'A'.&nbsp;
+3. Optional: Add a new gnn, by extending the list <SwmToken path="/main.py" pos="18:0:0" line-data="gnn_parameters = [{&#39;name&#39;: &#39;SAGE_2_20&#39;, &#39;gnn_layers&#39;: 4, &#39;epochs&#39;: 50},">`gnn_parameters`</SwmToken> by another dict with new parameters.
 
 This should have been all!
 
