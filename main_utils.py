@@ -12,7 +12,7 @@ def create_gnn_and_dataset(dataset_name,
                            gnn='SAGE',
                            gnn_layers=2,
                            dataset='house',  # type of data like house
-                           num_nodes=100,
+                           num_nodes=2000,
                            ):
     folder_path_ds = 'content/datasets'
     folder_path_gnn = 'content/gnns'
