@@ -12,7 +12,7 @@ def create_gnn_and_dataset(dataset_name,
                            gnn='SAGE',
                            gnn_layers=2,
                            dataset='house',  # type of data like house
-                           num_nodes=2000,
+                           num_nodes=200,
                            ):
     folder_path_ds = 'content/datasets'
     folder_path_gnn = 'content/gnns'
@@ -38,8 +38,8 @@ def create_gnn_and_dataset(dataset_name,
 
         if gnn == 'SAGE':
             gnn_cl = GNNDatasets(
-                data=dataset, type_to_classify=type_to_classify)
-            gnn_cl.train_model(epochs=20)
+                data=dataset, type_to_classify=type_to_classify, num_layers=gnn_layers)
+            gnn_cl.train_model(epochs=gnn_epochs)
 
         # store everything
         data_tuple = (dataset, dataset_class)
@@ -52,7 +52,12 @@ def create_gnn_and_dataset(dataset_name,
 
 
 def create_test_dataset(dataset_name='house', num_nodes=500):
-    motif = getattr(SyntheticDatasets, f'motif_{dataset_name}')
-    dataset, _ = SyntheticDatasets.new_dataset_motif(
-        num_nodes=num_nodes, motif=motif)
+    if isinstance(dataset_name, str):
+        motif = getattr(SyntheticDatasets, f'motif_{dataset_name}')
+        dataset, _ = SyntheticDatasets.new_dataset_motif(
+            num_nodes=num_nodes, motif=motif)
+    else:
+        assert isinstance(dataset_name[0], dict), dataset_name
+        dataset, _ = SyntheticDatasets.new_dataset_n_motif(
+            num_nodes=num_nodes, motifs=dataset_name)
     return dataset

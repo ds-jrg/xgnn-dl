@@ -11,10 +11,12 @@ dlsr = DLSyntaxObjectRenderer()
 # setup for parameters
 
 retrain_GNN_and_data = True
-list_datasets = ['house', 'circle5', 'star5', 'wheel5']
+list_datasets = ['house', 'circle', 'star', 'wheel',
+                 [{'positive': ['house', 'wheel'], 'negative': ['circle',  'star']}],
+                 ]
 dict_types_to_classify = {'house': 'A',
-                          'circle5': 'A', 'star5': 'A', 'wheel5': 'A'}
-gnn_parameters = [{'name': 'SAGE_2_20', 'gnn_layers': 4, 'epochs': 50},
+                          'circle': 'A', 'star': 'A', 'wheel': 'A'}
+gnn_parameters = [{'name': 'SAGE_2_50', 'gnn_layers': 4, 'epochs': 50},
                   ]
 
 
@@ -29,7 +31,7 @@ for ds in list_datasets:
                                                                  gnn_name=gnnparams['name'],
                                                                  gnn_epochs=gnnparams['epochs'],
                                                                  gnn_layers=gnnparams['gnn_layers'],
-                                                                 type_to_classify=dict_types_to_classify[ds],
+                                                                 type_to_classify='A',  # default: A
                                                                  retrain=retrain_GNN_and_data
                                                                  )
 

@@ -1393,7 +1393,7 @@ class GenerateRandomGraph():  # getestet
         return data
 
 
-class GraphMotifAugmenter():  # getestet
+class GraphMotifAugmenter():
     """
     This class is designed to add motifs to a graph.
     The input is:
@@ -1415,9 +1415,17 @@ class GraphMotifAugmenter():  # getestet
         'edges': [(0, 1), (1, 2), (2, 3), (3, 4), (4, 2), (0, 3)],
     }
 
-    def __init__(self, motif='house', num_motifs=0, orig_graph=None):
+    def __init__(self, motif='house', num_motifs=0, orig_graph=None, total_motifs=None):
         self.motif = motif
         self.num_motifs = num_motifs
+
+        if total_motifs is not None:
+            self.total_motifs = total_motifs
+        else:
+            if isinstance(motif, list):
+                self.total_motifs = len(motif)
+            else:
+                self.total_motifs = 1
 
         if orig_graph is not None:
             self.orig_graph = orig_graph
@@ -1429,29 +1437,50 @@ class GraphMotifAugmenter():  # getestet
         self._graph = copy.deepcopy(self.orig_graph)
         self._list_node_in_motif_or_not = [0]*self.orig_graph.number_of_nodes()
         self._number_nodes_of_orig_graph = self.orig_graph.number_of_nodes()
-        for _ in range(num_motifs):
-            while True:
-                try:
-                    self._graph = self.add_motif(motif, self._graph)
-                    break  # If the line executes without exceptions, exit the loop
-                except Exception as e:
-                    print(f"An exception occurred: {e}")
-                    raise Exception(
-                        "The graph is not connected or something with the motif is wrong.")
 
-            # self._graph = self.add_motif(motif, self._graph)
-            len_motif = 0
-            try:
-                len_motif = len(motif['labels'])
-            except Exception:
-                if motif == 'house':
-                    len_motif = 5
-            if motif == 'house':
-                motif == GraphMotifAugmenter.house_motif
-            self._list_node_in_motif_or_not.extend([1]*len_motif)
+        if not isinstance(motif, list):
+            self.motif = [motif]
+        self.add_n_motifs()
+
+    def extend_list_node_in_motif_or_not(self):
+        len_motif = 0
+        try:
+            len_motif = len(motif['labels'])
+        except Exception:
+            if self.motif == 'house':
+                len_motif = 5
+        if self.motif == 'house':
+            self.motif == GraphMotifAugmenter.house_motif
+        self._list_node_in_motif_or_not.extend([1]*len_motif)
+
+    def add_n_motifs(self):
+        for mot in self.motif:
+            for _ in range(self.num_motifs//self.total_motifs):
+                self.add_motif(mot, self._graph,
+                               self.number_nodes_of_orig_graph)
+                len_motif = 0
+                try:
+                    len_motif = len(mot['labels'])
+                except Exception:
+                    if mot == 'house':
+                        len_motif = 5
+                self._list_node_in_motif_or_not.extend([1]*len_motif)
+
+    def add_n_motifs_negative(self, motifs):
+        for mot in motifs:
+            for _ in range(self.num_motifs//self.total_motifs):
+                self.add_motif(mot, self._graph,
+                               self.number_nodes_of_orig_graph)
+                len_motif = 0
+                try:
+                    len_motif = len(mot['labels'])
+                except Exception:
+                    if mot == 'house':
+                        len_motif = 5
+                self._list_node_in_motif_or_not.extend([0]*len_motif)
 
     @staticmethod
-    def add_motif(motif, graph):  # getestet, aber geht trotzdem nicht
+    def add_motif(motif, graph, numnodes_bagraph=None):  # getestet, aber geht trotzdem nicht
         """
         Adds a motif to the graph (self.graph).
         Motifs are given by:
@@ -1467,54 +1496,54 @@ class GraphMotifAugmenter():  # getestet
             raise Exception("The graph is not a networkx graph.")
         nodes_in_graph = len(graph.nodes)
         assert nodes_in_graph > 0, "The graph has no nodes."
+        if numnodes_bagraph is None:
+            numnodes_bagraph = nodes_in_graph
 
         if motif == 'house':
             motif = GraphMotifAugmenter.house_motif
-        if isinstance(motif, dict):
-            # assetr tests, if the dictionary is correct
-            nodes_in_motif = len(motif['labels'])
-            assert 'labels' in motif, "The motif does not have labels."
-            assert nodes_in_motif == len(
-                motif['labels']), "The highest node in the motif is not the last node."
+        assert isinstance(motif, dict)
+        # tests for correctness
+        nodes_in_motif = len(motif['labels'])
+        assert 'labels' in motif, "The motif does not have labels."
+        assert nodes_in_motif == len(
+            motif['labels']), "The highest node in the motif is not the last node."
 
-            # continue with the code
-            # select random node from bagraph and add an edge to the house motif
-            start_node = random.randint(0, nodes_in_graph-1)  # in ba_graph
-            end_node = random.randint(
-                0, nodes_in_motif-1)+nodes_in_graph  # in motif
-            while end_node == start_node:
-                end_node = random.randint(0, nodes_in_motif-1)+nodes_in_graph
-            # Add nodes to graph
-            assert 'labels' in motif, "The motif does not have labels."
-            add_to = 0
-            if 0 not in list(graph.nodes):
-                add_to = 1
-            current_num_nodes = len(graph.nodes)
-            for i, label in enumerate(motif['labels']):
-                # assuming, the nodes previously are 0,1,2,...
-                graph.add_node(i+current_num_nodes+add_to, label=label)
-                assert current_num_nodes + i+1 == len(graph.nodes), ("The number of nodes did not increase by 1.", i,
-                                                                     i+current_num_nodes+add_to, graph.nodes)
-            for u_motif, v_motif in motif['edges']:
-                u, v = u_motif + nodes_in_graph+add_to, v_motif + nodes_in_graph+add_to
-                graph.add_edge(u, v)
-            graph.add_edge(start_node, end_node)
-            assert nx.is_connected(graph), "The graph is not connected."
+        # select random node from bagraph and add an edge to the motif
+        start_node = random.randint(0, numnodes_bagraph-1)  # in ba_graph
 
-            # Add edges
-            # check if the labels worked
-            labels = []
-            for _, attr in graph.nodes(data=True):
-                label = attr.get('label')
-                labels.append(label)
-            for label_motif in motif['labels']:
-                assert label_motif in labels, "The label " + \
-                    str(label_motif) + " is not in the graph."
-            # end check
+        end_node = random.randint(
+            0, nodes_in_motif-1)+nodes_in_graph  # in motif
+        while end_node == start_node:
+            end_node = random.randint(0, nodes_in_motif-1)+nodes_in_graph
+        # Add nodes to graph
+        assert 'labels' in motif, "The motif does not have labels."
+        add_to = 0
+        if 0 not in list(graph.nodes):
+            add_to = 1
+        current_num_nodes = len(graph.nodes)
+        for i, label in enumerate(motif['labels']):
+            # assuming, the nodes previously are 0,1,2,...
+            graph.add_node(i+current_num_nodes+add_to, label=label)
+            assert current_num_nodes + i+1 == len(graph.nodes), ("The number of nodes did not increase by 1.", i,
+                                                                 i+current_num_nodes+add_to, graph.nodes)
+        for u_motif, v_motif in motif['edges']:
+            u, v = u_motif + nodes_in_graph+add_to, v_motif + nodes_in_graph+add_to
+            graph.add_edge(u, v)
+        graph.add_edge(start_node, end_node)
+        assert nx.is_connected(graph), "The graph is not connected."
 
-            # update the list, which nodes are in the motif and which are not
-        else:
-            raise Exception("This case is not implemented yet.")
+        # Add edges
+        # check if the labels worked
+        labels = []
+        for _, attr in graph.nodes(data=True):
+            label = attr.get('label')
+            labels.append(label)
+        for label_motif in motif['labels']:
+            assert label_motif in labels, "The label " + \
+                str(label_motif) + " is not in the graph."
+        # end check
+
+        # update the list, which nodes are in the motif and which are not
 
         # Tests
         if motif == GraphMotifAugmenter.house_motif:
